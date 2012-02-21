@@ -644,16 +644,14 @@ begin
       raise ELWSCGI.Create(LWS_CONTENT_TYPE_CANT_BE_EMPTY_ERR);
     FHeaderContentType := FContentType;
     DoPopulateProperties;
+    DoPopulateParams;
     if (FContentLength > 0) and (FContentType <> ES) then
     begin
       ReadInput;
       DoRequest;
     end
     else
-    begin
-      DoPopulateParams;
       DoResponse;
-    end;
     DoFillHeaders;
     WriteOutput;
   except
