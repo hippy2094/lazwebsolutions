@@ -3,15 +3,17 @@ Copyright (C) 2010-2012 Silvio Clecio, Luciano Souza.
 
 https://github.com/silvioprog/lazwebsolutions
 
-Vide arquivo LICENSE.txt, incluso nesta distribuição, para detalhes do
-copyright.
+Vide arquivo LICENSE.txt, incluso nesta distribuição,
+para detalhes do copyright.
 
 DESCRIÇÃO
 ===========
 
-LazWebSolutions - Várias soluções multiplataforma escritas com FPC-Lazarus.
-No LazWebSolutions você encontrará as melhores soluções web escritas em Lazarus/Free Pascal,
-algumas inicialmente publicadas em http://silvioprog.com.br.
+LazWebSolutions - Várias soluções multiplataforma escritas
+com FPC-Lazarus.
+No LazWebSolutions você encontrará as melhores soluções web
+escritas em Lazarus/Free Pascal, algumas inicialmente
+publicadas em http://silvioprog.com.br.
 
 WIKI
 ====

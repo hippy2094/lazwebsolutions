@@ -9,9 +9,11 @@ for details about the copyright.
 DESCRIPTION
 ===========
 
-LazWebSolutions - Several cross-platform web solutions written with FPC-Lazarus.
-In LazWebSolutions you will find the best web solutions written in Lazarus/Free Pascal,
-some first published in http://silvioprog.com.br.
+LazWebSolutions - Several cross-platform web solutions
+written with FPC-Lazarus.
+In LazWebSolutions you will find the best web solutions
+written in Lazarus/Free Pascal, some first published in
+http://silvioprog.com.br.
 
 WIKI
 ====
