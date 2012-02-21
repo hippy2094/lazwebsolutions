@@ -2,7 +2,7 @@
   LazWebSolutions, Utils unit
   Copyright (C) 2012-2014 Silvio Clecio, Luciano Souza.
 
-  http://code.google.com/p/lazwebsolutions
+  https://github.com/silvioprog/lazwebsolutions
 
   See the file LICENSE.txt, included in this distribution,
   for details about the copyright.
