@@ -1,0 +1,10 @@
+﻿#The following people contributed to LazWebSolutions:
+
+Silvio Clecio
+Luciano Souza
+Joao Morais
+Fernando Baroni
+Luiz Americo
+Marcos Douglas
+
+#and special thanks to the Lazarus-BR group and FPC-Lazarus team.
