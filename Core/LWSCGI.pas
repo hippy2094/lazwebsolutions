@@ -127,6 +127,8 @@ type
     procedure DoPopulateFields(AData: TMemoryStream); virtual;
     procedure DoPopulateUploads(AData: TMemoryStream); virtual;
     procedure DoPopulateProperties; virtual;
+    procedure Init; virtual;
+    procedure Finit; virtual;
     procedure ReadInput; virtual;
     procedure WriteOutput; virtual;
   public
@@ -437,6 +439,25 @@ begin
 {$ENDIF}
 end;
 
+procedure TLWSCGI.Init;
+begin
+  FHeaderContentType := FContentType;
+  DoPopulateProperties;
+  DoPopulateParams;
+  if (FContentLength > 0) and (FContentType <> ES) then
+  begin
+    ReadInput;
+    DoRequest;
+  end
+  else
+    DoResponse;
+  DoFillHeaders;
+end;
+
+procedure TLWSCGI.Finit;
+begin
+end;
+
 procedure TLWSCGI.DoPopulateParams;
 var
   VJSONParser: TJSONParser;
@@ -642,18 +663,9 @@ begin
   try
     if FContentType = ES then
       raise ELWSCGI.Create(LWS_CONTENT_TYPE_CANT_BE_EMPTY_ERR);
-    FHeaderContentType := FContentType;
-    DoPopulateProperties;
-    DoPopulateParams;
-    if (FContentLength > 0) and (FContentType <> ES) then
-    begin
-      ReadInput;
-      DoRequest;
-    end
-    else
-      DoResponse;
-    DoFillHeaders;
+    Init;
     WriteOutput;
+    Finit;
   except
     on E: Exception do
       try
@@ -661,6 +673,7 @@ begin
       finally
         InternalShowException;
         WriteOutput;
+        Finit;
         if FHaltOnError then
           Halt;
       end;
