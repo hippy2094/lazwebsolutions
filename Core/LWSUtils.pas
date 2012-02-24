@@ -41,7 +41,7 @@ function LWSGetVariableValue(const AString: string): string;
 procedure LWSGetVariableNameValue(const AString: string;
   out AName, AValue: string);{$IFDEF LWSINLINE}inline;{$ENDIF}
 { Convert parametrized string to JSON. }
-function LWSParamStringToJSON(const AQueryString: string;
+function LWSParamStringToJSON(const AParamString: string;
   const AValueSeparator, ADelimiter: Char;
   const AUseURIDecode: Boolean = True): TJSONStringType;
 { TDateTime to GMT. }
@@ -220,7 +220,7 @@ begin
     Delete(Result, 1, VPos);
 end;
 
-function LWSParamStringToJSON(const AQueryString: string;
+function LWSParamStringToJSON(const AParamString: string;
   const AValueSeparator, ADelimiter: Char;
   const AUseURIDecode: Boolean): TJSONStringType;
 var
@@ -229,9 +229,9 @@ var
   S, VName, VValue, VResult: string;
 begin
   if AUseURIDecode then
-    Result := StringToJSONString(LWSURIDecode(AQueryString))
+    Result := StringToJSONString(LWSURIDecode(AParamString))
   else
-    Result := StringToJSONString(AQueryString);
+    Result := StringToJSONString(AParamString);
   if Length(Result) = 0 then
   begin
     Result := '{}';
