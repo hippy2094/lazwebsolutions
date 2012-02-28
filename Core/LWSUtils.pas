@@ -79,6 +79,10 @@ function LWSGetRawCookie(const AHTTPCookie: string; const AName: string): string
 procedure LWSDeleteCookie(var AHTTPHeader: string;
   const AName: string; const APath: string = ''; const ADomain: string = '');
 {$IFDEF LWSINLINE}inline;{$ENDIF}
+{ Convert a path string to JSON }
+function LWSPathToJSON(const APath: string; const ADelimiter: Char;
+  const AUseURIDecode: Boolean = True): TJSONStringType;
+{$IFDEF LWSINLINE}inline;{$ENDIF}
 
 implementation
 
@@ -403,6 +407,43 @@ begin
   if ADomain <> '' then
     AHTTPHeader += '; domain=' + ADomain;
   AHTTPHeader += '; expires=' + NullCookieExpires;
+end;
+
+function LWSPathToJSON(const APath: string; const ADelimiter: Char;
+  const AUseURIDecode: Boolean): TJSONStringType;
+var
+  S: string;
+  I, L: LongInt;
+begin
+  if AUseURIDecode then
+    Result := LWSURIDecode(APath)
+  else
+    Result := APath;
+  L := Length(Result);
+  if L = 0 then
+  begin
+    Result := '[]';
+    Exit;
+  end;
+  S := ES;
+  for I := 1 to L do
+  begin
+    if Result[I] = ADelimiter then
+    begin
+      if (I = 1) or (I = L) then
+        S := S + DQ
+      else
+        S := S + '", "';
+    end
+    else
+      S := S + Result[I];
+  end;
+  if S[1] <> DQ then
+    Insert(DQ, S, 1);
+  L := Length(S);
+  if S[L] <> DQ then
+    Insert(DQ, S, L + 1);
+  Result := '[' + S + ']';
 end;
 
 end.
