@@ -427,7 +427,6 @@ begin
   end;
   S := ES;
   for I := 1 to L do
-  begin
     if Result[I] = ADelimiter then
     begin
       if (I = 1) or (I = L) then
@@ -437,7 +436,6 @@ begin
     end
     else
       S := S + Result[I];
-  end;
   if S[1] <> DQ then
     Insert(DQ, S, 1);
   L := Length(S);
