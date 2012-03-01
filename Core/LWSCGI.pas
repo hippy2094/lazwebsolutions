@@ -607,36 +607,35 @@ begin
   begin
     VHeaders += LWS_HTTP_HEADER_LOCATION + FLocation;
     FHeaders.Text := VHeaders + CRLF;
-{$IFDEF DEBUG}
-    LWSSendMethodExit('TLWSCGI.DoFillHeaders');
-{$ENDIF}
-    Exit;
-  end;
-  if FExpires <> NullDate then
+  end
+  else
   begin
-    if FExpires = -1 then
-      VHeaders += LWS_HTTP_HEADER_EXPIRES + '-1' + CRLF
-    else
-      VHeaders += LWS_HTTP_HEADER_EXPIRES + LWSDateTimeToGMT(FExpires) + CRLF;
+    if FExpires <> NullDate then
+    begin
+      if FExpires = -1 then
+        VHeaders += LWS_HTTP_HEADER_EXPIRES + '-1' + CRLF
+      else
+        VHeaders += LWS_HTTP_HEADER_EXPIRES + LWSDateTimeToGMT(FExpires) + CRLF;
+    end;
+    VHeaders += LWS_HTTP_HEADER_CONTENT_TYPE + FHeaderContentType;
+    if FCharset <> ES then
+      VHeaders += '; charset=' + FCharset;
+    if FCacheControl <> ES then
+      VHeaders += CRLF + LWS_HTTP_HEADER_CACHE_CONTROL + FCacheControl;
+    if FSendContentLength and (FStatusCode <> LWS_HTTP_STATUS_CODE_NOT_FOUND) then
+      VHeaders += CRLF + LWS_HTTP_HEADER_CONTENT_LENGTH + IntToStr(FContents.Size);
+    if FContentEncoding <> ES then
+      VHeaders += CRLF + LWS_HTTP_HEADER_CONTENT_ENCODING + FContentEncoding;
+    if FETag <> ES then
+      VHeaders += CRLF + LWS_HTTP_HEADER_ETAG + FETag;
+    if FLastModified <> NullDate then
+      VHeaders += CRLF + LWS_HTTP_HEADER_LAST_MODIFIED +
+        LWSDateTimeToGMT(FLastModified);
+    if FTransferEncoding <> ES then
+      VHeaders += CRLF + LWS_HTTP_HEADER_TRANSFER_ENCODING + FTransferEncoding;
+    VHeaders += CRLF + LWS_HTTP_HEADER_X_POWERED_BY + LWS;
+    FHeaders.Add(VHeaders);
   end;
-  VHeaders += LWS_HTTP_HEADER_CONTENT_TYPE + FHeaderContentType;
-  if FCharset <> ES then
-    VHeaders += '; charset=' + FCharset;
-  if FCacheControl <> ES then
-    VHeaders += CRLF + LWS_HTTP_HEADER_CACHE_CONTROL + FCacheControl;
-  if FSendContentLength and (FStatusCode <> LWS_HTTP_STATUS_CODE_NOT_FOUND) then
-    VHeaders += CRLF + LWS_HTTP_HEADER_CONTENT_LENGTH + IntToStr(FContents.Size);
-  if FContentEncoding <> ES then
-    VHeaders += CRLF + LWS_HTTP_HEADER_CONTENT_ENCODING + FContentEncoding;
-  if FETag <> ES then
-    VHeaders += CRLF + LWS_HTTP_HEADER_ETAG + FETag;
-  if FLastModified <> NullDate then
-    VHeaders += CRLF + LWS_HTTP_HEADER_LAST_MODIFIED +
-      LWSDateTimeToGMT(FLastModified);
-  if FTransferEncoding <> ES then
-    VHeaders += CRLF + LWS_HTTP_HEADER_TRANSFER_ENCODING + FTransferEncoding;
-  VHeaders += CRLF + LWS_HTTP_HEADER_X_POWERED_BY + LWS;
-  FHeaders.Add(VHeaders);
   if Assigned(FOnFillHeaders) then
     FOnFillHeaders(Self);
 {$IFDEF DEBUG}
