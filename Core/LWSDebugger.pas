@@ -21,10 +21,16 @@ interface
 uses
   LWSConsts, SysUtils, Classes;
 
+type
+  ELWSDebugger = class(Exception);
+
 var
+  LWS_DEBUG_DIR: string = '';
   LWS_DEBUG_FILENAME: TFileName = '';
   LWS_DEBUGHEAP_FILENAME: TFileName = '';
 
+{ Init debugger. }
+procedure LWSInitDebugger;
 { Send msg to debug file. }
 procedure LWSSendMsg(const AMsg: string);
 { Send stream to debug file. }
@@ -52,6 +58,27 @@ begin
   if not Assigned(_DebugFile) then
     _DebugFile := TFileStream.Create(LWS_DEBUG_FILENAME, fmCreate);
   Result := _DebugFile;
+end;
+
+procedure LWSInitDebugger;
+begin
+  if LWS_DEBUG_DIR = '' then
+    LWS_DEBUG_DIR := GetTempDir;
+  LWS_DEBUG_DIR := IncludeTrailingPathDelimiter(LWS_DEBUG_DIR);
+  if not DirectoryExists(LWS_DEBUG_DIR) then
+    WriteLn(LWS_HTTP_HEADER_CONTENT_TYPE +
+      LWS_HTTP_CONTENT_TYPE_TEXT_PLAIN + CRLF + CRLF +
+      Format(LWS_DEBUG_SAVE_PATH_NOT_FOUND_ERR,
+      [LWS_DEBUG_DIR, 'LWSDebugger unit']));
+  if LWS_DEBUG_FILENAME = '' then
+    LWS_DEBUG_FILENAME := LWS_DEBUG_DIR + 'DEBUG.LOG';
+{$IFDEF DEBUGHEAP}
+  if LWS_DEBUGHEAP_FILENAME = '' then
+  begin
+    LWS_DEBUGHEAP_FILENAME := LWS_DEBUG_DIR + 'DEBUGHEAP.LOG';
+    DeleteFile(LWS_DEBUGHEAP_FILENAME);
+  end;
+{$ENDIF}
 end;
 
 procedure LWSSendMsg(const AMsg: string);
@@ -94,15 +121,6 @@ begin
 end;
 
 initialization
-  if LWS_DEBUG_FILENAME = '' then
-    LWS_DEBUG_FILENAME := GetTempDir + 'DEBUG.LOG';
-{$IFDEF DEBUGHEAP}
-  if LWS_DEBUGHEAP_FILENAME = '' then
-  begin
-    LWS_DEBUGHEAP_FILENAME := GetTempDir + 'DEBUGHEAP.LOG';
-    DeleteFile(LWS_DEBUGHEAP_FILENAME);
-  end;
-{$ENDIF}
 
 finalization
   if Assigned(_DebugFile) then

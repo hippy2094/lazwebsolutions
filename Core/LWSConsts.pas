@@ -43,6 +43,9 @@ const
   LWS_SESSION_TIMEOUT = 180;
   LWS_SESSION_PREFIX = 'sess_';
   LWS_CONTENT_TYPE_CANT_BE_EMPTY_ERR = 'ContentType can''t be empty.';
+  LWS_DEBUG_SAVE_PATH_NOT_FOUND_ERR =
+    'Failed to write debug data. Please verify that the current setting ' +
+    'of debug temp directory is correct (%s) in %s.';
   LWS_SESSION_SAVE_PATH_NOT_FOUND_ERR =
     'Failed to write session data. Please verify that the current setting ' +
     'of sessions SavePath is correct (%s) in %s.';
