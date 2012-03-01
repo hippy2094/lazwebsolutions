@@ -30,7 +30,7 @@ var
   LWS_DEBUGHEAP_FILENAME: TFileName = '';
 
 { Init debugger. }
-procedure LWSInitDebugger;
+procedure LWSInitDebugger(const ADebugDir: string = '');
 { Send msg to debug file. }
 procedure LWSSendMsg(const AMsg: string);
 { Send stream to debug file. }
@@ -60,8 +60,9 @@ begin
   Result := _DebugFile;
 end;
 
-procedure LWSInitDebugger;
+procedure LWSInitDebugger(const ADebugDir: string);
 begin
+  LWS_DEBUG_DIR := ADebugDir;
   if LWS_DEBUG_DIR = '' then
     LWS_DEBUG_DIR := GetTempDir;
   LWS_DEBUG_DIR := IncludeTrailingPathDelimiter(LWS_DEBUG_DIR);
