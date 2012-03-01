@@ -32,6 +32,7 @@ type
   end;
 
 begin
+  LWSInitDebugger;
 {$IFDEF DEBUGHEAP}
   SetHeapTraceOutput(LWS_DEBUGHEAP_FILENAME);
 {$ENDIF}
