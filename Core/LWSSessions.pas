@@ -60,7 +60,7 @@ type
     function Finish: Boolean; virtual;
     procedure Commit; virtual;
     procedure SetCookieParams(const AExpires: TDateTime = NullDate;
-      const APath: string = ''; const ADomain: string = '';
+      const APath: string = ES; const ADomain: string = ES;
       const ASecure: Boolean = False; const AHTTPOnly: Boolean = False);
     procedure RegenerateID(const ADeleteOldSession: Boolean = False);
     procedure Unset;
@@ -87,7 +87,7 @@ begin
   FHTTPCookie := AHTTPCookie;
   FName := LWS_SESSID;
   FSavePath := GetTempDir(True);
-  if FSavePath = '' then
+  if FSavePath = ES then
     FSavePath := ExtractFilePath(ParamStr(0));
   FTimeout := LWS_SESSION_TIMEOUT;
   if AStart then
@@ -106,7 +106,7 @@ end;
 procedure TLWSSessions.MakeID;
 begin
   FID := LWSGetVariableValue(LWSGetRawCookie(FHTTPCookie, FName));
-  if FID = '' then
+  if FID = ES then
   begin
     FID := LowerCase(LWSMakeSessionID);
     if FIsSetCookieParams then
@@ -124,9 +124,9 @@ var
 begin
   Result := -1;
   VID := FID;
-  if VID = '' then
+  if VID = ES then
     VID := LWSGetVariableValue(LWSGetRawCookie(FHTTPCookie, FName));
-  if VID <> '' then
+  if VID <> ES then
   begin
     FTimeout := FileAge(FSavePath + LWS_SESSION_PREFIX + VID);
     Result := FTimeout;
