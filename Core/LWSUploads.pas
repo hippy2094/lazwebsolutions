@@ -102,11 +102,11 @@ procedure TLWSUploadItem.DoParseLine;
   begin
     VLength := Length(S);
     VQuoted := False;
-    Result := '';
+    Result := ES;
     for I := 1 to VLength do
     begin
       C := S[I];
-      if C = '"' then
+      if C = DQ then
         VQuoted := not VQuoted
       else
       begin
@@ -119,7 +119,7 @@ procedure TLWSUploadItem.DoParseLine;
         end;
       end;
     end;
-    S := '';
+    S := ES;
   end;
 
 var
@@ -130,10 +130,10 @@ begin
   LWSSendMethodEnter('TLWSUploadItem.DoParseLine');
 {$ENDIF}
   VLine := GetLine(FContent);
-  while VLine <> '' do
+  while VLine <> ES do
   begin
     S := GetWord(VLine);
-    while S <> '' do
+    while S <> ES do
     begin
       if CompareText(S, 'Content-Disposition') = 0 then
         FContentDisposition := GetWord(VLine)
@@ -172,7 +172,7 @@ constructor TLWSUploads.Create;
 begin
   inherited Create(TLWSUploadItem);
   FSavePath := GetTempDir(True);
-  if FSavePath = '' then
+  if FSavePath = ES then
     FSavePath := ExtractFilePath(ParamStr(0));
 end;
 
@@ -269,7 +269,7 @@ begin
   I := Pos('=', ABoundary);
   VBoundary := Copy(ABoundary, I + 1, Length(ABoundary) - I);
   I := Length(VBoundary);
-  if (I > 0) and (VBoundary[1] = '"') then
+  if (I > 0) and (VBoundary[1] = DQ) then
     VBoundary := Copy(VBoundary, 2, I - 2);
   VContentLength := AData.Size;
   SetLength(S, VContentLength);
@@ -281,7 +281,7 @@ begin
   begin
     VItem := GetItem(I);
     VItem.DoParseLine;
-    if VItem.FFieldName = '' then
+    if VItem.FFieldName = ES then
       raise Exception.CreateFmt(LWS_UPLOAD_INVALID_MULTIPART_ENCODING_ERR,
         [VItem.FContent]);
     VFieldName := VItem.FFieldName;
@@ -291,7 +291,7 @@ begin
       VContentLength := Length(VItem.FContent);
       if (VContentLength = 0) or ((VContentLength = 2) and
         (VItem.FContent = CRLF)) then
-        VFileName := ''
+        VFileName := ES
       else
       begin
         VItem.FContentLength := VContentLength;
