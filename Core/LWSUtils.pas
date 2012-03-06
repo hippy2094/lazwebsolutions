@@ -69,15 +69,15 @@ function LWSGetAcceptEncodingSet(
 function LWSMakeSessionID: string;{$IFDEF LWSINLINE}inline;{$ENDIF}
 { Set raw cookie. }
 procedure LWSSetRawCookie(var AHTTPHeader: string; const AName, AValue: string;
-  const AExpires: TDateTime = NullDate; const APath: string = '';
-  const ADomain: string = ''; const ASecure: Boolean = False;
+  const AExpires: TDateTime = NullDate; const APath: string = ES;
+  const ADomain: string = ES; const ASecure: Boolean = False;
   const AHTTPOnly: Boolean = False);{$IFDEF LWSINLINE}inline;{$ENDIF}
 { Get raw cookie. }
 function LWSGetRawCookie(const AHTTPCookie: string; const AName: string): string;
 {$IFDEF LWSINLINE}inline;{$ENDIF}
 { Delete cookie. }
 procedure LWSDeleteCookie(var AHTTPHeader: string;
-  const AName: string; const APath: string = ''; const ADomain: string = '');
+  const AName: string; const APath: string = ES; const ADomain: string = ES);
 {$IFDEF LWSINLINE}inline;{$ENDIF}
 { Convert a path string to JSON }
 function LWSPathToJSON(const APath: string; const ADelimiter: Char;
@@ -199,7 +199,7 @@ procedure LWSGetVariableNameValue(const AString: string;
 var
   VPos: LongInt;
 begin
-  AName := '';
+  AName := ES;
   AValue := AString;
   VPos := Pos('=', AValue);
   if VPos <> 0 then
@@ -241,7 +241,7 @@ begin
     Result := '{}';
     Exit;
   end;
-  VResult := '';
+  VResult := ES;
   I := 1;
   J := 1;
   while I <= Length(Result) do
@@ -256,10 +256,10 @@ begin
       S := Copy(Result, J, I - J);
       VPos := Pos(':', S);
       VName := Copy(S, 1, Pred(VPos));
-      VValue := '';
-      if VName <> '' then
+      VValue := ES;
+      if VName <> ES then
         VValue := Copy(S, Succ(VPos), MaxInt);
-      VResult += '"' + VName + '": "' + VValue + '", ';
+      VResult += DQ + VName + '": "' + VValue + '", ';
       J := I + 1;
     end;
     Inc(I);
@@ -269,19 +269,19 @@ begin
     S := Copy(Result, J, I - J);
     VPos := Pos(':', S);
     VName := Copy(S, 1, Pred(VPos));
-    VValue := '';
-    if VName <> '' then
+    VValue := ES;
+    if VName <> ES then
       VValue := Copy(S, Succ(VPos), MaxInt);
-    VResult += '"' + VName + '": "' + VValue + '"';
+    VResult += DQ + VName + '": "' + VValue + DQ;
   end
   else
   begin
     VPos := Pos(':', Result);
     VName := Copy(Result, 1, Pred(VPos));
-    VValue := '';
-    if VName <> '' then
+    VValue := ES;
+    if VName <> ES then
       VValue := Copy(Result, Succ(VPos), MaxInt);
-    VResult := '"' + VName + '": "' + VValue + '"';
+    VResult := DQ + VName + '": "' + VValue + DQ;
   end;
   Result := '{ ' + VResult + ' }';
 end;
@@ -367,14 +367,14 @@ procedure LWSSetRawCookie(var AHTTPHeader: string; const AName, AValue: string;
   const AExpires: TDateTime; const APath: string; const ADomain: string;
   const ASecure: Boolean; const AHTTPOnly: Boolean);
 begin
-  if AHTTPHeader <> '' then
+  if AHTTPHeader <> ES then
     AHTTPHeader += CRLF;
   AHTTPHeader += LWS_HTTP_HEADER_SET_COOKIE + AName + '=' + AValue;
   if AExpires <> NullDate then
     AHTTPHeader += '; expires=' + LWSDateTimeToGMT(AExpires);
-  if APath <> '' then
+  if APath <> ES then
     AHTTPHeader += '; path=' + APath;
-  if ADomain <> '' then
+  if ADomain <> ES then
     AHTTPHeader += '; domain=' + ADomain;
   if ASecure then
     AHTTPHeader += '; secure';
@@ -399,12 +399,12 @@ end;
 procedure LWSDeleteCookie(var AHTTPHeader: string; const AName: string;
   const APath: string; const ADomain: string);
 begin
-  if AHTTPHeader <> '' then
+  if AHTTPHeader <> ES then
     AHTTPHeader += CRLF;
   AHTTPHeader += LWS_HTTP_HEADER_SET_COOKIE + AName + '=';
-  if APath <> '' then
+  if APath <> ES then
     AHTTPHeader += '; path=' + APath;
-  if ADomain <> '' then
+  if ADomain <> ES then
     AHTTPHeader += '; domain=' + ADomain;
   AHTTPHeader += '; expires=' + NullCookieExpires;
 end;
