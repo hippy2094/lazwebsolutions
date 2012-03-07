@@ -30,6 +30,7 @@ type
   private
     FContent: string;
     FPath: string;
+    FRecursive: Boolean;
     procedure SetPath(const AValue: string);
   public
     constructor Create(const AElements: array of const;
@@ -37,10 +38,11 @@ type
       const AAutoLoadLayout: Boolean = True); overload;
     function LoadLayoutToString(const AFileName: TFileName): string;
     procedure LoadLayoutFromFile(const AFileName: TFileName);
-    procedure Format(const ARecursive: Boolean = False); virtual;
+    procedure Format; virtual;
     function GetFormatedContent(const ARecursive: Boolean = False): string;
     property Content: string read FContent;
     property Path: string read FPath write SetPath;
+    property Recursive: Boolean read FRecursive write FRecursive;
   end;
 
   TLWSLayoutClass = class of TLWSLayout;
@@ -75,7 +77,7 @@ begin
   end;
 end;
 
-procedure TLWSLayout.Format(const ARecursive: Boolean);
+procedure TLWSLayout.Format;
 var
   I, L: Integer;
   J, P: LongInt;
@@ -85,7 +87,7 @@ begin
   begin
     VName := '@' + Names[I];
     VValue := Items[I].AsString;
-    if ARecursive then
+    if FRecursive then
       FContent := StringReplace(FContent, VName, VValue,
         [rfIgnoreCase, rfReplaceAll])
     else
@@ -105,7 +107,8 @@ end;
 
 function TLWSLayout.GetFormatedContent(const ARecursive: Boolean): string;
 begin
-  Format(ARecursive);
+  FRecursive := ARecursive;
+  Format;
   Result := FContent;
 end;
 
