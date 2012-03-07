@@ -36,8 +36,8 @@ type
       const AAutoLoadLayout: Boolean = True); overload;
     function LoadLayoutToString(const AFileName: TFileName): string;
     procedure LoadLayoutFromFile(const AFileName: TFileName);
-    procedure Format; virtual;
-    function GetFormatedContent: string;
+    procedure Format(const ARecursive: Boolean = False); virtual;
+    function GetFormatedContent(const ARecursive: Boolean = False): string;
     property Content: string read FContent;
     property Path: string read FPath write SetPath;
   end;
@@ -69,30 +69,37 @@ begin
   end;
 end;
 
-procedure TLWSLayout.Format;
+procedure TLWSLayout.Format(const ARecursive: Boolean);
 var
-  VName: string;
   I, L: Integer;
   J, P: LongInt;
+  VName, VValue: string;
 begin
   for I := 0 to Pred(Count) do
-    for J := 1 to Length(FContent) do
-    begin
-      VName := '@' + Names[I];
-      P := Pos(VName, FContent);
-      if P <> 0 then
+  begin
+    VName := '@' + Names[I];
+    VValue := Items[I].AsString;
+    if ARecursive then
+      FContent := StringReplace(FContent, VName, VValue,
+        [rfIgnoreCase, rfReplaceAll])
+    else
+      for J := 1 to Length(FContent) do
       begin
-        L := Length(VName);
-        System.Delete(FContent, P, L);
-        Insert(Items[I].AsString, FContent, P);
-        Break;
+        P := Pos(VName, FContent);
+        if P <> 0 then
+        begin
+          L := Length(VName);
+          System.Delete(FContent, P, L);
+          Insert(VValue, FContent, P);
+          Break;
+        end;
       end;
-    end;
+  end;
 end;
 
-function TLWSLayout.GetFormatedContent: string;
+function TLWSLayout.GetFormatedContent(const ARecursive: Boolean): string;
 begin
-  Format;
+  Format(ARecursive);
   Result := FContent;
 end;
 
