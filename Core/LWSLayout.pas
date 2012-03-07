@@ -33,6 +33,7 @@ type
     procedure SetPath(const AValue: string);
   public
     constructor Create(const AElements: array of const;
+      const ALayoutPath: string = '';
       const AAutoLoadLayout: Boolean = True); overload;
     function LoadLayoutToString(const AFileName: TFileName): string;
     procedure LoadLayoutFromFile(const AFileName: TFileName);
@@ -47,10 +48,13 @@ implementation
 { TLWSLayout }
 
 constructor TLWSLayout.Create(const AElements: array of const;
-  const AAutoLoadLayout: Boolean);
+  const ALayoutPath: string; const AAutoLoadLayout: Boolean);
 begin
   inherited Create(AElements);
-  SetPath(ExtractFilePath(ParamStr(0)) + 'views' + DirectorySeparator);
+  if ALayoutPath = '' then
+    SetPath(ExtractFilePath(ParamStr(0)) + 'views' + DirectorySeparator)
+  else
+    SetPath(ALayoutPath);
   if AAutoLoadLayout then
     LoadLayoutFromFile(LWS_DEFAULT_LAYOUT_FILENAME);
 end;
