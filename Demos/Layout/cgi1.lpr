@@ -4,6 +4,7 @@ program cgi1;
 
 uses
   LWSCGI,
+  LWSConsts,
   LWSLayout;
 
 type
@@ -21,7 +22,8 @@ type
 
   procedure TCGI.Init;
   begin
-    FLayout := TLWSLayout.Create(['body', '', 'title', 'Hello']);
+    FLayout := TLWSLayout.Create(
+      ['body', '', 'div.body', 'Test', 'title', 'Hello']);
   end;
 
   procedure TCGI.Finit;
@@ -32,6 +34,7 @@ type
   procedure TCGI.DoResponse;
   begin
     FLayout['body'].AsString := 'Hello world!';
+    FLayout['div.body'].AsString := BR + 'Test!';
     Contents.Text := FLayout.GetFormatedContent;
   end;
 
