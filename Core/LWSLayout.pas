@@ -43,6 +43,8 @@ type
     property Path: string read FPath write SetPath;
   end;
 
+  TLWSLayoutClass = class of TLWSLayout;
+
 implementation
 
 { TLWSLayout }
