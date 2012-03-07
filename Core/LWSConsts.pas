@@ -42,6 +42,7 @@ const
   LWS_SESSID = 'LSSESSID';
   LWS_SESSION_TIMEOUT = 180;
   LWS_SESSION_PREFIX = 'sess_';
+  LWS_DEFAULT_LAYOUT_FILENAME = 'default.lws.html';
   LWS_CONTENT_TYPE_CANT_BE_EMPTY_ERR = 'ContentType can''t be empty.';
   LWS_DEBUG_SAVE_PATH_NOT_FOUND_ERR =
     'Failed to write debug data. Please verify that the current setting ' +
@@ -52,6 +53,9 @@ const
   LWS_UPLOAD_SAVE_PATH_NOT_FOUND_ERR =
     'Failed to write upload file. Please verify that the current setting ' +
     'of uploads SavePath is correct (%s) in %s.';
+  LWS_LAYOUT_PATH_NOT_FOUND_ERR =
+    'Failed to load layout file. Please verify that the current path ' +
+    'of layouts (%s) is correct in %s.';
   LWS_UPLOAD_NO_SUCH_UPLOADED_FILE_ERR = 'No such uploaded file: "%s"';
   LWS_UPLOAD_INVALID_MULTIPART_ENCODING_ERR = 'Invalid multipart encoding: %s';
   { Server environment variables. }

@@ -24,8 +24,8 @@ for details about the copyright.
 This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."/>
-    <Version Release="1" Build="6"/>
-    <Files Count="10">
+    <Version Release="2"/>
+    <Files Count="11">
       <Item1>
         <Filename Value="..\Core\lazwebsolutions.inc"/>
         <Type Value="Include"/>
@@ -47,25 +47,29 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."/>
         <UnitName Value="LWSDebugger"/>
       </Item5>
       <Item6>
-        <Filename Value="..\Core\LWSMessages.pas"/>
-        <UnitName Value="LWSMessages"/>
+        <Filename Value="..\Core\LWSLayout.pas"/>
+        <UnitName Value="LWSLayout"/>
       </Item6>
       <Item7>
-        <Filename Value="..\Core\LWSMessages.inc"/>
-        <Type Value="Include"/>
+        <Filename Value="..\Core\LWSMessages.pas"/>
+        <UnitName Value="LWSMessages"/>
       </Item7>
       <Item8>
-        <Filename Value="..\Core\LWSSessions.pas"/>
-        <UnitName Value="LWSSessions"/>
+        <Filename Value="..\Core\LWSMessages.inc"/>
+        <Type Value="Include"/>
       </Item8>
       <Item9>
-        <Filename Value="..\Core\LWSUploads.pas"/>
-        <UnitName Value="LWSUploads"/>
+        <Filename Value="..\Core\LWSSessions.pas"/>
+        <UnitName Value="LWSSessions"/>
       </Item9>
       <Item10>
+        <Filename Value="..\Core\LWSUploads.pas"/>
+        <UnitName Value="LWSUploads"/>
+      </Item10>
+      <Item11>
         <Filename Value="..\Core\LWSUtils.pas"/>
         <UnitName Value="LWSUtils"/>
-      </Item10>
+      </Item11>
     </Files>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>
