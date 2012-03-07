@@ -49,7 +49,7 @@ constructor TLWSLayout.Create(const AElements: array of const;
   const AAutoLoadLayout: Boolean);
 begin
   inherited Create(AElements);
-  SetPath(ExtractFilePath(ParamStr(0)) + 'views\layout');
+  SetPath(ExtractFilePath(ParamStr(0)) + 'views' + DirectorySeparator);
   if AAutoLoadLayout then
     LoadLayoutFromFile(LWS_DEFAULT_LAYOUT_FILENAME);
 end;
