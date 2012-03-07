@@ -34,6 +34,7 @@ type
   public
     constructor Create(const AElements: array of const;
       const AAutoLoadLayout: Boolean = True); overload;
+    function LoadLayoutToString(const AFileName: TFileName): string;
     procedure LoadLayoutFromFile(const AFileName: TFileName);
     procedure Format; virtual;
     function GetFormatedContent: string;
@@ -54,6 +55,20 @@ begin
     LoadLayoutFromFile(LWS_DEFAULT_LAYOUT_FILENAME);
 end;
 
+function TLWSLayout.LoadLayoutToString(const AFileName: TFileName): string;
+var
+  L: LongInt;
+begin
+  with TFileStream.Create(AFileName, fmOpenRead) do
+  try
+    L := Size;
+    SetLength(Result, L);
+    Read(Pointer(Result)^, L);
+  finally
+    Free;
+  end;
+end;
+
 procedure TLWSLayout.Format;
 var
   VName: string;
@@ -61,7 +76,6 @@ var
   J, P: LongInt;
 begin
   for I := 0 to Pred(Count) do
-  begin
     for J := 1 to Length(FContent) do
     begin
       VName := '@' + Names[I];
@@ -74,7 +88,6 @@ begin
         Break;
       end;
     end;
-  end;
 end;
 
 function TLWSLayout.GetFormatedContent: string;
