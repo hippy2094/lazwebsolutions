@@ -31,24 +31,24 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."/>
         <Type Value="Include"/>
       </Item1>
       <Item2>
-        <Filename Value="..\Core\LWSCGI.pas"/>
-        <UnitName Value="LWSCGI"/>
+        <Filename Value="..\Core\LWSActionView.pas"/>
+        <UnitName Value="LWSActionView"/>
       </Item2>
       <Item3>
-        <Filename Value="..\Core\LWSConsts.pas"/>
-        <UnitName Value="LWSConsts"/>
+        <Filename Value="..\Core\LWSCGI.pas"/>
+        <UnitName Value="LWSCGI"/>
       </Item3>
       <Item4>
-        <Filename Value="..\Core\LWSCookies.pas"/>
-        <UnitName Value="LWSCookies"/>
+        <Filename Value="..\Core\LWSConsts.pas"/>
+        <UnitName Value="LWSConsts"/>
       </Item4>
       <Item5>
-        <Filename Value="..\Core\LWSDebugger.pas"/>
-        <UnitName Value="LWSDebugger"/>
+        <Filename Value="..\Core\LWSCookies.pas"/>
+        <UnitName Value="LWSCookies"/>
       </Item5>
       <Item6>
-        <Filename Value="..\Core\LWSLayout.pas"/>
-        <UnitName Value="LWSLayout"/>
+        <Filename Value="..\Core\LWSDebugger.pas"/>
+        <UnitName Value="LWSDebugger"/>
       </Item6>
       <Item7>
         <Filename Value="..\Core\LWSMessages.pas"/>

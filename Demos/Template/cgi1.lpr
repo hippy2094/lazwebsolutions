@@ -5,7 +5,7 @@ program cgi1;
 uses
   LWSCGI,
   LWSConsts,
-  LWSLayout;
+  LWSActionView;
 
 type
 
@@ -13,7 +13,7 @@ type
 
   TCGI = class(TLWSCGI)
   private
-    FLayout: TLWSLayout;
+    FTemplate: TLWSActionView;
   protected
     procedure Init; override;
     procedure Finit; override;
@@ -22,20 +22,20 @@ type
 
   procedure TCGI.Init;
   begin
-    FLayout := TLWSLayout.Create(
+    FTemplate := TLWSActionView.Create(
       ['body', '', 'div.body', 'Test', 'title', 'Hello']);
   end;
 
   procedure TCGI.Finit;
   begin
-    FLayout.Free;
+    FTemplate.Free;
   end;
 
   procedure TCGI.DoResponse;
   begin
-    FLayout['body'].AsString := 'Hello world!';
-    FLayout['div.body'].AsString := BR + 'Test!';
-    Contents.Text := FLayout.Content;
+    FTemplate['body'].AsString := 'Hello world!';
+    FTemplate['div.body'].AsString := BR + 'Test!';
+    Contents.Text := FTemplate.Content;
   end;
 
 begin
