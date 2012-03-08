@@ -35,7 +35,7 @@ type
   begin
     FLayout['body'].AsString := 'Hello world!';
     FLayout['div.body'].AsString := BR + 'Test!';
-    Contents.Text := FLayout.GetFormatedContent;
+    Contents.Text := FLayout.Content;
   end;
 
 begin
