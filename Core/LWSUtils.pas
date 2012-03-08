@@ -19,7 +19,7 @@ unit LWSUtils;
 interface
 
 uses
-  LWSConsts, FPJSON, SysUtils;
+  LWSConsts, FPJSON, SysUtils, Classes;
 
 type
   TLWSHTTPAcceptEncodingSet = set of (ceDeflate, ceGzip, ceSdch, ceXGzip);
@@ -82,6 +82,9 @@ procedure LWSDeleteCookie(var AHTTPHeader: string;
 { Convert a path string to JSON }
 function LWSPathToJSON(const APath: string; const ADelimiter: Char;
   const AUseURIDecode: Boolean = True): TJSONStringType;
+{$IFDEF LWSINLINE}inline;{$ENDIF}
+{ File to string. }
+function LWSFileToString(const AFileName: TFileName): string;
 {$IFDEF LWSINLINE}inline;{$ENDIF}
 
 implementation
@@ -442,6 +445,20 @@ begin
   if S[L] <> DQ then
     Insert(DQ, S, L + 1);
   Result := '[' + S + ']';
+end;
+
+function LWSFileToString(const AFileName: TFileName): string;
+var
+  L: LongInt;
+begin
+  with TFileStream.Create(AFileName, fmOpenRead) do
+  try
+    L := Size;
+    SetLength(Result, L);
+    Read(Pointer(Result)^, L);
+  finally
+    Free;
+  end;
 end;
 
 end.
