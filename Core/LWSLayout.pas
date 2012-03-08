@@ -36,7 +36,7 @@ type
     constructor Create(const AElements: array of const;
       const ALayoutPath: string = '';
       const AAutoLoadLayout: Boolean = True); overload;
-    function LoadLayoutToString(const AFileName: TFileName): string;
+    function LoadFileToString(const AFileName: TFileName): string;
     procedure LoadLayoutFromFile(const AFileName: TFileName);
     procedure Format; virtual;
     function GetFormatedContent(const ARecursive: Boolean = False): string;
@@ -63,7 +63,7 @@ begin
     LoadLayoutFromFile(LWS_DEFAULT_LAYOUT_FILENAME);
 end;
 
-function TLWSLayout.LoadLayoutToString(const AFileName: TFileName): string;
+function TLWSLayout.LoadFileToString(const AFileName: TFileName): string;
 var
   L: LongInt;
 begin
