@@ -1,5 +1,5 @@
-Simple demo with layout.
+Simple demo with template.
 
-Please create layout dirs, e.g.: [server][directory_separator]views
+Please create the view direcory, e.g.: [server][script_directory]view
 
 Enjoy!
