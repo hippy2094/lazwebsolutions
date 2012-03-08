@@ -19,7 +19,7 @@ unit LWSLayout;
 interface
 
 uses
-  LWSConsts, Classes, SysUtils, FPJSON;
+  LWSConsts, LWSUtils, SysUtils, FPJSON;
 
 type
   ELWSLayout = class(Exception);
@@ -31,16 +31,16 @@ type
     FContent: string;
     FPath: string;
     FRecursive: Boolean;
+    function GetContent: string;
     procedure SetPath(const AValue: string);
   public
     constructor Create(const AElements: array of const;
-      const ALayoutPath: string = '';
-      const AAutoLoadLayout: Boolean = True); overload;
-    function LoadFileToString(const AFileName: TFileName): string;
+      const ALayoutPath: string = ''; const ALayoutFile: string = '';
+      const AAutoLoaded: Boolean = True); overload;
+    function FileToString(const AFileName: TFileName): string;
     procedure LoadFromFile(const AFileName: TFileName);
     procedure Format; virtual;
-    function GetFormatedContent(const ARecursive: Boolean = False): string;
-    property Content: string read FContent;
+    property Content: string read GetContent;
     property Path: string read FPath write SetPath;
     property Recursive: Boolean read FRecursive write FRecursive;
   end;
@@ -52,29 +52,26 @@ implementation
 { TLWSLayout }
 
 constructor TLWSLayout.Create(const AElements: array of const;
-  const ALayoutPath: string; const AAutoLoadLayout: Boolean);
+  const ALayoutPath: string; const ALayoutFile: string;
+  const AAutoLoaded: Boolean);
 begin
   inherited Create(AElements);
   if ALayoutPath = '' then
     SetPath(ExtractFilePath(ParamStr(0)) + 'views' + DirectorySeparator)
   else
     SetPath(ALayoutPath);
-  if AAutoLoadLayout then
-    LoadFromFile(LWS_DEFAULT_LAYOUT_FILENAME);
+  if AAutoLoaded then
+  begin
+    if ALayoutFile = '' then
+      LoadFromFile(LWS_DEFAULT_LAYOUT_FILENAME)
+    else
+      LoadFromFile(ALayoutFile);
+  end;
 end;
 
-function TLWSLayout.LoadFileToString(const AFileName: TFileName): string;
-var
-  L: LongInt;
+function TLWSLayout.FileToString(const AFileName: TFileName): string;
 begin
-  with TFileStream.Create(AFileName, fmOpenRead) do
-  try
-    L := Size;
-    SetLength(Result, L);
-    Read(Pointer(Result)^, L);
-  finally
-    Free;
-  end;
+  Result := LWSFileToString(AFileName);
 end;
 
 procedure TLWSLayout.Format;
@@ -105,33 +102,23 @@ begin
   end;
 end;
 
-function TLWSLayout.GetFormatedContent(const ARecursive: Boolean): string;
-begin
-  FRecursive := ARecursive;
-  Format;
-  Result := FContent;
-end;
-
 procedure TLWSLayout.SetPath(const AValue: string);
 begin
   FPath := IncludeTrailingPathDelimiter(AValue);
 end;
 
+function TLWSLayout.GetContent: string;
+begin
+  Format;
+  Result := FContent;
+end;
+
 procedure TLWSLayout.LoadFromFile(const AFileName: TFileName);
-var
-  L: LongInt;
 begin
   if not DirectoryExists(FPath) then
     raise ELWSLayout.CreateFmt(LWS_LAYOUT_PATH_NOT_FOUND_ERR,
       [FPath, ClassName]);
-  with TFileStream.Create(FPath + AFileName, fmOpenRead) do
-  try
-    L := Size;
-    SetLength(FContent, L);
-    Read(Pointer(FContent)^, L);
-  finally
-    Free;
-  end;
+  FContent := LWSFileToString(FPath + AFileName);
 end;
 
 end.
