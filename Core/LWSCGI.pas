@@ -53,6 +53,8 @@ type
     property Text: string read GetText write SetText;
   end;
 
+  TLWSCGIMemoryClass = class of TLWSCGIMemory;
+
   { TLWSCGI }
 
   TLWSCGI = class
@@ -206,6 +208,8 @@ type
     property OnShowException: TLWSCGIShowExceptionEvent
       read FOnShowException write FOnShowException;
   end;
+
+  TLWSCGIClass = class of TLWSCGI;
 
 implementation
 
