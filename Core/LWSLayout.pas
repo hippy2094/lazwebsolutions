@@ -37,7 +37,7 @@ type
       const ALayoutPath: string = '';
       const AAutoLoadLayout: Boolean = True); overload;
     function LoadFileToString(const AFileName: TFileName): string;
-    procedure LoadLayoutFromFile(const AFileName: TFileName);
+    procedure LoadFromFile(const AFileName: TFileName);
     procedure Format; virtual;
     function GetFormatedContent(const ARecursive: Boolean = False): string;
     property Content: string read FContent;
@@ -60,7 +60,7 @@ begin
   else
     SetPath(ALayoutPath);
   if AAutoLoadLayout then
-    LoadLayoutFromFile(LWS_DEFAULT_LAYOUT_FILENAME);
+    LoadFromFile(LWS_DEFAULT_LAYOUT_FILENAME);
 end;
 
 function TLWSLayout.LoadFileToString(const AFileName: TFileName): string;
@@ -117,7 +117,7 @@ begin
   FPath := IncludeTrailingPathDelimiter(AValue);
 end;
 
-procedure TLWSLayout.LoadLayoutFromFile(const AFileName: TFileName);
+procedure TLWSLayout.LoadFromFile(const AFileName: TFileName);
 var
   L: LongInt;
 begin
