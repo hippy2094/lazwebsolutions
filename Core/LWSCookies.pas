@@ -57,6 +57,8 @@ type
     property Resent: Boolean read FResent write FResent;
   end;
 
+  TLWSCookiesClass = class of TLWSCookies;
+
 implementation
 
 { TLWSCookies }
