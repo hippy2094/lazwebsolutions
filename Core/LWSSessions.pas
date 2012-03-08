@@ -75,6 +75,8 @@ type
     property Timeout: LongInt read GetTimeout write FTimeout;
   end;
 
+  TLWSSessionsClass = class of TLWSSessions;
+
 implementation
 
 { TLWSSessions }
