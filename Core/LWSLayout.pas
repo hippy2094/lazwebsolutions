@@ -57,7 +57,7 @@ constructor TLWSLayout.Create(const AElements: array of const;
 begin
   inherited Create(AElements);
   if ALayoutPath = '' then
-    SetPath(ExtractFilePath(ParamStr(0)) + 'views' + DirectorySeparator)
+    SetPath(ExtractFilePath(ParamStr(0)) + 'view' + DirectorySeparator)
   else
     SetPath(ALayoutPath);
   if AAutoLoaded then
