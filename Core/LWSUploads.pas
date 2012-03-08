@@ -53,6 +53,8 @@ type
     property IsFile: Boolean read FIsFile;
   end;
 
+  TLWSUploadItemClass = class of TLWSUploadItem;
+
   { TLWSUploads }
 
   TLWSUploads = class(TCollection)
@@ -75,6 +77,8 @@ type
       write SetItem; default;
     property SavePath: string read FSavePath write SetSavePath;
   end;
+
+  TLWSUploadsClass = class of TLWSUploads;
 
 implementation
 
