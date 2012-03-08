@@ -23,7 +23,8 @@ type
   procedure TCGI.Init;
   begin
     FTemplate := TLWSActionView.Create(
-      ['body', '', 'div.body', 'Test', 'title', 'Hello']);
+      ['body', '', 'div.body', 'Test', 'title', 'Hello'],
+      '/home/your_username/your_project/view', 'main.lws.html');
   end;
 
   procedure TCGI.Finit;
