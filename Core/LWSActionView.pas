@@ -31,18 +31,21 @@ type
     FContent: string;
     FPath: string;
     FRecursive: Boolean;
+    FTagPrefix: ShortString;
     function GetContent: string;
     procedure SetPath(const AValue: string);
+  protected
+    procedure Format; virtual;
   public
     constructor Create(const AElements: array of const;
-      const AViewPath: string = ''; const AViewFile: string = '';
+      const AViewPath: string = ES; const AViewFile: string = ES;
       const AAutoLoaded: Boolean = True); overload;
     function FileToString(const AFileName: TFileName): string;
     procedure LoadFromFile(const AFileName: TFileName);
-    procedure Format; virtual;
     property Content: string read GetContent;
     property Path: string read FPath write SetPath;
     property Recursive: Boolean read FRecursive write FRecursive;
+    property TagPrefix: ShortString read FTagPrefix write FTagPrefix;
   end;
 
   TLWSActionViewClass = class of TLWSActionView;
@@ -56,13 +59,14 @@ constructor TLWSActionView.Create(const AElements: array of const;
   const AAutoLoaded: Boolean);
 begin
   inherited Create(AElements);
-  if AViewPath = '' then
+  FTagPrefix := LWS_DEFAULT_TAG_PREFIX;
+  if AViewPath = ES then
     SetPath(ExtractFilePath(ParamStr(0)) + 'view' + DirectorySeparator)
   else
     SetPath(AViewPath);
   if AAutoLoaded then
   begin
-    if AViewFile = '' then
+    if AViewFile = ES then
       LoadFromFile(LWS_DEFAULT_VIEW_FILENAME)
     else
       LoadFromFile(AViewFile);
@@ -82,7 +86,7 @@ var
 begin
   for I := 0 to Pred(Count) do
   begin
-    VName := '@' + Names[I];
+    VName := FTagPrefix + Names[I];
     VValue := Items[I].AsString;
     if FRecursive then
       FContent := StringReplace(FContent, VName, VValue,
