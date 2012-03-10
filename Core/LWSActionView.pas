@@ -19,6 +19,9 @@ unit LWSActionView;
 interface
 
 uses
+{$IFDEF DEBUG}
+  LWSDebugger,
+{$ENDIF}
   LWSConsts, LWSUtils, SysUtils, FPJSON;
 
 type
@@ -84,6 +87,9 @@ var
   J, P: LongInt;
   VName, VValue: string;
 begin
+{$IFDEF DEBUG}
+  LWSSendMethodEnter('TLWSActionView.Format');
+{$ENDIF}
   for I := 0 to Pred(Count) do
   begin
     VName := FTagPrefix + Names[I];
@@ -104,6 +110,9 @@ begin
         end;
       end;
   end;
+{$IFDEF DEBUG}
+  LWSSendMethodExit('TLWSActionView.Format');
+{$ENDIF}
 end;
 
 procedure TLWSActionView.SetPath(const AValue: string);
