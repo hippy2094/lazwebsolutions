@@ -138,6 +138,9 @@ var
   VControllerName: ShortString;
   VController: TLWSActionController;
 begin
+{$IFDEF DEBUG}
+  LWSSendMethodEnter('TLWSRouter.Route');
+{$ENDIF}
   if ARequestMethod = LWS_HTTP_REQUEST_METHOD_HEAD then
     Exit;
   VParser := TJSONParser.Create(LWSPathToJSON(APathInfo, '/'));
@@ -193,6 +196,9 @@ begin
   finally
     VParser.Free;
   end;
+{$IFDEF DEBUG}
+  LWSSendMethodExit('TLWSRouter.Route');
+{$ENDIF}
 end;
 
 end.
