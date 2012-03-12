@@ -32,10 +32,7 @@ type
   end;
 
 begin
-  LWSInitDebugger;
-{$IFDEF DEBUGHEAP}
-  SetHeapTraceOutput(LWS_DEBUGHEAP_FILENAME);
-{$ENDIF}
+  LWSInitDebugger('/path/to/your/DEBUG.LOG', '/path/to/your/DEBUGHEAP.LOG');
   with TCGI.Create do
     try
       Run;
