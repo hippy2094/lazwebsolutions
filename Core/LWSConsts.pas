@@ -41,21 +41,18 @@ const
   LWS_GMT_FRMT = '%s, %.2d %s %d %.2d:%.2d:%.2d GMT';
   LWS_SESSID = 'LSSESSID';
   LWS_SESSION_TIMEOUT = 180;
-  LWS_SESSION_PREFIX = 'sess_';
+  LWS_SESSION_PREFIX = 'lws_sess_';
   LWS_DEFAULT_TAG_PREFIX = '@';
   LWS_DEFAULT_VIEW_FILENAME = 'default.lws.html';
   LWS_CONTENT_TYPE_CANT_BE_EMPTY_ERR = 'ContentType can''t be empty.';
-  LWS_DEBUG_SAVE_PATH_NOT_FOUND_ERR =
-    'Failed to write debug data. Please verify that the current setting ' +
-    'of debug temp directory is correct (%s) in %s.';
   LWS_SESSION_SAVE_PATH_NOT_FOUND_ERR =
-    'Failed to write session data. Please verify that the current setting ' +
-    'of sessions SavePath is correct (%s) in %s.';
+    'Failed to write session data. Please verify if current setting of ' +
+    'sessions SavePath is correct (%s) in %s.';
   LWS_UPLOAD_SAVE_PATH_NOT_FOUND_ERR =
-    'Failed to write upload file. Please verify that the current setting ' +
-    'of uploads SavePath is correct (%s) in %s.';
+    'Failed to write upload file. Please verify if current setting  of ' +
+    'uploads SavePath is correct (%s) in %s.';
   LWS_VIEW_PATH_NOT_FOUND_ERR =
-    'Failed to load view file. Please verify if current path  of views (%s) ' +
+    'Failed to load view file. Please verify if current path of views (%s) ' +
     'is correct in %s.';
   LWS_UPLOAD_NO_SUCH_UPLOADED_FILE_ERR = 'No such uploaded file: "%s"';
   LWS_UPLOAD_INVALID_MULTIPART_ENCODING_ERR = 'Invalid multipart encoding: %s';
