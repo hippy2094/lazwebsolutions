@@ -26,9 +26,9 @@ type
   private
     FUploads: TLWSUploads;
   protected
-    procedure DoPopulateUploads(AData: TMemoryStream); override;
-    procedure DoRequest; override;
-    procedure DoResponse; override;
+    procedure FillUploads(AData: TMemoryStream); override;
+    procedure Request; override;
+    procedure Respond; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -46,12 +46,12 @@ type
     inherited Destroy;
   end;
 
-  procedure TCGI.DoPopulateUploads(AData: TMemoryStream);
+  procedure TCGI.FillUploads(AData: TMemoryStream);
   begin
     FUploads.ReadUploads(AData, @Fields, ContentType);
   end;
 
-  procedure TCGI.DoRequest;
+  procedure TCGI.Request;
   var
     I: Integer;
     VFormItem: TLWSUploadItem;
@@ -74,7 +74,7 @@ type
       [VFields,  VValues, VFiles, FUploads.SavePath])]);
   end;
 
-  procedure TCGI.DoResponse;
+  procedure TCGI.Respond;
   begin
     Contents.Text := Format(HEAD, [FORM]);
   end;

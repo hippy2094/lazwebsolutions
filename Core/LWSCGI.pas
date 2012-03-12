@@ -28,14 +28,6 @@ uses
 type
   ELWSCGI = class(Exception);
 
-  TLWSCGIShowExceptionEvent = procedure(var E: Exception) of object;
-
-  TLWSCGIPopulatingPropEvent = procedure(var AName, AValue: string) of object;
-
-  TLWSCGIPopulateFieldsEvent = procedure(AData: TMemoryStream) of object;
-
-  TLWSCGIPopulateUploadsEvent = procedure(AData: TMemoryStream) of object;
-
   { TLWSCGIMemory }
 
   TLWSCGIMemory = class(TMemoryStream)
@@ -45,7 +37,6 @@ type
     procedure SetText(const AValue: string);
   public
     constructor Create;
-    function AsString: string;
     procedure Add(const AString: string);
     procedure Put(const AString: string);
     property LineBreakString: ShortString read FLineBreakString
@@ -75,21 +66,12 @@ type
     FHTTPIfNoneMatch: string;
     FInputStream: TStream;
     FLastModified: TDateTime;
-    FOnPopulateFields: TLWSCGIPopulateFieldsEvent;
-    FOnPopulateParams: TNotifyEvent;
-    FOnPopulateProperties: TNotifyEvent;
-    FOnPopulateUploads: TLWSCGIPopulateUploadsEvent;
-    FOnPopulatingProperties: TLWSCGIPopulatingPropEvent;
     FOutputStream: TStream;
     FContentLength: Int64;
     FContents: TLWSCGIMemory;
     FContentType: ShortString;
     FFields: TJSONObject;
     FLocation: string;
-    FOnRequest: TNotifyEvent;
-    FOnResponse: TNotifyEvent;
-    FOnFillHeaders: TNotifyEvent;
-    FOnShowException: TLWSCGIShowExceptionEvent;
     FParams: TJSONObject;
     FHeaders: TLWSCGIMemory;
     FPathInfo: string;
@@ -120,17 +102,17 @@ type
     procedure InternalShowException;
     procedure SetLocation(const AValue: string);
   protected
-    procedure DoPopulatingProperties(var AName, AValue: string); virtual;
-    procedure DoRequest; virtual;
-    procedure DoResponse; virtual;
-    procedure DoFillHeaders; virtual;
-    procedure DoShowException(var E: Exception); virtual;
-    procedure DoPopulateParams; virtual;
-    procedure DoPopulateFields(AData: TMemoryStream); virtual;
-    procedure DoPopulateUploads(AData: TMemoryStream); virtual;
-    procedure DoPopulateProperties; virtual;
     procedure Init; virtual;
     procedure Finit; virtual;
+    procedure FillFields(AData: TMemoryStream); virtual;
+    procedure FillHeaders; virtual;
+    procedure FillParams; virtual;
+    procedure FillProperties; virtual;
+    procedure FillingProperties(var AName, AValue: string); virtual;
+    procedure FillUploads(AData: TMemoryStream); virtual;
+    procedure ShowException(var E: Exception); virtual;
+    procedure Request; virtual;
+    procedure Respond; virtual;
     procedure ReadInput; virtual;
     procedure WriteOutput; virtual;
   public
@@ -192,21 +174,6 @@ type
     property TransferEncoding: ShortString read FTransferEncoding
       write FTransferEncoding;
     property UserAgent: string read FUserAgent;
-    property OnFillHeaders: TNotifyEvent read FOnFillHeaders write FOnFillHeaders;
-    property OnPopulateFields: TLWSCGIPopulateFieldsEvent read FOnPopulateFields
-      write FOnPopulateFields;
-    property OnPopulateParams: TNotifyEvent read FOnPopulateParams
-      write FOnPopulateParams;
-    property OnPopulatingProperties: TLWSCGIPopulatingPropEvent
-      read FOnPopulatingProperties write FOnPopulatingProperties;
-    property OnPopulateProperties: TNotifyEvent
-      read FOnPopulateProperties write FOnPopulateProperties;
-    property OnPopulateUploads: TLWSCGIPopulateUploadsEvent read FOnPopulateUploads
-      write FOnPopulateUploads;
-    property OnResponse: TNotifyEvent read FOnResponse write FOnResponse;
-    property OnRequest: TNotifyEvent read FOnRequest write FOnRequest;
-    property OnShowException: TLWSCGIShowExceptionEvent
-      read FOnShowException write FOnShowException;
   end;
 
   TLWSCGIClass = class of TLWSCGI;
@@ -247,20 +214,6 @@ begin
   Write(Pointer(AString)^, Length(AString));
 end;
 
-function TLWSCGIMemory.AsString: string;
-var
-  VOldPos: Int64;
-begin
-  try
-    VOldPos := Position;
-    SetLength(Result, Size);
-    Position := 0;
-    Read(Pointer(Result)^, Size);
-  finally
-    Position := VOldPos;
-  end;
-end;
-
 { TLWSCGI }
 
 constructor TLWSCGI.Create;
@@ -268,6 +221,8 @@ begin
   FContents := TLWSCGIMemory.Create;
   FHeaders := TLWSCGIMemory.Create;
   FEnvironmentVariables := TStringList.Create;
+  FFields := nil;
+  FParams := nil;
   FHeaders.LineBreakString := CRLF;
   FHaltOnError := False;
   FContentType := LWS_HTTP_CONTENT_TYPE_TEXT_HTML;
@@ -282,13 +237,12 @@ end;
 
 destructor TLWSCGI.Destroy;
 begin
-  if Assigned(FParams) then
-    FreeAndNil(FParams);
   if Assigned(FFields) then
     FreeAndNil(FFields);
+  if Assigned(FParams) then
+    FreeAndNil(FParams);
   FContents.Free;
   FEnvironmentVariables.Free;
-  FFields.Free;
   FHeaders.Free;
   inherited Destroy;
 end;
@@ -324,13 +278,13 @@ begin
 {$ENDIF}
 end;
 
-procedure TLWSCGI.DoPopulateFields(AData: TMemoryStream);
+procedure TLWSCGI.FillFields(AData: TMemoryStream);
 var
   S: string;
   VJSONParser: TJSONParser;
 begin
 {$IFDEF DEBUG}
-  LWSSendMethodEnter('TLWSCGI.PopulateFields');
+  LWSSendMethodEnter('TLWSCGI.FillFields');
 {$ENDIF}
   SetLength(S, FContentLength);
   AData.Position := 0;
@@ -338,29 +292,25 @@ begin
   VJSONParser := TJSONParser.Create(LWSParamStringToJSON(S, '=', '&'));
   try
     FFields := TJSONObject(VJSONParser.Parse);
-    if Assigned(FOnPopulateFields) then
-      FOnPopulateFields(AData);
   finally
     VJSONParser.Free;
   end;
 {$IFDEF DEBUG}
-  LWSSendMethodExit('TLWSCGI.PopulateFields');
+  LWSSendMethodExit('TLWSCGI.FillFields');
 {$ENDIF}
 end;
 
-procedure TLWSCGI.DoPopulateUploads(AData: TMemoryStream);
+procedure TLWSCGI.FillUploads(AData: TMemoryStream);
 begin
-  if Assigned(FOnPopulateUploads) then
-    FOnPopulateUploads(AData);
 end;
 
-procedure TLWSCGI.DoPopulateProperties;
+procedure TLWSCGI.FillProperties;
 var
   I: Integer;
   S, VName, VValue: string;
 begin
 {$IFDEF DEBUG}
-  LWSSendMethodEnter('TLWSCGI.PopulateProperties');
+  LWSSendMethodEnter('TLWSCGI.FillProperties');
 {$ENDIF}
   for I := 1 to LWS_CGI_ENV_COUNT do
   begin
@@ -369,7 +319,7 @@ begin
     begin
       FEnvironmentVariables.Add(S);
       LWSGetVariableNameValue(S, VName, VValue);
-      DoPopulatingProperties(VName, VValue);
+      FillingProperties(VName, VValue);
       if VName = LWS_SRV_ENV_CONTENT_LENGTH then
       begin
         FContentLength := StrToInt64(VValue);
@@ -436,10 +386,8 @@ begin
   end;
   if FRequestMethod = ES then
     raise ELWSCGI.Create(SLWSNoREQUEST_METHODPassedFromServerError);
-  if Assigned(FOnPopulateProperties) then
-    FOnPopulateProperties(Self);
 {$IFDEF DEBUG}
-  LWSSendMethodExit('TLWSCGI.PopulateProperties');
+  LWSSendMethodExit('TLWSCGI.FillProperties');
 {$ENDIF}
 end;
 
@@ -451,12 +399,12 @@ procedure TLWSCGI.Finit;
 begin
 end;
 
-procedure TLWSCGI.DoPopulateParams;
+procedure TLWSCGI.FillParams;
 var
   VJSONParser: TJSONParser;
 begin
 {$IFDEF DEBUG}
-  LWSSendMethodEnter('TLWSCGI.PopulateParams');
+  LWSSendMethodEnter('TLWSCGI.FillParams');
 {$ENDIF}
   if FQueryString <> ES then
   begin
@@ -464,14 +412,12 @@ begin
       LWSParamStringToJSON(FQueryString, '=', '&'));
     try
       FParams := TJSONObject(VJSONParser.Parse);
-      if Assigned(FOnPopulateParams) then
-        FOnPopulateParams(Self);
     finally
       VJSONParser.Free;
     end;
   end;
 {$IFDEF DEBUG}
-  LWSSendMethodExit('TLWSCGI.PopulateParams');
+  LWSSendMethodExit('TLWSCGI.FillParams');
 {$ENDIF}
 end;
 
@@ -488,11 +434,11 @@ begin
     VData.CopyFrom(FInputStream, FContentLength);
     if Pos(LWS_HTTP_CONTENT_TYPE_APP_X_WWW_FORM_URLENCODED,
       LowerCase(FContentType)) <> 0 then
-      DoPopulateFields(VData)
+      FillFields(VData)
     else
     if Pos(LWS_HTTP_CONTENT_TYPE_MULTIPART_FORM_DATA,
       LowerCase(FContentType)) <> 0 then
-      DoPopulateUploads(VData);
+      FillUploads(VData);
   finally
     FInputStream.Free;
     VData.Free;
@@ -538,16 +484,12 @@ begin
   end;
 end;
 
-procedure TLWSCGI.DoRequest;
+procedure TLWSCGI.Request;
 begin
-  if Assigned(FOnRequest) then
-    FOnRequest(Self);
 end;
 
-procedure TLWSCGI.DoResponse;
+procedure TLWSCGI.Respond;
 begin
-  if Assigned(FOnResponse) then
-    FOnResponse(Self);
 end;
 
 procedure TLWSCGI.InternalShowException;
@@ -575,13 +517,11 @@ begin
   end;
 end;
 
-procedure TLWSCGI.DoPopulatingProperties(var AName, AValue: string);
+procedure TLWSCGI.FillingProperties(var AName, AValue: string);
 begin
-  if Assigned(FOnPopulatingProperties) then
-    FOnPopulatingProperties(AName, AValue);
 end;
 
-procedure TLWSCGI.DoShowException(var E: Exception);
+procedure TLWSCGI.ShowException(var E: Exception);
 var
   VError: string;
 begin
@@ -594,16 +534,14 @@ begin
     FContents.Text := StringReplace(VError, LF, BR, [rfReplaceAll])
   else
     FContents.Text := VError;
-  if Assigned(FOnShowException) then
-    FOnShowException(E);
 end;
 
-procedure TLWSCGI.DoFillHeaders;
+procedure TLWSCGI.FillHeaders;
 var
   VHeaders: string;
 begin
 {$IFDEF DEBUG}
-  LWSSendMethodEnter('TLWSCGI.DoFillHeaders');
+  LWSSendMethodEnter('TLWSCGI.FillHeaders');
 {$ENDIF}
   VHeaders := LWS_HTTP_HEADER_STATUS + IntToStr(FStatusCode) + SP +
     FReasonPhrase + CRLF;
@@ -640,10 +578,8 @@ begin
     VHeaders += CRLF + LWS_HTTP_HEADER_X_POWERED_BY + LWS;
     FHeaders.Add(VHeaders);
   end;
-  if Assigned(FOnFillHeaders) then
-    FOnFillHeaders(Self);
 {$IFDEF DEBUG}
-  LWSSendMethodExit('TLWSCGI.DoFillHeaders');
+  LWSSendMethodExit('TLWSCGI.FillHeaders');
 {$ENDIF}
 end;
 
@@ -657,22 +593,22 @@ begin
       raise ELWSCGI.Create(LWS_CONTENT_TYPE_CANT_BE_EMPTY_ERR);
     FHeaderContentType := FContentType;
     Init;
-    DoPopulateProperties;
-    DoPopulateParams;
+    FillProperties;
+    FillParams;
     if (FContentLength > 0) and (FContentType <> ES) then
     begin
       ReadInput;
-      DoRequest;
+      Request;
     end
     else
-      DoResponse;
-    DoFillHeaders;
+      Respond;
+    FillHeaders;
     WriteOutput;
     Finit;
   except
     on E: Exception do
       try
-        DoShowException(E);
+        ShowException(E);
       finally
         InternalShowException;
         Finit;

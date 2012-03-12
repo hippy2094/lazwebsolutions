@@ -15,17 +15,17 @@ type
 
   TCGI = class(TLWSCGI)
   protected
-    procedure DoFillHeaders; override;
-    procedure DoResponse; override;
+    procedure FillHeaders; override;
+    procedure Respond; override;
   end;
 
-  procedure TCGI.DoFillHeaders;
+  procedure TCGI.FillHeaders;
   begin
     ETag := CETAG;
     inherited;
   end;
 
-  procedure TCGI.DoResponse;
+  procedure TCGI.Respond;
   begin
     Contents.Add('<!DOCTYPE HTML>');
     Contents.Add('<html lang="en-US">');

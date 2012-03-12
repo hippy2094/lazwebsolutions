@@ -12,10 +12,10 @@ type
 
   TCGI = class(TLWSCGI)
   protected
-    procedure DoResponse; override;
+    procedure Respond; override;
   end;
 
-  procedure TCGI.DoResponse;
+  procedure TCGI.Respond;
   begin
     Contents.Add('23');
     Contents.Add('This is the data in the first chunk');

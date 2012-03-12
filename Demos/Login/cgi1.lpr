@@ -13,11 +13,11 @@ type
 
   TCGI = class(TLWSCGI)
   protected
-    procedure DoRequest; override;
-    procedure DoResponse; override;
+    procedure Request; override;
+    procedure Respond; override;
   end;
 
-  procedure TCGI.DoRequest;
+  procedure TCGI.Request;
   var
     VUser, VPass: ShortString;
   begin
@@ -33,7 +33,7 @@ type
     Contents.Add('<hr />Login fail!');
   end;
 
-  procedure TCGI.DoResponse;
+  procedure TCGI.Respond;
   begin
     if PathInfo = '' then
       Contents.Text :=

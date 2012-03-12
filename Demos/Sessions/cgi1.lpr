@@ -15,9 +15,9 @@ type
   private
     FSessions: TLWSSessions;
   protected
-    procedure DoFillHeaders; override;
-    procedure DoPopulateProperties; override;
-    procedure DoResponse; override;
+    procedure FillHeaders; override;
+    procedure FillProperties; override;
+    procedure Respond; override;
   public
     destructor Destroy; override;
   end;
@@ -28,19 +28,19 @@ type
     inherited Destroy;
   end;
 
-  procedure TCGI.DoFillHeaders;
+  procedure TCGI.FillHeaders;
   begin
     Headers.Text := FSessions.Header;
     inherited;
   end;
 
-  procedure TCGI.DoPopulateProperties;
+  procedure TCGI.FillProperties;
   begin
     inherited;
     FSessions := TLWSSessions.Create(HTTPCookie);
   end;
 
-  procedure TCGI.DoResponse;
+  procedure TCGI.Respond;
   var
     I: Integer;
   begin

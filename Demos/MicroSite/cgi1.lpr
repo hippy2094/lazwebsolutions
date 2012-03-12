@@ -13,17 +13,17 @@ type
 
   TCGI = class(TLWSCGI)
   protected
-    procedure DoShowException(var E: Exception); override;
-    procedure DoResponse; override;
+    procedure ShowException(var E: Exception); override;
+    procedure Respond; override;
   end;
 
-  procedure TCGI.DoShowException(var E: Exception);
+  procedure TCGI.ShowException(var E: Exception);
   begin
     Contents.LoadFromFile('error.html');
     Contents.Text := Format(Contents.Text, [E.Message]);
   end;
 
-  procedure TCGI.DoResponse;
+  procedure TCGI.Respond;
   begin
     if (PathInfo = '') or (PathInfo = '/home') then
       Contents.LoadFromFile('home.html')

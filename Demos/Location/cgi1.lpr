@@ -11,10 +11,10 @@ type
 
   TCGI = class(TLWSCGI)
   protected
-    procedure DoResponse; override;
+    procedure Respond; override;
   end;
 
-  procedure TCGI.DoResponse;
+  procedure TCGI.Respond;
   begin
     Location := 'https://www.google.com/';
   end;

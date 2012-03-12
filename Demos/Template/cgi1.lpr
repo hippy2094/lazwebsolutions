@@ -17,7 +17,7 @@ type
   protected
     procedure Init; override;
     procedure Finit; override;
-    procedure DoResponse; override;
+    procedure Respond; override;
   end;
 
   procedure TCGI.Init;
@@ -32,7 +32,7 @@ type
     FTemplate.Free;
   end;
 
-  procedure TCGI.DoResponse;
+  procedure TCGI.Respond;
   begin
     FTemplate['body'].AsString := 'Hello world!';
     FTemplate['div.body'].AsString := BR + 'Test!';

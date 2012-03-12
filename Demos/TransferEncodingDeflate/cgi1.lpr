@@ -29,18 +29,18 @@ type
   private
     FDeflate: Boolean;
   protected
-    procedure DoFillHeaders; override;
-    procedure DoResponse; override;
+    procedure FillHeaders; override;
+    procedure Respond; override;
   end;
 
-  procedure TCGI.DoFillHeaders;
+  procedure TCGI.FillHeaders;
   begin
     if FDeflate then
       ContentEncoding := LWS_HTTP_CONTENT_ENCODING_DEFLATE;
     inherited;
   end;
 
-  procedure TCGI.DoResponse;
+  procedure TCGI.Respond;
   var
     S: string;
     VDeflate: TCompressionStream;

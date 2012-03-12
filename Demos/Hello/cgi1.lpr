@@ -11,10 +11,10 @@ type
 
   TCGI = class(TLWSCGI)
   protected
-    procedure DoResponse; override;
+    procedure Respond; override;
   end;
 
-  procedure TCGI.DoResponse;
+  procedure TCGI.Respond;
   begin
     Contents.Add('<!DOCTYPE HTML>');
     Contents.Add('<html lang="en-US">');

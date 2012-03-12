@@ -179,10 +179,10 @@ begin
     +LE
     +'  TCGI = class(TLWSCGI)'+LE
     +'  protected'+LE
-    +'    procedure DoResponse; override;'+LE
+    +'    procedure Respond; override;'+LE
     +'  end;'+LE
     +LE
-    +'  procedure TCGI.DoResponse;'+LE
+    +'  procedure TCGI.Respond;'+LE
     +'  begin'+LE
     +'    // Your response code here ...'+LE
     +'  end;'+LE
@@ -227,9 +227,9 @@ begin
     +'  private'+LE
     +'    FCookies: TLWSCookies;'+LE
     +'  protected'+LE
-    +'    procedure DoFillHeaders; override;'+LE
-    +'    procedure DoPopulateProperties; override;'+LE
-    +'    procedure DoResponse; override;'+LE
+    +'    procedure FillHeaders; override;'+LE
+    +'    procedure FillProperties; override;'+LE
+    +'    procedure Respond; override;'+LE
     +'  public'+LE
     +'    destructor Destroy; override;'+LE
     +'  end;'+LE
@@ -240,19 +240,19 @@ begin
     +'    inherited Destroy;'+LE
     +'  end;'+LE
     +LE
-    +'  procedure TCGI.DoFillHeaders;'+LE
+    +'  procedure TCGI.FillHeaders;'+LE
     +'  begin'+LE
     +'    inherited;'+LE
     +'    Headers.Add(FCookies.Header);'+LE
     +'  end;'+LE
     +LE
-    +'  procedure TCGI.DoPopulateProperties;'+LE
+    +'  procedure TCGI.FillProperties;'+LE
     +'  begin'+LE
     +'    inherited;'+LE
     +'    FCookies := TLWSCookies.Create(HTTPCookie);'+LE
     +'  end;'+LE
     +LE
-    +'  procedure TCGI.DoResponse;'+LE
+    +'  procedure TCGI.Respond;'+LE
     +'  begin'+LE
     +'    // Your response code here ...'+LE
     +'  end;'+LE
@@ -307,9 +307,9 @@ begin
     +'  private'+LE
     +'    FSessions: TLWSSessions;'+LE
     +'  protected'+LE
-    +'    procedure DoFillHeaders; override;'+LE
-    +'    procedure DoPopulateProperties; override;'+LE
-    +'    procedure DoResponse; override;'+LE
+    +'    procedure FillHeaders; override;'+LE
+    +'    procedure FillProperties; override;'+LE
+    +'    procedure Respond; override;'+LE
     +'  public'+LE
     +'    destructor Destroy; override;'+LE
     +'  end;'+LE
@@ -320,19 +320,19 @@ begin
     +'    inherited Destroy;'+LE
     +'  end;'+LE
     +LE
-    +'  procedure TCGI.DoFillHeaders;'+LE
+    +'  procedure TCGI.FillHeaders;'+LE
     +'  begin'+LE
     +'    inherited;'+LE
     +'    Headers.Add(FSessions.Header);'+LE
     +'  end;'+LE
     +LE
-    +'  procedure TCGI.DoPopulateProperties;'+LE
+    +'  procedure TCGI.FillProperties;'+LE
     +'  begin'+LE
     +'    inherited;'+LE
     +'    FSessions := TLWSSessions.Create(HTTPCookie);'+LE
     +'  end;'+LE
     +LE
-    +'  procedure TCGI.DoResponse;'+LE
+    +'  procedure TCGI.Respond;'+LE
     +'  begin'+LE
     +'    FSessions.Start;'+LE
     +'    // Your response code here ...'+LE
@@ -389,9 +389,9 @@ begin
    +'  private'+LE
    +'    FUploads: TLWSUploads;'+LE
    +'  protected'+LE
-   +'    procedure DoPopulateUploads(AData: TMemoryStream); override;'+LE
-   +'    procedure DoRequest; override;'+LE
-   +'    procedure DoResponse; override;'+LE
+   +'    procedure FillUploads(AData: TMemoryStream); override;'+LE
+   +'    procedure Request; override;'+LE
+   +'    procedure Respond; override;'+LE
    +'  public'+LE
    +'    constructor Create; override;'+LE
    +'    destructor Destroy; override;'+LE
@@ -409,18 +409,18 @@ begin
    +'    inherited Destroy;'+LE
    +'  end;'+LE
    +LE
-   +'  procedure TCGI.DoPopulateUploads(AData: TMemoryStream);'+LE
+   +'  procedure TCGI.FillUploads(AData: TMemoryStream);'+LE
    +'  begin'+LE
    +'    inherited;'+LE
    +'    FUploads.ReadUploads(AData, @Fields, ContentType);'+LE
    +'  end;'+LE
    +LE
-   +'  procedure TCGI.DoRequest;'+LE
+   +'  procedure TCGI.Request;'+LE
    +'  begin'+LE
    +'    // Your request code here ...'+LE
    +'  end;'+LE
    +LE
-   +'  procedure TCGI.DoResponse;'+LE
+   +'  procedure TCGI.Respond;'+LE
    +'  begin'+LE
    +'    // Your response code here ...'+LE
    +'  end;'+LE

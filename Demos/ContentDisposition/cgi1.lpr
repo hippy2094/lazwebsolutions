@@ -12,10 +12,10 @@ type
 
   TCGI = class(TLWSCGI)
   protected
-    procedure DoFillHeaders; override;
+    procedure FillHeaders; override;
   end;
 
-  procedure TCGI.DoFillHeaders;
+  procedure TCGI.FillHeaders;
   begin
     AddContentDisposition(LWS_HTTP_CONTENT_TYPE_IMAGE_PNG,
       '/home/your-home/lazwebsolutions/Demos/ContentDisposition/lws.png',
