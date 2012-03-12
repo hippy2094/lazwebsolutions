@@ -100,6 +100,8 @@ type
     FTransferEncoding: ShortString;
     FUserAgent: string;
     procedure InternalShowException;
+    procedure WriteOutput;
+    procedure ReadInput;
     procedure SetLocation(const AValue: string);
   protected
     procedure Init; virtual;
@@ -113,12 +115,10 @@ type
     procedure ShowException(var E: Exception); virtual;
     procedure Request; virtual;
     procedure Respond; virtual;
-    procedure ReadInput; virtual;
-    procedure WriteOutput; virtual;
   public
     constructor Create; virtual;
     destructor Destroy; override;
-    procedure Run; virtual;
+    procedure Run;
     procedure AddContentDisposition(const AContentType: ShortString;
       const AFileName: TFileName = ES;
       const ADispositionType: ShortString = LWS_HTTP_CONTENT_DISPOSITION_ATTACHMENT;
@@ -247,6 +247,16 @@ begin
   inherited Destroy;
 end;
 
+{$HINTS OFF}
+procedure TLWSCGI.FillingProperties(var AName, AValue: string);
+begin
+end;
+
+procedure TLWSCGI.FillUploads(AData: TMemoryStream);
+begin
+end;
+{$HINTS ON}
+
 procedure TLWSCGI.AddContentDisposition(const AContentType: ShortString;
   const AFileName: TFileName; const ADispositionType: ShortString;
   const AContentDescription: ShortString; const AModificationDate: TDateTime);
@@ -298,10 +308,6 @@ begin
 {$IFDEF DEBUG}
   LWSSendMethodExit('TLWSCGI.FillFields');
 {$ENDIF}
-end;
-
-procedure TLWSCGI.FillUploads(AData: TMemoryStream);
-begin
 end;
 
 procedure TLWSCGI.FillProperties;
@@ -504,7 +510,7 @@ begin
   VHeaders := LWS_HTTP_HEADER_STATUS + IntToStr(FStatusCode) + SP +
     FReasonPhrase + CRLF + LWS_HTTP_HEADER_CONTENT_TYPE +
     FHeaderContentType + CRLF;
-  FHeaders.Text := VHeaders;
+  FHeaders.Text := VHeaders + CRLF;
 end;
 
 procedure TLWSCGI.SetLocation(const AValue: string);
@@ -515,10 +521,6 @@ begin
     FStatusCode := LWS_HTTP_STATUS_CODE_TEMPORARY_REDIRECT;
     FReasonPhrase := LWS_HTTP_REASON_PHRASE_TEMPORARY_REDIRECT;
   end;
-end;
-
-procedure TLWSCGI.FillingProperties(var AName, AValue: string);
-begin
 end;
 
 procedure TLWSCGI.ShowException(var E: Exception);
@@ -611,7 +613,7 @@ begin
         ShowException(E);
       finally
         InternalShowException;
-        Finit;
+        WriteOutput;
         if FHaltOnError then
           Halt;
       end;
