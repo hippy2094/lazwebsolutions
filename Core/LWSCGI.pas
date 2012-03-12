@@ -675,7 +675,6 @@ begin
         DoShowException(E);
       finally
         InternalShowException;
-        WriteOutput;
         Finit;
         if FHaltOnError then
           Halt;
