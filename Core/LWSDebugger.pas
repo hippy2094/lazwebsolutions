@@ -19,18 +19,14 @@ unit LWSDebugger;
 interface
 
 uses
+{$IFDEF DEBUGHEAP}
+  HeapTrc,
+{$ENDIF}
   LWSConsts, SysUtils, Classes;
 
-type
-  ELWSDebugger = class(Exception);
-
-var
-  LWS_DEBUG_DIR: string = ES;
-  LWS_DEBUG_FILENAME: TFileName = ES;
-  LWS_DEBUGHEAP_FILENAME: TFileName = ES;
-
 { Init debugger. }
-procedure LWSInitDebugger(const ADebugDir: string = ES);
+procedure LWSInitDebugger(
+  const ADebugFileName{$IFDEF DEBUGHEAP}, ADebugHeapFileName{$ENDIF}: TFileName);
 { Send msg to debug file. }
 procedure LWSSendMsg(const AMsg: string);
 { Send stream to debug file. }
@@ -52,34 +48,30 @@ implementation
 
 var
   _DebugFile: TFileStream;
+  _DebugFileName: TFileName;
 
 function DebugFile: TFileStream;
 begin
-  if not Assigned(_DebugFile) then
-    _DebugFile := TFileStream.Create(LWS_DEBUG_FILENAME, fmCreate);
-  Result := _DebugFile;
+  try
+    if not Assigned(_DebugFile) then
+      _DebugFile := TFileStream.Create(_DebugFileName, fmCreate);
+    Result := _DebugFile;
+  except
+    on E: Exception do
+      WriteLn(LWS_HTTP_HEADER_CONTENT_TYPE +
+        LWS_HTTP_CONTENT_TYPE_TEXT_PLAIN + CRLF + CRLF +
+        Format('DEBUG ERROR: %s', [E.Message]));
+  end;
 end;
 
-procedure LWSInitDebugger(const ADebugDir: string);
+procedure LWSInitDebugger(
+  const ADebugFileName{$IFDEF DEBUGHEAP}, ADebugHeapFileName{$ENDIF}: TFileName);
 begin
-  LWS_DEBUG_DIR := ADebugDir;
-  if LWS_DEBUG_DIR = ES then
-    LWS_DEBUG_DIR := GetTempDir;
-  LWS_DEBUG_DIR := IncludeTrailingPathDelimiter(LWS_DEBUG_DIR);
-  if not DirectoryExists(LWS_DEBUG_DIR) then
-    WriteLn(LWS_HTTP_HEADER_CONTENT_TYPE +
-      LWS_HTTP_CONTENT_TYPE_TEXT_PLAIN + CRLF + CRLF +
-      Format(LWS_DEBUG_SAVE_PATH_NOT_FOUND_ERR,
-      [LWS_DEBUG_DIR, 'LWSDebugger unit']));
-  if LWS_DEBUG_FILENAME = ES then
-    LWS_DEBUG_FILENAME := LWS_DEBUG_DIR + 'DEBUG.LOG';
 {$IFDEF DEBUGHEAP}
-  if LWS_DEBUGHEAP_FILENAME = ES then
-  begin
-    LWS_DEBUGHEAP_FILENAME := LWS_DEBUG_DIR + 'DEBUGHEAP.LOG';
-    DeleteFile(LWS_DEBUGHEAP_FILENAME);
-  end;
+  DeleteFile(ADebugHeapFileName);
+  SetHeapTraceOutput(ADebugHeapFileName);
 {$ENDIF}
+  _DebugFileName := ADebugFileName;
 end;
 
 procedure LWSSendMsg(const AMsg: string);
@@ -120,8 +112,6 @@ begin
   LWSSendMsg(ALineBreak + '>> ' + TimeToStr(Now) + ' - End <- ' + AProjectName +
     ' - ' + AGoodByeMsg + LF + LF);
 end;
-
-initialization
 
 finalization
   if Assigned(_DebugFile) then
