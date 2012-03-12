@@ -41,7 +41,7 @@ type
     FFileName: string;
     FIsFile: Boolean;
   protected
-    procedure DoParseLine; virtual;
+    procedure ParseLine; virtual;
   public
     procedure ContentStream(AStream: TStream);
     property Content: string read FContent;
@@ -64,7 +64,7 @@ type
     procedure SetItem(AIndex: Integer; const AValue: TLWSUploadItem);
     procedure SetSavePath(const AValue: string);
   protected
-    procedure DoSplitForm(var AContent: string; const ABoundary: string); virtual;
+    procedure SplitForm(var AContent: string; const ABoundary: string); virtual;
   public
     constructor Create;
     procedure ReadUploads(AData: TMemoryStream; AFields: PJSONObject;
@@ -84,7 +84,7 @@ implementation
 
 { TLWSUploadItem }
 
-procedure TLWSUploadItem.DoParseLine;
+procedure TLWSUploadItem.ParseLine;
 
   function GetLine(var S: string): string;
   var
@@ -131,7 +131,7 @@ var
   VLength: Integer;
 begin
 {$IFDEF DEBUG}
-  LWSSendMethodEnter('TLWSUploadItem.DoParseLine');
+  LWSSendMethodEnter('TLWSUploadItem.ParseLine');
 {$ENDIF}
   VLine := GetLine(FContent);
   while VLine <> ES do
@@ -161,7 +161,7 @@ begin
   if VLength > 2 then
     FContent := Copy(FContent, 1, VLength - 2);
 {$IFDEF DEBUG}
-  LWSSendMethodExit('TLWSUploadItem.DoParseLine');
+  LWSSendMethodExit('TLWSUploadItem.ParseLine');
 {$ENDIF}
 end;
 
@@ -225,14 +225,14 @@ begin
   FSavePath := IncludeTrailingPathDelimiter(AValue);
 end;
 
-procedure TLWSUploads.DoSplitForm(var AContent: string; const ABoundary: string);
+procedure TLWSUploads.SplitForm(var AContent: string; const ABoundary: string);
 var
   VSeparator: string;
   VItem: TLWSUploadItem;
   VContentLength, VSeparatorLength, P: LongInt;
 begin
 {$IFDEF DEBUG}
-  LWSSendMethodEnter('TLWSUploads.DoSplitForm');
+  LWSSendMethodEnter('TLWSUploads.SplitForm');
 {$ENDIF}
   VSeparator := '--' + ABoundary + CRLF;
   VSeparatorLength := Length(VSeparator);
@@ -251,7 +251,7 @@ begin
     VContentLength := Length(AContent);
   end;
 {$IFDEF DEBUG}
-  LWSSendMethodExit('TLWSUploads.DoSplitForm');
+  LWSSendMethodExit('TLWSUploads.SplitForm');
 {$ENDIF}
 end;
 
@@ -279,12 +279,12 @@ begin
   SetLength(S, VContentLength);
   AData.Position := 0;
   AData.Read(Pointer(S)^, VContentLength);
-  DoSplitForm(S, VBoundary);
+  SplitForm(S, VBoundary);
   AFields^ := TJSONObject.Create([]);
   for I := 0 to Pred(Count) do
   begin
     VItem := GetItem(I);
-    VItem.DoParseLine;
+    VItem.ParseLine;
     if VItem.FFieldName = ES then
       raise Exception.CreateFmt(LWS_UPLOAD_INVALID_MULTIPART_ENCODING_ERR,
         [VItem.FContent]);
