@@ -32,7 +32,9 @@ type
   end;
 
 begin
+{$IFDEF DEBUG}
   LWSInitDebugger('/path/to/your/DEBUG.LOG', '/path/to/your/DEBUGHEAP.LOG');
+{$ENDIF}
   with TCGI.Create do
     try
       Run;
