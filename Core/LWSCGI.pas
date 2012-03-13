@@ -605,8 +605,8 @@ begin
     else
       Respond;
     FillHeaders;
-    WriteOutput;
     Finit;
+    WriteOutput;
   except
     on E: Exception do
       try
