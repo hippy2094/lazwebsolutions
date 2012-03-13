@@ -34,7 +34,7 @@ type
   private
     FActionEdit: ShortString;
     FActionNew: ShortString;
-    FControllers: TList;
+    FController: TLWSActionController;
     FControllerClasses: TList;
     FPathInfos: TJSONArray;
     FSkippedItems: Integer;
@@ -42,7 +42,6 @@ type
     procedure Customize; virtual;
     function FindControllerClass(
       const AName: ShortString): TLWSActionControllerClass;
-    procedure FreeControllers;
     procedure MissingController(const AName: ShortString); virtual;
     function Require(const AActionType: TLWSActionType): Boolean; virtual;
     property PathInfos: TJSONArray read FPathInfos;
@@ -66,7 +65,6 @@ implementation
 
 constructor TLWSRouter.Create;
 begin
-  FControllers := TList.Create;
   FControllerClasses := TList.Create;
   FPathInfos := nil;
   FActionEdit := 'edit';
@@ -78,8 +76,8 @@ destructor TLWSRouter.Destroy;
 begin
   if Assigned(FPathInfos) then
     FPathInfos.Free;
-  FreeControllers;
-  FControllers.Free;
+  if Assigned(FController) then
+    FController.Free;
   FControllerClasses.Free;
   inherited Destroy;
 end;
@@ -117,18 +115,6 @@ begin
   end;
 end;
 
-procedure TLWSRouter.FreeControllers;
-var
-  I: Integer;
-  VController: TObject;
-begin
-  for I := 0 to Pred(FControllers.Count) do
-  begin
-    VController := TObject(FControllers[I]);
-    FreeAndNil(VController);
-  end;
-end;
-
 procedure TLWSRouter.AddControllerClass(
   AControllerClass: TLWSActionControllerClass);
 begin
@@ -150,7 +136,6 @@ var
   VCount: LongInt;
   VParser: TJSONParser;
   VControllerName: ShortString;
-  VController: TLWSActionController;
   VControllerClass: TLWSActionControllerClass;
 begin
 {$IFDEF DEBUG}
@@ -168,42 +153,41 @@ begin
       VControllerClass := FindControllerClass(VControllerName);
       if Assigned(VControllerClass) then
       begin
-        VController := VControllerClass.Create;
-        FControllers.Add(VController);
+        FController := VControllerClass.Create;
         if ARequestMethod = LWS_HTTP_REQUEST_METHOD_GET then
         begin
           case VCount of
-            1: VController.Index;
+            1: FController.Index;
             2:
               if FPathInfos[Succ(FSkippedItems)].AsString = FActionNew then
-                VController.New
+                FController.New
               else
-                VController.Show(FPathInfos[Succ(FSkippedItems)]);
+                FController.Show(FPathInfos[Succ(FSkippedItems)]);
             3:
               if FPathInfos[FSkippedItems + 2].AsString = FActionEdit then
-                VController.Edit(FPathInfos[Succ(FSkippedItems)]);
+                FController.Edit(FPathInfos[Succ(FSkippedItems)]);
           end;
         end
         else
         if ARequestMethod = LWS_HTTP_REQUEST_METHOD_POST then
         begin
           if Require(atInsert) then
-            VController.Insert;
+            FController.Insert;
         end
         else
         if (ARequestMethod = LWS_HTTP_REQUEST_METHOD_PUT) and (VCount > 1) then
         begin
           if Require(atUpdate) then
-            VController.Update(FPathInfos[Succ(FSkippedItems)]);
+            FController.Update(FPathInfos[Succ(FSkippedItems)]);
         end
         else
         if (ARequestMethod = LWS_HTTP_REQUEST_METHOD_DELETE) and
           (VCount > 1) then
         begin
           if Require(atDelete) then
-            VController.Delete(FPathInfos[Succ(FSkippedItems)]);
+            FController.Delete(FPathInfos[Succ(FSkippedItems)]);
         end;
-        VController.Extra(FPathInfos);
+        FController.Extra(FPathInfos);
       end
       else
         MissingController(VControllerName);
