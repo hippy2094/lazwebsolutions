@@ -26,10 +26,9 @@ type
   { TLWSActionController }
 
   TLWSActionController = class
-  private
-    FName: string;
   public
-    constructor Create;
+    class function Name: ShortString; virtual;
+    constructor Create; virtual;
     procedure Index; virtual; abstract;
     procedure Delete(AValue: TJSONData); virtual;
     procedure Edit(AValue: TJSONData); virtual;
@@ -38,7 +37,6 @@ type
     procedure New; virtual;
     procedure Show(AValue: TJSONData); virtual;
     procedure Update(AValue: TJSONData); virtual;
-    property Name: string read FName write FName;
   end;
 
   TLWSActionControllerClass = class of TLWSActionController;
@@ -49,7 +47,11 @@ implementation
 
 constructor TLWSActionController.Create;
 begin
-  FName := Copy(LowerCase(ClassName), 2, MaxInt);
+end;
+
+class function TLWSActionController.Name: ShortString;
+begin
+  Result := Copy(LowerCase(ClassName), 2, MaxInt);
 end;
 
 procedure TLWSActionController.Delete(AValue: TJSONData);
