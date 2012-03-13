@@ -35,19 +35,23 @@ type
     FActionEdit: ShortString;
     FActionNew: ShortString;
     FControllers: TList;
+    FControllerClasses: TList;
     FPathInfos: TJSONArray;
     FSkippedItems: Integer;
   protected
-    function FindController(const AName: ShortString): TLWSActionController;
-    procedure MissingController(const AName: ShortString); virtual;
     procedure Customize; virtual;
+    function FindControllerClass(
+      const AName: ShortString): TLWSActionControllerClass;
+    procedure FreeControllers;
+    procedure MissingController(const AName: ShortString); virtual;
     function Require(const AActionType: TLWSActionType): Boolean; virtual;
     property PathInfos: TJSONArray read FPathInfos;
   public
-    constructor Create;
+    constructor Create; virtual;
     destructor Destroy; override;
-    procedure AddController(AController: TLWSActionController);
-    procedure AddControllers(AControllers: array of TLWSActionController);
+    procedure AddControllerClass(AControllerClass: TLWSActionControllerClass);
+    procedure AddControllerClasses(
+      AControllerClasses: array of TLWSActionControllerClass);
     procedure Route(const ARequestMethod: ShortString; const APathInfo: string);
     property ActionEdit: ShortString read FActionEdit write FActionEdit;
     property ActionNew: ShortString read FActionNew write FActionNew;
@@ -63,6 +67,7 @@ implementation
 constructor TLWSRouter.Create;
 begin
   FControllers := TList.Create;
+  FControllerClasses := TList.Create;
   FPathInfos := nil;
   FActionEdit := 'edit';
   FActionNew := 'new';
@@ -70,23 +75,13 @@ begin
 end;
 
 destructor TLWSRouter.Destroy;
-var
-  I: Integer;
-  VController: TObject;
 begin
-  for I := 0 to Pred(FControllers.Count) do
-  begin
-    VController := TObject(FControllers[I]);
-    FreeAndNil(VController);
-  end;
   if Assigned(FPathInfos) then
     FPathInfos.Free;
+  FreeControllers;
   FControllers.Free;
+  FControllerClasses.Free;
   inherited Destroy;
-end;
-
-procedure TLWSRouter.Customize;
-begin
 end;
 
 {$HINTS OFF}
@@ -100,34 +95,53 @@ begin
 end;
 {$HINTS ON}
 
-function TLWSRouter.FindController(const AName: ShortString): TLWSActionController;
+procedure TLWSRouter.Customize;
+begin
+end;
+
+function TLWSRouter.FindControllerClass(const AName: ShortString
+  ): TLWSActionControllerClass;
 var
   I: Integer;
-  VController: TLWSActionController;
+  VClass: TLWSActionControllerClass;
 begin
   Result := nil;
-  for I := 0 to Pred(FControllers.Count) do
+  for I := 0 to Pred(FControllerClasses.Count) do
   begin
-    VController := TLWSActionController(FControllers[I]);
-    if CompareText(AName, VController.Name) = 0 then
+    VClass := TLWSActionControllerClass(FControllerClasses[I]);
+    if CompareText(AName, VClass.Name) = 0 then
     begin
-      Result := VController;
+      Result := VClass;
       Break;
     end;
   end;
 end;
 
-procedure TLWSRouter.AddController(AController: TLWSActionController);
+procedure TLWSRouter.FreeControllers;
+var
+  I: Integer;
+  VController: TObject;
 begin
-  FControllers.Add(AController);
+  for I := 0 to Pred(FControllers.Count) do
+  begin
+    VController := TObject(FControllers[I]);
+    FreeAndNil(VController);
+  end;
 end;
 
-procedure TLWSRouter.AddControllers(AControllers: array of TLWSActionController);
+procedure TLWSRouter.AddControllerClass(
+  AControllerClass: TLWSActionControllerClass);
+begin
+  FControllerClasses.Add(AControllerClass);
+end;
+
+procedure TLWSRouter.AddControllerClasses(
+  AControllerClasses: array of TLWSActionControllerClass);
 var
   I: Integer;
 begin
-  for I := Low(AControllers) to High(AControllers) do
-    FControllers.Add(AControllers[I]);
+  for I := 0 to High(AControllerClasses) do
+    FControllerClasses.Add(AControllerClasses[I]);
 end;
 
 procedure TLWSRouter.Route(const ARequestMethod: ShortString;
@@ -137,6 +151,7 @@ var
   VParser: TJSONParser;
   VControllerName: ShortString;
   VController: TLWSActionController;
+  VControllerClass: TLWSActionControllerClass;
 begin
 {$IFDEF DEBUG}
   LWSSendMethodEnter('TLWSRouter.Route');
@@ -150,9 +165,11 @@ begin
     if Assigned(FPathInfos) and (VCount > 0) then
     begin
       VControllerName := FPathInfos[FSkippedItems].AsString;
-      VController := FindController(VControllerName);
-      if Assigned(VController) then
+      VControllerClass := FindControllerClass(VControllerName);
+      if Assigned(VControllerClass) then
       begin
+        VController := VControllerClass.Create;
+        FControllers.Add(VController);
         if ARequestMethod = LWS_HTTP_REQUEST_METHOD_GET then
         begin
           case VCount of
