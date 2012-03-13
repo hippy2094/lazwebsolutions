@@ -112,22 +112,23 @@ type
     property ContentEncoding: ShortString read FContentEncoding
       write FContentEncoding;
     property ContentLength: Int64 read FContentLength;
-    property Contents: TLWSMemoryStream read FContents;
+    property Contents: TLWSMemoryStream read FContents write FContents;
     property ContentType: ShortString read FContentType write FContentType;
     property DocumentRoot: string read FDocumentRoot;
-    property EnvironmentVariables: TStrings read FEnvironmentVariables;
+    property EnvironmentVariables: TStrings read FEnvironmentVariables
+      write FEnvironmentVariables;
     property ETag: string read FETag write FETag;
     property Expires: TDateTime read FExpires write FExpires;
-    property Fields: TJSONObject read FFields;
+    property Fields: TJSONObject read FFields write FFields;
     property GatewayInterface: ShortString read FGatewayInterface;
     property HaltOnError: Boolean read FHaltOnError write FHaltOnError;
-    property Headers: TLWSMemoryStream read FHeaders;
+    property Headers: TLWSMemoryStream read FHeaders write FHeaders;
     property HTTPAcceptEncoding: ShortString read FHTTPAcceptEncoding;
     property HTTPCookie: string read FHTTPCookie;
     property HTTPIfNoneMatch: string read FHTTPIfNoneMatch;
     property LastModified: TDateTime read FLastModified write FLastModified;
     property Location: string read FLocation write SetLocation;
-    property Params: TJSONObject read FParams;
+    property Params: TJSONObject read FParams write FParams;
     property PathInfo: string read FPathInfo;
     property PathTranslated: string read FPathTranslated;
     property QueryString: string read FQueryString;
