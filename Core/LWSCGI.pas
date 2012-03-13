@@ -22,29 +22,11 @@ uses
 {$IFDEF DEBUG}
   LWSDebugger,
 {$ENDIF}
-  LWSConsts, LWSUtils, LWSMessages, IOStream, SysUtils, Classes, FPJSON,
-  JSONParser;
+  LWSConsts, LWSClasses, LWSUtils, LWSMessages, IOStream, SysUtils, Classes,
+  FPJSON, JSONParser;
 
 type
   ELWSCGI = class(Exception);
-
-  { TLWSCGIMemory }
-
-  TLWSCGIMemory = class(TMemoryStream)
-  private
-    FLineBreakString: ShortString;
-    function GetText: string;
-    procedure SetText(const AValue: string);
-  public
-    constructor Create;
-    procedure Add(const AString: string);
-    procedure Put(const AString: string);
-    property LineBreakString: ShortString read FLineBreakString
-      write FLineBreakString;
-    property Text: string read GetText write SetText;
-  end;
-
-  TLWSCGIMemoryClass = class of TLWSCGIMemory;
 
   { TLWSCGI }
 
@@ -68,12 +50,12 @@ type
     FLastModified: TDateTime;
     FOutputStream: TStream;
     FContentLength: Int64;
-    FContents: TLWSCGIMemory;
+    FContents: TLWSMemoryStream;
     FContentType: ShortString;
     FFields: TJSONObject;
     FLocation: string;
     FParams: TJSONObject;
-    FHeaders: TLWSCGIMemory;
+    FHeaders: TLWSMemoryStream;
     FPathInfo: string;
     FPathTranslated: string;
     FQueryString: string;
@@ -130,7 +112,7 @@ type
     property ContentEncoding: ShortString read FContentEncoding
       write FContentEncoding;
     property ContentLength: Int64 read FContentLength;
-    property Contents: TLWSCGIMemory read FContents;
+    property Contents: TLWSMemoryStream read FContents;
     property ContentType: ShortString read FContentType write FContentType;
     property DocumentRoot: string read FDocumentRoot;
     property EnvironmentVariables: TStrings read FEnvironmentVariables;
@@ -139,7 +121,7 @@ type
     property Fields: TJSONObject read FFields;
     property GatewayInterface: ShortString read FGatewayInterface;
     property HaltOnError: Boolean read FHaltOnError write FHaltOnError;
-    property Headers: TLWSCGIMemory read FHeaders;
+    property Headers: TLWSMemoryStream read FHeaders;
     property HTTPAcceptEncoding: ShortString read FHTTPAcceptEncoding;
     property HTTPCookie: string read FHTTPCookie;
     property HTTPIfNoneMatch: string read FHTTPIfNoneMatch;
@@ -180,46 +162,12 @@ type
 
 implementation
 
-{ TLWSCGIMemory }
-
-function TLWSCGIMemory.GetText: string;
-begin
-  SetLength(Result, Size);
-  Position := 0;
-  Read(Pointer(Result)^, Size);
-end;
-
-procedure TLWSCGIMemory.SetText(const AValue: string);
-begin
-  Clear;
-  Write(Pointer(AValue)^, Length(AValue));
-end;
-
-constructor TLWSCGIMemory.Create;
-begin
-  FLineBreakString := LineEnding;
-end;
-
-procedure TLWSCGIMemory.Add(const AString: string);
-var
-  S: string;
-begin
-  S := AString + FLineBreakString;
-  Position := Size;
-  Write(Pointer(S)^, Length(S));
-end;
-
-procedure TLWSCGIMemory.Put(const AString: string);
-begin
-  Write(Pointer(AString)^, Length(AString));
-end;
-
 { TLWSCGI }
 
 constructor TLWSCGI.Create;
 begin
-  FContents := TLWSCGIMemory.Create;
-  FHeaders := TLWSCGIMemory.Create;
+  FContents := TLWSMemoryStream.Create;
+  FHeaders := TLWSMemoryStream.Create;
   FEnvironmentVariables := TStringList.Create;
   FFields := nil;
   FParams := nil;
