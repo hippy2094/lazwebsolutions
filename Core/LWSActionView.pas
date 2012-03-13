@@ -36,16 +36,17 @@ type
     FRecursive: Boolean;
     FTagPrefix: ShortString;
     function GetContent: string;
+    procedure SetContent(const AValue: string);
     procedure SetPath(const AValue: string);
-  protected
-    procedure Format; virtual;
   public
     constructor Create(const AElements: array of const;
       const AViewPath: string = ES; const AViewFile: string = ES;
       const AAutoLoaded: Boolean = True); overload;
-    function FileToString(const AFileName: TFileName): string;
+    function FileToString(const AFileName: TFileName;
+      const AUseViewPath: Boolean = True): string;
+    procedure Format;
     procedure LoadFromFile(const AFileName: TFileName);
-    property Content: string read GetContent;
+    property Content: string read GetContent write SetContent;
     property Path: string read FPath write SetPath;
     property Recursive: Boolean read FRecursive write FRecursive;
     property TagPrefix: ShortString read FTagPrefix write FTagPrefix;
@@ -76,9 +77,13 @@ begin
   end;
 end;
 
-function TLWSActionView.FileToString(const AFileName: TFileName): string;
+function TLWSActionView.FileToString(const AFileName: TFileName;
+  const AUseViewPath: Boolean): string;
 begin
-  Result := LWSFileToString(AFileName);
+  if AUseViewPath then
+    Result := LWSFileToString(FPath + AFileName)
+  else
+    Result := LWSFileToString(AFileName);
 end;
 
 procedure TLWSActionView.Format;
@@ -124,6 +129,11 @@ function TLWSActionView.GetContent: string;
 begin
   Format;
   Result := FContent;
+end;
+
+procedure TLWSActionView.SetContent(const AValue: string);
+begin
+  FContent := AValue;
 end;
 
 procedure TLWSActionView.LoadFromFile(const AFileName: TFileName);
