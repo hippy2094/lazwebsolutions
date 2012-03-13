@@ -1,5 +1,5 @@
 (*
-  LazWebSolutions, Memory stream unit
+  LazWebSolutions, Classes unit
   Copyright (C) 2012-2014 Silvio Clecio, Luciano Souza.
 
   https://github.com/silvioprog/lazwebsolutions
