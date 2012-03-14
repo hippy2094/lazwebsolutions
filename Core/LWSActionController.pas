@@ -61,7 +61,6 @@ type
     procedure New; virtual;
     procedure Show(AValue: TJSONData); virtual;
     procedure Update(AValue: TJSONData); virtual;
-    property View: TLWSActionView read FView write FView;
 {$IFDEF USELWSCGI}
     property CGI: TLWSCGI read FCGI write FCGI;
 {$ELSE}
@@ -72,6 +71,7 @@ type
     property Headers: TLWSMemoryStream read FHeaders write FHeaders;
     property Params: TJSONObject read FParams write FParams;
 {$ENDIF}
+    property View: TLWSActionView read FView write FView;
   end;
 
   TLWSActionControllerClass = class of TLWSActionController;
