@@ -15,17 +15,34 @@
 unit LWSActionController;
 
 {$I lazwebsolutions.inc}
+{$DEFINE USELWSCGI}
 
 interface
 
 uses
-  FPJSON;
+{$IFDEF USELWSCGI}
+  LWSCGI,
+{$ELSE}
+  LWSClasses, Classes,
+{$ENDIF}
+  LWSActionView, FPJSON;
 
 type
 
   { TLWSActionController }
 
   TLWSActionController = class
+  private
+{$IFDEF USELWSCGI}
+    FCGI: TLWSCGI;
+{$ELSE}
+    FContents: TLWSMemoryStream;
+    FEnvironmentVariables: TStrings;
+    FFields: TJSONObject;
+    FHeaders: TLWSMemoryStream;
+    FParams: TJSONObject;
+{$ENDIF}
+    FView: TLWSActionView;
   public
     class function Name: ShortString; virtual;
     constructor Create; virtual;
@@ -37,6 +54,17 @@ type
     procedure New; virtual;
     procedure Show(AValue: TJSONData); virtual;
     procedure Update(AValue: TJSONData); virtual;
+{$IFDEF USELWSCGI}
+    property CGI: TLWSCGI read FCGI write FCGI;
+{$ELSE}
+    property Contents: TLWSMemoryStream read FContents write FContents;
+    property EnvironmentVariables: TStrings read FEnvironmentVariables
+      write FEnvironmentVariables;
+    property Fields: TJSONObject read FFields write FFields;
+    property Headers: TLWSMemoryStream read FHeaders write FHeaders;
+    property Params: TJSONObject read FParams write FParams;
+{$ENDIF}
+    property View: TLWSActionView read FView write FView;
   end;
 
   TLWSActionControllerClass = class of TLWSActionController;
@@ -49,11 +77,7 @@ constructor TLWSActionController.Create;
 begin
 end;
 
-class function TLWSActionController.Name: ShortString;
-begin
-  Result := Copy(LowerCase(ClassName), 2, MaxInt);
-end;
-
+{$HINTS OFF}
 procedure TLWSActionController.Delete(AValue: TJSONData);
 begin
 end;
@@ -66,19 +90,25 @@ procedure TLWSActionController.Extra(APathInfos: TJSONArray);
 begin
 end;
 
-procedure TLWSActionController.Insert;
+procedure TLWSActionController.Show(AValue: TJSONData);
 begin
+end;
+
+procedure TLWSActionController.Update(AValue: TJSONData);
+begin
+end;
+{$HINTS ON}
+
+class function TLWSActionController.Name: ShortString;
+begin
+  Result := Copy(LowerCase(ClassName), 2, MaxInt);
 end;
 
 procedure TLWSActionController.New;
 begin
 end;
 
-procedure TLWSActionController.Show(AValue: TJSONData);
-begin
-end;
-
-procedure TLWSActionController.Update(AValue: TJSONData);
+procedure TLWSActionController.Insert;
 begin
 end;
 
