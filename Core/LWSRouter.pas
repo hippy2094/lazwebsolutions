@@ -28,6 +28,12 @@ uses
 type
   TLWSActionType = (atInsert, atUpdate, atDelete);
 
+  TLWSRouterCreateControllerEvent = procedure(
+    AController: TLWSActionController) of object;
+
+  TLWSRouterMissingControllerEvent = procedure(
+    const AControllerName: ShortString) of object;
+
   { TLWSRouter }
 
   TLWSRouter = class
@@ -39,19 +45,18 @@ type
     FPathInfos: TJSONArray;
     FSkippedItems: Integer;
   protected
-    procedure Customize; virtual;
     function FindControllerClass(
       const AName: ShortString): TLWSActionControllerClass;
-    procedure MissingController(const AName: ShortString); virtual;
     function Require(const AActionType: TLWSActionType): Boolean; virtual;
-    property PathInfos: TJSONArray read FPathInfos;
   public
     constructor Create; virtual;
     destructor Destroy; override;
     procedure AddControllerClass(AControllerClass: TLWSActionControllerClass);
     procedure AddControllerClasses(
       AControllerClasses: array of TLWSActionControllerClass);
-    procedure Route(const ARequestMethod: ShortString; const APathInfo: string);
+    function Route(const ARequestMethod: ShortString; const APathInfo: string;
+      AOnCreateController: TLWSRouterCreateControllerEvent;
+      AOnMissingController: TLWSRouterMissingControllerEvent): Boolean;
     property ActionEdit: ShortString read FActionEdit write FActionEdit;
     property ActionNew: ShortString read FActionNew write FActionNew;
     property SkippedItems: Integer read FSkippedItems write FSkippedItems;
@@ -83,19 +88,11 @@ begin
 end;
 
 {$HINTS OFF}
-procedure TLWSRouter.MissingController(const AName: ShortString);
-begin
-end;
-
 function TLWSRouter.Require(const AActionType: TLWSActionType): Boolean;
 begin
   Result := True;
 end;
 {$HINTS ON}
-
-procedure TLWSRouter.Customize;
-begin
-end;
 
 function TLWSRouter.FindControllerClass(const AName: ShortString
   ): TLWSActionControllerClass;
@@ -130,8 +127,10 @@ begin
     FControllerClasses.Add(AControllerClasses[I]);
 end;
 
-procedure TLWSRouter.Route(const ARequestMethod: ShortString;
-  const APathInfo: string);
+function TLWSRouter.Route(
+  const ARequestMethod: ShortString; const APathInfo: string;
+  AOnCreateController: TLWSRouterCreateControllerEvent;
+  AOnMissingController: TLWSRouterMissingControllerEvent): Boolean;
 var
   VCount: LongInt;
   VParser: TJSONParser;
@@ -147,13 +146,16 @@ begin
   try
     FPathInfos := TJSONArray(VParser.Parse);
     VCount := FPathInfos.Count - FSkippedItems;
-    if Assigned(FPathInfos) and (VCount > 0) then
+    Result := Assigned(FPathInfos) and (VCount > 0);
+    if Result then
     begin
       VControllerName := FPathInfos[FSkippedItems].AsString;
       VControllerClass := FindControllerClass(VControllerName);
       if Assigned(VControllerClass) then
       begin
         FController := VControllerClass.Create;
+        if Assigned(AOnCreateController) then
+          AOnCreateController(FController);
         if ARequestMethod = LWS_HTTP_REQUEST_METHOD_GET then
         begin
           case VCount of
@@ -190,10 +192,9 @@ begin
         FController.Extra(FPathInfos);
       end
       else
-        MissingController(VControllerName);
-    end
-    else
-      Customize;
+        if Assigned(AOnMissingController) then
+          AOnMissingController(VControllerName);
+    end;
   finally
     VParser.Free;
   end;
