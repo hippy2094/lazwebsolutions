@@ -47,6 +47,7 @@ type
     FHTTPAcceptEncoding: ShortString;
     FHTTPCookie: string;
     FHTTPIfNoneMatch: string;
+    FHTTPReferer: string;
     FInputStream: TStream;
     FLastModified: TDateTime;
     FOutputStream: TStream;
@@ -129,6 +130,7 @@ type
     property HTTPAcceptEncoding: ShortString read FHTTPAcceptEncoding;
     property HTTPCookie: string read FHTTPCookie;
     property HTTPIfNoneMatch: string read FHTTPIfNoneMatch;
+    property HTTPReferer: string read FHTTPReferer;
     property LastModified: TDateTime read FLastModified write FLastModified;
     property Location: string read FLocation write SetLocation;
     property Params: TJSONObject read FParams write FParams;
@@ -302,6 +304,8 @@ begin
         FHTTPCookie := VValue;
       if VName = LWS_CLT_ENV_HTTP_IF_NONE_MATCH then
         FHTTPIfNoneMatch := VValue;
+      if VName = LWS_CLT_ENV_HTTP_REFERER then
+        FHTTPReferer := VValue;
       if VName = LWS_SRV_ENV_PATH_INFO then
         FPathInfo := VValue;
       if VName = LWS_SRV_ENV_PATH_TRANSLATED then
