@@ -46,13 +46,6 @@ type
   public
     class function Name: ShortString; virtual;
     constructor Create; virtual;
-    { TODO: ButtonTo }
-    { TODO: MailTo }
-    function LinkTo(
-      const AController, AAction, ACaption: string): string;
-    function LinkTo(const AAction, ACaption: string): string;
-    function URLFor(const AController, AAction: string): string;
-    function URLFor(const AAction: string): string;
     procedure Index; virtual; abstract;
     procedure Delete(AValue: TJSONData); virtual;
     procedure Edit(AValue: TJSONData); virtual;
@@ -105,29 +98,6 @@ procedure TLWSActionController.Update(AValue: TJSONData);
 begin
 end;
 {$HINTS ON}
-
-function TLWSActionController.LinkTo(const AController, AAction,
-  ACaption: string): string;
-begin
-  Result := '<a href="' + URLFor(AController, AAction) + '">' +
-    ACaption + '</a>';
-end;
-
-function TLWSActionController.LinkTo(const AAction, ACaption: string): string;
-begin
-  Result := LinkTo(Name, AAction, ACaption);
-end;
-
-function TLWSActionController.URLFor(const AController, AAction: string
-  ): string;
-begin
-  Result := CGI.Domain + AController + '/' + AAction;
-end;
-
-function TLWSActionController.URLFor(const AAction: string): string;
-begin
-  Result := URLFor(Name, AAction);
-end;
 
 class function TLWSActionController.Name: ShortString;
 begin
