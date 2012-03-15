@@ -32,6 +32,7 @@ type
   TLWSActionView = class(TJSONObject)
   private
     FContent: string;
+    FDomain: string;
     FPath: string;
     FRecursive: Boolean;
     FTagPrefix: ShortString;
@@ -42,11 +43,16 @@ type
     constructor Create(const AElements: array of const;
       const AViewPath: string = ES; const AViewFile: string = ES;
       const AAutoLoaded: Boolean = True); overload;
+    function LinkTo(const AControllerName, AActionName, ACaption: string): string;
+    function URLFor(const AControllerName, AActionName: string): string;
     function FileToString(const AFileName: TFileName;
+      const AUseViewPath: Boolean = True): string;
+    function HTMLToString(const AFileName: TFileName;
       const AUseViewPath: Boolean = True): string;
     procedure Format;
     procedure LoadFromFile(const AFileName: TFileName);
     property Content: string read GetContent write SetContent;
+    property Domain: string read FDomain write FDomain;
     property Path: string read FPath write SetPath;
     property Recursive: Boolean read FRecursive write FRecursive;
     property TagPrefix: ShortString read FTagPrefix write FTagPrefix;
@@ -77,6 +83,19 @@ begin
   end;
 end;
 
+function TLWSActionView.LinkTo(const AControllerName, AActionName,
+  ACaption: string): string;
+begin
+  Result := '<a href="' + URLFor(AControllerName, AActionName) + '">' +
+    ACaption + '</a>';
+end;
+
+function TLWSActionView.URLFor(const AControllerName, AActionName: string
+  ): string;
+begin
+  Result := FDomain + AControllerName + '/' + AActionName;
+end;
+
 function TLWSActionView.FileToString(const AFileName: TFileName;
   const AUseViewPath: Boolean): string;
 begin
@@ -84,6 +103,12 @@ begin
     Result := LWSFileToString(FPath + AFileName)
   else
     Result := LWSFileToString(AFileName);
+end;
+
+function TLWSActionView.HTMLToString(const AFileName: TFileName;
+  const AUseViewPath: Boolean): string;
+begin
+  Result := FileToString(AFileName + '.lws.html', AUseViewPath);
 end;
 
 procedure TLWSActionView.Format;
