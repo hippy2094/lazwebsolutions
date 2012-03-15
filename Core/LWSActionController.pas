@@ -25,7 +25,7 @@ uses
 {$ELSE}
   LWSClasses, Classes,
 {$ENDIF}
-  LWSActionView, FPJSON;
+  LWSConsts, LWSActionView, FPJSON;
 
 type
 
@@ -55,6 +55,8 @@ type
     procedure Show(AValue: TJSONData); virtual;
     procedure Update(AValue: TJSONData); virtual;
 {$IFDEF USELWSCGI}
+    procedure RedirectTo(const AActionName: ShortString = ES;
+      AControllerName: ShortString = ES);
     property CGI: TLWSCGI read FCGI write FCGI;
 {$ELSE}
     property Contents: TLWSMemoryStream read FContents write FContents;
@@ -98,6 +100,16 @@ procedure TLWSActionController.Update(AValue: TJSONData);
 begin
 end;
 {$HINTS ON}
+
+{$IFDEF USELWSCGI}
+procedure TLWSActionController.RedirectTo(const AActionName: ShortString;
+  AControllerName: ShortString);
+begin
+  if AControllerName = ES then
+    AControllerName := Name;
+  CGI.Location := View.URLFor(AControllerName, AActionName);
+end;
+{$ENDIF}
 
 class function TLWSActionController.Name: ShortString;
 begin
