@@ -43,8 +43,10 @@ type
     constructor Create(const AElements: array of const;
       const AViewPath: string = ES; const AViewFile: string = ES;
       const AAutoLoaded: Boolean = True); overload;
-    function LinkTo(const AControllerName, AActionName, ACaption: string): string;
-    function URLFor(const AControllerName, AActionName: string): string;
+    function LinkTo(const ACaption: string; const AControllerName: ShortString;
+      const AActionName: ShortString = ES): string;
+    function URLFor(const AControllerName: ShortString;
+      const AActionName: ShortString = ES): string;
     function FileToString(const AFileName: TFileName;
       const AUseViewPath: Boolean = True): string;
     function HTMLToString(const AFileName: TFileName;
@@ -83,17 +85,19 @@ begin
   end;
 end;
 
-function TLWSActionView.LinkTo(const AControllerName, AActionName,
-  ACaption: string): string;
+function TLWSActionView.LinkTo(const ACaption: string;
+  const AControllerName: ShortString; const AActionName: ShortString): string;
 begin
   Result := '<a href="' + URLFor(AControllerName, AActionName) + '">' +
     ACaption + '</a>';
 end;
 
-function TLWSActionView.URLFor(const AControllerName, AActionName: string
-  ): string;
+function TLWSActionView.URLFor(const AControllerName: ShortString;
+  const AActionName: ShortString): string;
 begin
-  Result := FDomain + AControllerName + '/' + AActionName;
+  Result := FDomain + AControllerName;
+  if AActionName <> ES then
+    Result += '/' + AActionName;
 end;
 
 function TLWSActionView.FileToString(const AFileName: TFileName;
