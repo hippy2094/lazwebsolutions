@@ -48,6 +48,9 @@ type
     function FindControllerClass(
       const AName: ShortString): TLWSActionControllerClass;
     function Require(const AActionType: TLWSActionType): Boolean; virtual;
+    procedure Routing(const ARequestMethod: ShortString;
+      const APathInfo: string; APathInfos: TJSONArray;
+      AController: TLWSActionController; var AContinue: Boolean); virtual;
   public
     constructor Create; virtual;
     destructor Destroy; override;
@@ -92,6 +95,12 @@ function TLWSRouter.Require(const AActionType: TLWSActionType): Boolean;
 begin
   Result := True;
 end;
+
+procedure TLWSRouter.Routing(const ARequestMethod: ShortString;
+  const APathInfo: string; APathInfos: TJSONArray;
+  AController: TLWSActionController; var AContinue: Boolean);
+begin
+end;
 {$HINTS ON}
 
 function TLWSRouter.FindControllerClass(const AName: ShortString
@@ -134,6 +143,7 @@ function TLWSRouter.Route(
 var
   VCount: LongInt;
   VParser: TJSONParser;
+  VContinue: Boolean = True;
   VControllerName: ShortString;
   VControllerClass: TLWSActionControllerClass;
 begin
@@ -156,40 +166,44 @@ begin
         FController := VControllerClass.Create;
         if Assigned(AOnCreateController) then
           AOnCreateController(FController);
-        if ARequestMethod = LWS_HTTP_REQUEST_METHOD_GET then
+        Routing(ARequestMethod, APathInfo, FPathInfos, FController, VContinue);
+        if VContinue then
         begin
-          case VCount of
-            1: FController.Index;
-            2:
-              if FPathInfos[Succ(FSkippedItems)].AsString = FActionNew then
-                FController.New
-              else
-                FController.Show(FPathInfos[Succ(FSkippedItems)]);
-            3:
-              if FPathInfos[FSkippedItems + 2].AsString = FActionEdit then
-                FController.Edit(FPathInfos[Succ(FSkippedItems)]);
+          if ARequestMethod = LWS_HTTP_REQUEST_METHOD_GET then
+          begin
+            case VCount of
+              1: FController.Index;
+              2:
+                if FPathInfos[Succ(FSkippedItems)].AsString = FActionNew then
+                  FController.New
+                else
+                  FController.Show(FPathInfos[Succ(FSkippedItems)]);
+              3:
+                if FPathInfos[FSkippedItems + 2].AsString = FActionEdit then
+                  FController.Edit(FPathInfos[Succ(FSkippedItems)]);
+            end;
+          end
+          else
+          if ARequestMethod = LWS_HTTP_REQUEST_METHOD_POST then
+          begin
+            if Require(atInsert) then
+              FController.Insert;
+          end
+          else
+          if (ARequestMethod = LWS_HTTP_REQUEST_METHOD_PUT) and (VCount > 1) then
+          begin
+            if Require(atUpdate) then
+              FController.Update(FPathInfos[Succ(FSkippedItems)]);
+          end
+          else
+          if (ARequestMethod = LWS_HTTP_REQUEST_METHOD_DELETE) and
+            (VCount > 1) then
+          begin
+            if Require(atDelete) then
+              FController.Delete(FPathInfos[Succ(FSkippedItems)]);
           end;
-        end
-        else
-        if ARequestMethod = LWS_HTTP_REQUEST_METHOD_POST then
-        begin
-          if Require(atInsert) then
-            FController.Insert;
-        end
-        else
-        if (ARequestMethod = LWS_HTTP_REQUEST_METHOD_PUT) and (VCount > 1) then
-        begin
-          if Require(atUpdate) then
-            FController.Update(FPathInfos[Succ(FSkippedItems)]);
-        end
-        else
-        if (ARequestMethod = LWS_HTTP_REQUEST_METHOD_DELETE) and
-          (VCount > 1) then
-        begin
-          if Require(atDelete) then
-            FController.Delete(FPathInfos[Succ(FSkippedItems)]);
+          FController.Extra(ARequestMethod, APathInfo, FPathInfos);
         end;
-        FController.Extra(FPathInfos);
       end
       else
         if Assigned(AOnMissingController) then
