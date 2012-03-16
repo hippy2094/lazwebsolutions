@@ -51,7 +51,8 @@ type
     procedure Index; virtual; abstract;
     procedure Delete(AValue: TJSONData); virtual;
     procedure Edit(AValue: TJSONData); virtual;
-    procedure Extra(APathInfos: TJSONArray); virtual;
+    procedure Extra(const ARequestMethod: ShortString; const APathInfo: string;
+      APathInfos: TJSONArray); virtual;
     procedure Insert; virtual;
     procedure New; virtual;
     procedure Show(AValue: TJSONData); virtual;
@@ -90,7 +91,8 @@ procedure TLWSActionController.Edit(AValue: TJSONData);
 begin
 end;
 
-procedure TLWSActionController.Extra(APathInfos: TJSONArray);
+procedure TLWSActionController.Extra(const ARequestMethod: ShortString;
+  const APathInfo: string; APathInfos: TJSONArray);
 begin
 end;
 
