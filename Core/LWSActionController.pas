@@ -44,6 +44,8 @@ type
 {$ENDIF}
     FView: TLWSActionView;
   public
+    function GetView: TLWSActionView;
+    procedure SetView(const AValue: TLWSActionView);
     class function Name: ShortString; virtual;
     constructor Create; virtual;
     procedure Index; virtual; abstract;
@@ -66,7 +68,7 @@ type
     property Headers: TLWSMemoryStream read FHeaders write FHeaders;
     property Params: TJSONObject read FParams write FParams;
 {$ENDIF}
-    property View: TLWSActionView read FView write FView;
+    property View: TLWSActionView read GetView write SetView;
   end;
 
   TLWSActionControllerClass = class of TLWSActionController;
@@ -110,6 +112,16 @@ begin
   CGI.Location := View.URLFor(AControllerName, AActionName);
 end;
 {$ENDIF}
+
+function TLWSActionController.GetView: TLWSActionView;
+begin
+  Result := FView;
+end;
+
+procedure TLWSActionController.SetView(const AValue: TLWSActionView);
+begin
+  FView := AValue;
+end;
 
 class function TLWSActionController.Name: ShortString;
 begin
