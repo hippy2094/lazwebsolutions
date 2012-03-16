@@ -423,7 +423,7 @@ begin
   else
     Result := APath;
   L := Length(Result);
-  if L = 0 then
+  if L < 2 then
   begin
     Result := '[]';
     Exit;
