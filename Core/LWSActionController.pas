@@ -49,14 +49,14 @@ type
     constructor Create; virtual;
     procedure Index; virtual; abstract;
     procedure Clear; virtual; abstract;
-    procedure Delete(AValue: TJSONData); virtual;
-    procedure Edit(AValue: TJSONData); virtual;
-    procedure Extra(const ARequestMethod: ShortString; const APathInfo: string;
-      APathInfos: TJSONArray); virtual;
+    procedure Delete(AValue: Int64); virtual;
+    procedure Edit(AValue: Int64); virtual;
+    procedure Find; virtual;
     procedure Insert; virtual;
+    procedure Locate(AParams: TJSONObject); virtual;
     procedure New; virtual;
-    procedure Show(AValue: TJSONData); virtual;
-    procedure Update(AValue: TJSONData); virtual;
+    procedure Show(AValue: Int64); virtual;
+    procedure Update(AValue: Int64); virtual;
 {$IFDEF USELWSCGI}
     procedure RedirectTo(const AActionName: ShortString = ES;
       AControllerName: ShortString = ES);
@@ -83,33 +83,36 @@ begin
 end;
 
 {$HINTS OFF}
-procedure TLWSActionController.Delete(AValue: TJSONData);
+procedure TLWSActionController.Delete(AValue: Int64);
 begin
 end;
 
-procedure TLWSActionController.Edit(AValue: TJSONData);
+procedure TLWSActionController.Edit(AValue: Int64);
 begin
 end;
 
-procedure TLWSActionController.Extra(const ARequestMethod: ShortString;
-  const APathInfo: string; APathInfos: TJSONArray);
+procedure TLWSActionController.Locate(AParams: TJSONObject);
 begin
 end;
 
-procedure TLWSActionController.Show(AValue: TJSONData);
+procedure TLWSActionController.Show(AValue: Int64);
 begin
 end;
 
-procedure TLWSActionController.Update(AValue: TJSONData);
+procedure TLWSActionController.Update(AValue: Int64);
 begin
 end;
 {$HINTS ON}
 
-procedure TLWSActionController.New;
+procedure TLWSActionController.Find;
 begin
 end;
 
 procedure TLWSActionController.Insert;
+begin
+end;
+
+procedure TLWSActionController.New;
 begin
 end;
 
