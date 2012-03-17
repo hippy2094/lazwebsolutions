@@ -480,20 +480,16 @@ begin
 end;
 
 procedure TLWSCGI.ShowException(var E: Exception);
-var
-  VError: string;
 begin
   FStatusCode := LWS_HTTP_STATUS_CODE_INTERNAL_SERVER_ERROR;
   FReasonPhrase := LWS_HTTP_REASON_PHRASE_INTERNAL_SERVER_ERROR;
-  VError := E.Message
 {$IFDEF DEBUG}
-    + CRLF + CRLF + '------- Call stack -------' + CRLF + CRLF +
-    LWSDumpExceptionCallStack
-{$ENDIF};
+  E.Message := E.Message + CRLF + CRLF + '------- Call stack -------' + CRLF +
+    CRLF + LWSDumpExceptionCallStack;
+{$ENDIF}
   if FShowExceptionAsHTML then
-    FContents.Text := StringReplace(VError, LF, BR, [rfReplaceAll])
-  else
-    FContents.Text := VError;
+    E.Message := StringReplace(E.Message, LF, BR, [rfReplaceAll]);
+  FContents.Text := E.Message;
 end;
 
 procedure TLWSCGI.FillHeaders;
