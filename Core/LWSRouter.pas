@@ -32,7 +32,7 @@ type
     AController: TLWSActionController) of object;
 
   TLWSRouterMissingControllerEvent = procedure(
-    const AControllerName: ShortString) of object;
+    const AControllerName: ShortString; const APathInfo: string) of object;
 
   { TLWSRouter }
 
@@ -207,7 +207,7 @@ begin
       end
       else
         if Assigned(AOnMissingController) then
-          AOnMissingController(VControllerName);
+          AOnMissingController(VControllerName, APathInfo);
     end;
   finally
     VParser.Free;
