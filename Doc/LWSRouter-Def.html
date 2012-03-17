@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+</head>
+<body>
+<table border=1>
+	<tbody><tr>
+		<th>HTTP method</th>
+		<th>Path</th>
+		<th>Action</th>
+		<th>Used for</th>
+	</tr>
+	<tr>
+		<td>GET</td>
+		<td>/photos</td>
+		<td>select</td>
+		<td>Display a list of all photos.</td>
+	</tr>
+	<tr>
+		<td>GET</td>
+		<td>/photos/new</td>
+		<td>new</td>
+		<td>Return an HTML form for creating a new photo.</td>
+	</tr>
+	<tr>
+		<td>POST</td>
+		<td>/photos</td>
+		<td>insert</td>
+		<td>Insert a new photo.</td>
+	</tr>
+	<tr>
+		<td>GET</td>
+		<td>/photos/:id</td>
+		<td>show</td>
+		<td>Display a specific photo.</td>
+	</tr>
+	<tr>
+		<td>GET</td>
+		<td>/photos/:id/edit</td>
+		<td>edit</td>
+		<td>Return an HTML form for editing a photo.</td>
+	</tr>
+	<tr>
+		<td>PUT</td>
+		<td>/photos/:id</td>
+		<td>update</td>
+		<td>Update a specific photo.</td>
+	</tr>
+	<tr>
+		<td>DELETE</td>
+		<td>/photos/:id</td>
+		<td>delete</td>
+		<td>Delete a specific photo.</td>
+	</tr>
+	<tr>
+		<td>GET</td>
+		<td>/photos/find</td>
+		<td>find</td>
+		<td>Return an HTML form for find a photo or more.</td>
+	</tr>
+	<tr>
+		<td>GET</td>
+		<td>/photos/find?q=:val</td>
+		<td>locate</td>
+		<td>Find a photo or more.</td>
+	</tr>
+</tbody></table>
+</body>
+</html>
