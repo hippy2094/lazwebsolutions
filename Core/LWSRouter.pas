@@ -37,6 +37,7 @@ type
   TLWSRouter = class
   private
     FActionEdit: ShortString;
+    FActionFind: ShortString;
     FActionNew: ShortString;
     FController: TLWSActionController;
     FControllerClasses: TList;
@@ -59,6 +60,7 @@ type
       AOnCreateController: TLWSRouterCreateControllerEvent;
       AOnNotFound: TLWSRouterNotFoundEvent): Boolean;
     property ActionEdit: ShortString read FActionEdit write FActionEdit;
+    property ActionFind: ShortString read FActionFind write FActionFind;
     property ActionNew: ShortString read FActionNew write FActionNew;
     property SkippedItems: Integer read FSkippedItems write FSkippedItems;
   end;
@@ -74,6 +76,7 @@ begin
   FControllerClasses := TList.Create;
   FPathInfos := nil;
   FActionEdit := 'edit';
+  FActionFind := 'find';
   FActionNew := 'new';
   FSkippedItems := 0;
 end;
@@ -141,6 +144,8 @@ function TLWSRouter.Route(
 var
   VCount: LongInt;
   VParser: TJSONParser;
+  VParams: TJSONObject;
+  VPathInfoItem: TJSONData;
   VContinue: Boolean = True;
   VControllerName: ShortString;
   VControllerClass: TLWSActionControllerClass;
@@ -168,18 +173,30 @@ begin
         if VContinue then
         begin
           FController.Clear;
+          if VCount > 1 then
+            VPathInfoItem := FPathInfos[Succ(FSkippedItems)];
           if ARequestMethod = LWS_HTTP_REQUEST_METHOD_GET then
           begin
+            { TODO: implements StatusCode/ReasonPhrase }
             case VCount of
               1: FController.Index;
               2:
-                if FPathInfos[Succ(FSkippedItems)].AsString = FActionNew then
+                if VPathInfoItem.AsString = FActionFind then
+                begin
+                  VParams := FController{$IFDEF USELWSCGI}.CGI{$ENDIF}.Params;
+                  if Assigned(VParams) and (VParams.Count > 0) then
+                    FController.Locate(VParams)
+                  else
+                    FController.Find;
+                end
+                else
+                if VPathInfoItem.AsString = FActionNew then
                   FController.New
                 else
-                  FController.Show(FPathInfos[Succ(FSkippedItems)]);
+                  FController.Show(VPathInfoItem.AsInt64);
               3:
                 if FPathInfos[FSkippedItems + 2].AsString = FActionEdit then
-                  FController.Edit(FPathInfos[Succ(FSkippedItems)]);
+                  FController.Edit(VPathInfoItem.AsInt64);
             end;
           end
           else
@@ -192,14 +209,14 @@ begin
           if (ARequestMethod = LWS_HTTP_REQUEST_METHOD_PUT) and (VCount > 1) then
           begin
             if Require(atUpdate) then
-              FController.Update(FPathInfos[Succ(FSkippedItems)]);
+              FController.Update(VPathInfoItem.AsInt64);
           end
           else
           if (ARequestMethod = LWS_HTTP_REQUEST_METHOD_DELETE) and
             (VCount > 1) then
           begin
             if Require(atDelete) then
-              FController.Delete(FPathInfos[Succ(FSkippedItems)]);
+              FController.Delete(VPathInfoItem.AsInt64);
           end;
         end;
       end
