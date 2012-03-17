@@ -28,6 +28,7 @@ const
   CR = #13;
   SP = #32;
   DQ = #34;
+  US = #47;
   BR = '<br />';
   CRLF = CR + LF;
   LWS_CGI_ENV_COUNT = 36;
