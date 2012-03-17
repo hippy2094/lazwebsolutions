@@ -32,7 +32,9 @@ function LWSURIEncode(const AString: string): string;
 { Decode URI to string. }
 function LWSURIDecode(const AString: string): string;
 { Include path delimiter in an URL. }
-function LWSIncludeURLPathDelimiter(const AString: string): string;
+function LWSIncludeURLPathDelimiter(const AURL: string): string;
+{ Exclude path delimiter in an URL. }
+function LWSExcludeURLPathDelimiter(const AURL: string): string;
 { Get variable name. }
 function LWSGetVariableName(const AString: string): string;
 { Get variable value. }
@@ -187,14 +189,24 @@ begin
   SetLength(Result, VResult - PChar(Result));
 end;
 
-function LWSIncludeURLPathDelimiter(const AString: string): string;
+function LWSIncludeURLPathDelimiter(const AURL: string): string;
 var
-  VLength: Integer;
+  L: Integer;
 begin
-  Result := AString;
-  VLength := Length(Result);
-  if (VLength > 0) and (Result[VLength] <> '/') then
-    Result += '/';
+  Result := AURL;
+  L := Length(Result);
+  if (L > 0) and (Result[L] <> US) then
+    Result += US;
+end;
+
+function LWSExcludeURLPathDelimiter(const AURL: string): string;
+var
+  L : Integer;
+begin
+  L := Length(AURL);
+  if (L > 0) and (AURL[L] = US) then
+    Dec(L);
+  Result := Copy(AURL, 1, L);
 end;
 
 procedure LWSGetVariableNameValue(const AString: string;
