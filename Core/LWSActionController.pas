@@ -15,7 +15,6 @@
 unit LWSActionController;
 
 {$I lazwebsolutions.inc}
-{$DEFINE USELWSCGI}
 
 interface
 
@@ -49,6 +48,7 @@ type
     class function Name: ShortString; virtual;
     constructor Create; virtual;
     procedure Index; virtual; abstract;
+    procedure Clear; virtual; abstract;
     procedure Delete(AValue: TJSONData); virtual;
     procedure Edit(AValue: TJSONData); virtual;
     procedure Extra(const ARequestMethod: ShortString; const APathInfo: string;
@@ -105,6 +105,14 @@ begin
 end;
 {$HINTS ON}
 
+procedure TLWSActionController.New;
+begin
+end;
+
+procedure TLWSActionController.Insert;
+begin
+end;
+
 {$IFDEF USELWSCGI}
 procedure TLWSActionController.RedirectTo(const AActionName: ShortString;
   AControllerName: ShortString);
@@ -128,14 +136,6 @@ end;
 class function TLWSActionController.Name: ShortString;
 begin
   Result := Copy(LowerCase(ClassName), 2, MaxInt);
-end;
-
-procedure TLWSActionController.New;
-begin
-end;
-
-procedure TLWSActionController.Insert;
-begin
 end;
 
 end.
