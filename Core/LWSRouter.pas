@@ -152,7 +152,7 @@ begin
 {$ENDIF}
   if ARequestMethod = LWS_HTTP_REQUEST_METHOD_HEAD then
     Exit;
-  VParser := TJSONParser.Create(LWSPathToJSON(APathInfo, '/'));
+  VParser := TJSONParser.Create(LWSPathToJSON(APathInfo, US));
   try
     FPathInfos := TJSONArray(VParser.Parse);
     VCount := FPathInfos.Count - FSkippedItems;
