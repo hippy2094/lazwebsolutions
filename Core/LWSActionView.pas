@@ -43,6 +43,8 @@ type
     constructor Create(const AElements: array of const;
       const AViewPath: string = ES; const AViewFile: string = ES;
       const AAutoLoaded: Boolean = True); overload;
+    function Index: string;
+    function Link(const ACaption: string): string;
     function LinkTo(const ACaption: string; const AControllerName: ShortString;
       const AActionName: ShortString = ES): string;
     function URLFor(const AControllerName: ShortString;
@@ -85,6 +87,16 @@ begin
   end;
 end;
 
+function TLWSActionView.Index: string;
+begin
+  Result := LWSExcludeURLPathDelimiter(FDomain);
+end;
+
+function TLWSActionView.Link(const ACaption: string): string;
+begin
+  Result := '<a href="' + Index + '">' + ACaption + '</a>';
+end;
+
 function TLWSActionView.LinkTo(const ACaption: string;
   const AControllerName: ShortString; const AActionName: ShortString): string;
 begin
@@ -97,7 +109,7 @@ function TLWSActionView.URLFor(const AControllerName: ShortString;
 begin
   Result := FDomain + AControllerName;
   if AActionName <> ES then
-    Result += '/' + AActionName;
+    Result += US + AActionName;
 end;
 
 function TLWSActionView.FileToString(const AFileName: TFileName;
