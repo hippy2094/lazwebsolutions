@@ -26,7 +26,7 @@ uses
   JSONParser;
 
 type
-  TLWSActionType = (atInsert, atUpdate, atDelete);
+  TLWSActionType = (atInsert, atUpdate, atDelete, atLocate);
 
   TLWSRouterCreateControllerEvent = procedure(
     AController: TLWSActionController) of object;
@@ -185,7 +185,10 @@ begin
                 begin
                   VParams := FController{$IFDEF USELWSCGI}.CGI{$ENDIF}.Params;
                   if Assigned(VParams) and (VParams.Count > 0) then
-                    FController.Locate(VParams)
+                  begin
+                    if Require(atLocate) then
+                      FController.Locate(VParams);
+                  end
                   else
                     FController.Find;
                 end
