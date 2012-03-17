@@ -31,9 +31,7 @@ type
   TLWSRouterCreateControllerEvent = procedure(
     AController: TLWSActionController) of object;
 
-  TLWSRouterMissingControllerEvent = procedure(
-    const AControllerName: ShortString; const APathInfo: string) of object;
-
+  TLWSRouterNotFoundEvent = procedure(const APathInfo: string) of object;
   { TLWSRouter }
 
   TLWSRouter = class
@@ -59,7 +57,7 @@ type
       AControllerClasses: array of TLWSActionControllerClass);
     function Route(const ARequestMethod: ShortString; const APathInfo: string;
       AOnCreateController: TLWSRouterCreateControllerEvent;
-      AOnMissingController: TLWSRouterMissingControllerEvent): Boolean;
+      AOnNotFound: TLWSRouterNotFoundEvent): Boolean;
     property ActionEdit: ShortString read FActionEdit write FActionEdit;
     property ActionNew: ShortString read FActionNew write FActionNew;
     property SkippedItems: Integer read FSkippedItems write FSkippedItems;
@@ -139,7 +137,7 @@ end;
 function TLWSRouter.Route(
   const ARequestMethod: ShortString; const APathInfo: string;
   AOnCreateController: TLWSRouterCreateControllerEvent;
-  AOnMissingController: TLWSRouterMissingControllerEvent): Boolean;
+  AOnNotFound: TLWSRouterNotFoundEvent): Boolean;
 var
   VCount: LongInt;
   VParser: TJSONParser;
@@ -169,6 +167,7 @@ begin
         Routing(ARequestMethod, APathInfo, FPathInfos, FController, VContinue);
         if VContinue then
         begin
+          FController.Clear;
           if ARequestMethod = LWS_HTTP_REQUEST_METHOD_GET then
           begin
             case VCount of
@@ -202,12 +201,11 @@ begin
             if Require(atDelete) then
               FController.Delete(FPathInfos[Succ(FSkippedItems)]);
           end;
-          FController.Extra(ARequestMethod, APathInfo, FPathInfos);
         end;
       end
       else
-        if Assigned(AOnMissingController) then
-          AOnMissingController(VControllerName, APathInfo);
+        if Assigned(AOnNotFound) then
+          AOnNotFound(APathInfo);
     end;
   finally
     VParser.Free;
