@@ -63,7 +63,7 @@ type
     procedure Update(AValue: Int64); virtual;
     procedure MethodNotAllowed; virtual;
 {$IFDEF USELWSCGI}
-    procedure RedirectTo(const AActionName: ShortString = ES;
+    procedure RedirectTo(const AURL: string; const AActionName: ShortString = ES;
       AControllerName: ShortString = ES);
     property CGI: TLWSCGI read FCGI write FCGI;
 {$ELSE}
@@ -136,12 +136,19 @@ begin
 end;
 
 {$IFDEF USELWSCGI}
-procedure TLWSActionController.RedirectTo(const AActionName: ShortString;
-  AControllerName: ShortString);
+procedure TLWSActionController.RedirectTo(const AURL: string;
+  const AActionName: ShortString; AControllerName: ShortString);
+var
+  VURL: string;
 begin
   if AControllerName = ES then
     AControllerName := Name;
-  CGI.Location := View.URLFor(AControllerName, AActionName);
+  CGI.Headers.Clear;
+  if AURL <> ES then
+    VURL := AURL
+  else
+    VURL := View.URLFor(AControllerName, AActionName);
+  CGI.Headers.Add(LWS_HTTP_HEADER_LOCATION + VURL + CRLF);
 end;
 {$ENDIF}
 
