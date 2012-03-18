@@ -61,6 +61,7 @@ type
     procedure New; virtual;
     procedure Show(AValue: Int64); virtual;
     procedure Update(AValue: Int64); virtual;
+    procedure MethodNotAllowed; virtual;
 {$IFDEF USELWSCGI}
     procedure RedirectTo(const AActionName: ShortString = ES;
       AControllerName: ShortString = ES);
@@ -126,6 +127,12 @@ end;
 
 procedure TLWSActionController.New;
 begin
+end;
+
+procedure TLWSActionController.MethodNotAllowed;
+begin
+  SetHTTPStatusCode(LWS_HTTP_STATUS_CODE_METHOD_NOT_ALLOWED,
+    LWS_HTTP_REASON_PHRASE_METHOD_NOT_ALLOWED);
 end;
 
 {$IFDEF USELWSCGI}
