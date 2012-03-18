@@ -154,7 +154,13 @@ begin
   LWSSendMethodEnter('TLWSRouter.Route');
 {$ENDIF}
   if ARequestMethod = LWS_HTTP_REQUEST_METHOD_HEAD then
+  begin
+    Result := True;
+{$IFDEF DEBUG}
+    LWSSendMethodExit('TLWSRouter.Route');
+{$ENDIF}
     Exit;
+  end;
   VParser := TJSONParser.Create(LWSPathToJSON(APathInfo, US));
   try
     FPathInfos := TJSONArray(VParser.Parse);
