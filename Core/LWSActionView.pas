@@ -43,6 +43,7 @@ type
     constructor Create(const AElements: array of const;
       const AViewPath: string = ES; const AViewFile: string = ES;
       const AAutoLoaded: Boolean = True); overload;
+    procedure Clear; override;
     function Index: string;
     function Link(const ACaption: string): string;
     function LinkTo(const ACaption: string; const AControllerName: ShortString;
@@ -85,6 +86,12 @@ begin
     else
       LoadFromFile(AViewFile);
   end;
+end;
+
+procedure TLWSActionView.Clear;
+begin
+  inherited Clear;
+  FContent := '';
 end;
 
 function TLWSActionView.Index: string;
