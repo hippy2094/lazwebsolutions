@@ -177,7 +177,6 @@ begin
             VPathInfoItem := FPathInfos[Succ(FSkippedItems)];
           if ARequestMethod = LWS_HTTP_REQUEST_METHOD_GET then
           begin
-            { TODO: implements StatusCode/ReasonPhrase }
             case VCount of
               1: FController.Index;
               2:
