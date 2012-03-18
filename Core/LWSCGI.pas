@@ -461,7 +461,7 @@ begin
   VHeaders := LWS_HTTP_HEADER_STATUS + IntToStr(FStatusCode) + SP +
     FReasonPhrase + CRLF + LWS_HTTP_HEADER_CONTENT_TYPE +
     FHeaderContentType + CRLF;
-  FHeaders.Text := VHeaders + CRLF;
+  FHeaders.Text := VHeaders;
 end;
 
 procedure TLWSCGI.SetDomain(const AValue: string);
