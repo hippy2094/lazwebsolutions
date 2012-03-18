@@ -40,13 +40,17 @@ type
     FFields: TJSONObject;
     FHeaders: TLWSMemoryStream;
     FParams: TJSONObject;
+    FReasonPhrase: ShortString;
+    FStatusCode: Word;
 {$ENDIF}
     FView: TLWSActionView;
   public
+    constructor Create; virtual;
+    procedure SetHTTPStatusCode(const AStatusCode: Word;
+      const AReasonPhrase: ShortString);
     function GetView: TLWSActionView;
     procedure SetView(const AValue: TLWSActionView);
     class function Name: ShortString; virtual;
-    constructor Create; virtual;
     procedure Index; virtual; abstract;
     procedure Clear; virtual; abstract;
     procedure Delete(AValue: Int64); virtual;
@@ -68,6 +72,8 @@ type
     property Fields: TJSONObject read FFields write FFields;
     property Headers: TLWSMemoryStream read FHeaders write FHeaders;
     property Params: TJSONObject read FParams write FParams;
+    property ReasonPhrase: ShortString read FReasonPhrase write FReasonPhrase;
+    property StatusCode: Word read FStatusCode write FStatusCode;
 {$ENDIF}
     property View: TLWSActionView read GetView write SetView;
   end;
@@ -85,10 +91,14 @@ end;
 {$HINTS OFF}
 procedure TLWSActionController.Delete(AValue: Int64);
 begin
+  SetHTTPStatusCode(LWS_HTTP_STATUS_CODE_NO_CONTENT,
+    LWS_HTTP_REASON_PHRASE_NO_CONTENT);
 end;
 
 procedure TLWSActionController.Edit(AValue: Int64);
 begin
+  SetHTTPStatusCode(LWS_HTTP_STATUS_CODE_NO_CONTENT,
+    LWS_HTTP_REASON_PHRASE_NO_CONTENT);
 end;
 
 procedure TLWSActionController.Locate(AParams: TJSONObject);
@@ -110,6 +120,8 @@ end;
 
 procedure TLWSActionController.Insert;
 begin
+  SetHTTPStatusCode(LWS_HTTP_STATUS_CODE_CREATED,
+    LWS_HTTP_REASON_PHRASE_CREATED);
 end;
 
 procedure TLWSActionController.New;
@@ -125,6 +137,13 @@ begin
   CGI.Location := View.URLFor(AControllerName, AActionName);
 end;
 {$ENDIF}
+
+procedure TLWSActionController.SetHTTPStatusCode(const AStatusCode: Word;
+  const AReasonPhrase: ShortString);
+begin
+{$IFDEF USELWSCGI}CGI.{$ENDIF}StatusCode := AStatusCode;
+{$IFDEF USELWSCGI}CGI.{$ENDIF}ReasonPhrase := AReasonPhrase;
+end;
 
 function TLWSActionController.GetView: TLWSActionView;
 begin
