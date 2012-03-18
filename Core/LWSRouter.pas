@@ -214,18 +214,19 @@ begin
               FController.Insert;
           end
           else
-          if (ARequestMethod = LWS_HTTP_REQUEST_METHOD_PUT) and (VCount > 1) then
+          if ARequestMethod = LWS_HTTP_REQUEST_METHOD_PUT then
           begin
-            if Require(atUpdate) then
+            if (VCount > 1) and Require(atUpdate) then
               FController.Update(VPathInfoItem.AsInt64);
           end
           else
-          if (ARequestMethod = LWS_HTTP_REQUEST_METHOD_DELETE) and
-            (VCount > 1) then
+          if ARequestMethod = LWS_HTTP_REQUEST_METHOD_DELETE then
           begin
-            if Require(atDelete) then
+            if (VCount > 1) and Require(atDelete) then
               FController.Delete(VPathInfoItem.AsInt64);
-          end;
+          end
+          else
+            FController.MethodNotAllowed;
         end;
       end
       else
