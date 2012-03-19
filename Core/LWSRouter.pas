@@ -149,6 +149,7 @@ var
   VParser: TJSONParser;
   VFields: TJSONObject;
   VParams: TJSONObject;
+  _methodIndex: Integer;
   VPathInfoItem: TJSONData;
   VContinue: Boolean = True;
   VActionName, VControllerName: ShortString;
@@ -226,9 +227,9 @@ begin
             VFields := FController{$IFDEF USELWSCGI}.CGI{$ENDIF}.Fields;
             if VCount = 2 then
             begin
-              WriteLn(VFields.AsJSON);
-              if Assigned(VFields) and (VFields.IndexOfName('_method') <> -1) and
-                (VFields['_method'].AsString = 'delete') and
+              _methodIndex := VFields.IndexOfName('_method');
+              if Assigned(VFields) and (_methodIndex <> -1) and
+                (VFields.Items[_methodIndex].AsString = 'delete') and
                 Require(atDelete) then
                 FController.Delete(VPathInfoItem.AsInt64)
               else
