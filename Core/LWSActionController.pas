@@ -117,6 +117,8 @@ end;
 
 procedure TLWSActionController.Update(AValue: Int64);
 begin
+  SetHTTPStatusCode(LWS_HTTP_STATUS_CODE_NO_CONTENT,
+    LWS_HTTP_REASON_PHRASE_NO_CONTENT);
 end;
 {$HINTS ON}
 
