@@ -45,11 +45,16 @@ type
       const AAutoLoaded: Boolean = True); overload;
     procedure Clear; override;
     function Index: string;
+    function ButtonTo(const ACaption: string; const AControllerName: ShortString;
+      const AActionName: ShortString = ES; AValue: ShortString = ES;
+      const AAdditionalPath: string = ES): string;
     function Link(const ACaption: string): string;
     function LinkTo(const ACaption: string; const AControllerName: ShortString;
-      const AActionName: ShortString = ES): string;
+      const AActionName: ShortString = ES;
+      const AAdditionalPath: string = ES): string;
     function URLFor(const AControllerName: ShortString;
-      const AActionName: ShortString = ES): string;
+      const AActionName: ShortString = ES;
+      const AAdditionalPath: string = ES): string;
     function FileToString(const AFileName: TFileName;
       const AUseViewPath: Boolean = True): string;
     function HTMLToString(const AFileName: TFileName;
@@ -99,22 +104,35 @@ begin
   Result := LWSExcludeURLPathDelimiter(FDomain);
 end;
 
+function TLWSActionView.ButtonTo(const ACaption: string;
+  const AControllerName: ShortString; const AActionName: ShortString;
+  AValue: ShortString; const AAdditionalPath: string): string;
+begin
+  if AValue = ES then
+    AValue := 'delete';
+  Result := '<form class="button_to" method="post" action="' +
+    URLFor(AControllerName, AActionName, AAdditionalPath) +
+      '"><input name="_method" value="' + AValue +
+      '" type="hidden"/><input value=' + ACaption + ' type="submit"/></form>';
+end;
+
 function TLWSActionView.Link(const ACaption: string): string;
 begin
   Result := '<a href="' + Index + '">' + ACaption + '</a>';
 end;
 
 function TLWSActionView.LinkTo(const ACaption: string;
-  const AControllerName: ShortString; const AActionName: ShortString): string;
+  const AControllerName: ShortString; const AActionName: ShortString;
+  const AAdditionalPath: string): string;
 begin
-  Result := '<a href="' + URLFor(AControllerName, AActionName) + '">' +
-    ACaption + '</a>';
+  Result := '<a href="' + URLFor(AControllerName, AActionName,
+    AAdditionalPath) + '">' + ACaption + '</a>';
 end;
 
 function TLWSActionView.URLFor(const AControllerName: ShortString;
-  const AActionName: ShortString): string;
+  const AActionName: ShortString; const AAdditionalPath: string): string;
 begin
-  Result := FDomain + AControllerName;
+  Result := FDomain + AControllerName + AAdditionalPath;
   if AActionName <> ES then
     Result += US + AActionName;
 end;
