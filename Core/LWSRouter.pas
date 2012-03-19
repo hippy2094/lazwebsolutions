@@ -37,6 +37,7 @@ type
   TLWSRouter = class
   private
     FActionEdit: ShortString;
+    FActionExclude: ShortString;
     FActionFind: ShortString;
     FActionNew: ShortString;
     FController: TLWSActionController;
@@ -60,6 +61,7 @@ type
       AOnCreateController: TLWSRouterCreateControllerEvent;
       AOnNotFound: TLWSRouterNotFoundEvent): Boolean;
     property ActionEdit: ShortString read FActionEdit write FActionEdit;
+    property ActionExclude: ShortString read FActionExclude write FActionExclude;
     property ActionFind: ShortString read FActionFind write FActionFind;
     property ActionNew: ShortString read FActionNew write FActionNew;
     property SkippedItems: Integer read FSkippedItems write FSkippedItems;
@@ -76,6 +78,7 @@ begin
   FControllerClasses := TList.Create;
   FPathInfos := nil;
   FActionEdit := 'edit';
+  FActionExclude := 'exclude';
   FActionFind := 'find';
   FActionNew := 'new';
   FSkippedItems := 0;
@@ -144,10 +147,11 @@ function TLWSRouter.Route(
 var
   VCount: LongInt;
   VParser: TJSONParser;
+  VFields: TJSONObject;
   VParams: TJSONObject;
   VPathInfoItem: TJSONData;
   VContinue: Boolean = True;
-  VControllerName: ShortString;
+  VActionName, VControllerName: ShortString;
   VControllerClass: TLWSActionControllerClass;
 begin
 {$IFDEF DEBUG}
@@ -186,30 +190,52 @@ begin
             case VCount of
               1: FController.Index;
               2:
-                if VPathInfoItem.AsString = FActionFind then
                 begin
-                  VParams := FController{$IFDEF USELWSCGI}.CGI{$ENDIF}.Params;
-                  if Assigned(VParams) and (VParams.Count > 0) then
+                  VActionName := VPathInfoItem.AsString;
+                  if VActionName = FActionFind then
                   begin
-                    if Require(atLocate) then
-                      FController.Locate(VParams);
+                    VParams := FController{$IFDEF USELWSCGI}.CGI{$ENDIF}.Params;
+                    if Assigned(VParams) and (VParams.Count > 0) then
+                    begin
+                      if Require(atLocate) then
+                        FController.Locate(VParams);
+                    end
+                    else
+                      FController.Find;
                   end
                   else
-                    FController.Find;
-                end
-                else
-                if VPathInfoItem.AsString = FActionNew then
-                  FController.New
-                else
-                  FController.Show(VPathInfoItem.AsInt64);
+                  if VActionName = FActionNew then
+                    FController.New
+                  else
+                    FController.Show(VPathInfoItem.AsInt64);
+                end;
               3:
-                if FPathInfos[FSkippedItems + 2].AsString = FActionEdit then
-                  FController.Edit(VPathInfoItem.AsInt64);
+                begin
+                  VActionName := FPathInfos[FSkippedItems + 2].AsString;
+                  if VActionName = FActionEdit then
+                    FController.Edit(VPathInfoItem.AsInt64)
+                  else
+                  if VActionName = FActionExclude then
+                    FController.Exclude(VPathInfoItem.AsInt64);
+                end;
             end;
           end
           else
           if ARequestMethod = LWS_HTTP_REQUEST_METHOD_POST then
           begin
+            VFields := FController{$IFDEF USELWSCGI}.CGI{$ENDIF}.Fields;
+            if VCount = 2 then
+            begin
+              WriteLn(VFields.AsJSON);
+              if Assigned(VFields) and (VFields.IndexOfName('_method') <> -1) and
+                (VFields['_method'].AsString = 'delete') and
+                Require(atDelete) then
+                FController.Delete(VPathInfoItem.AsInt64)
+              else
+              if Require(atUpdate) then
+                FController.Update(VPathInfoItem.AsInt64);
+            end
+            else
             if Require(atInsert) then
               FController.Insert;
           end
