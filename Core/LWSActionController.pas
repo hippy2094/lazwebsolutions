@@ -55,6 +55,7 @@ type
     procedure Clear; virtual; abstract;
     procedure Delete(AValue: Int64); virtual;
     procedure Edit(AValue: Int64); virtual;
+    procedure Exclude(AValue: Int64); virtual;
     procedure Find; virtual;
     procedure Insert; virtual;
     procedure Locate(AParams: TJSONObject); virtual;
@@ -100,6 +101,10 @@ procedure TLWSActionController.Edit(AValue: Int64);
 begin
   SetHTTPStatusCode(LWS_HTTP_STATUS_CODE_NO_CONTENT,
     LWS_HTTP_REASON_PHRASE_NO_CONTENT);
+end;
+
+procedure TLWSActionController.Exclude(AValue: Int64);
+begin
 end;
 
 procedure TLWSActionController.Locate(AParams: TJSONObject);
