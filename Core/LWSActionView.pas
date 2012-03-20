@@ -98,14 +98,16 @@ begin
   end;
 end;
 
+{$HINTS OFF}
+procedure TLWSActionView.ShowException(var E: Exception; const AReferer: string);
+begin
+end;
+{$HINTS ON}
+
 procedure TLWSActionView.Clear;
 begin
   inherited Clear;
   FContent := '';
-end;
-
-procedure TLWSActionView.ShowException(var E: Exception; const AReferer: string);
-begin
 end;
 
 function TLWSActionView.ButtonTo(const ACaption: string;
