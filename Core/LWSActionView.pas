@@ -48,6 +48,7 @@ type
     procedure Clear; override;
     procedure Index; virtual; abstract;
     procedure NotFound(const APathInfo: string); virtual; abstract;
+    procedure ShowException(var E: Exception; const AReferer: string); virtual;
     function ButtonTo(const ACaption: string; const AControllerName: ShortString;
       const AActionName: ShortString = ES; AValue: ShortString = ES;
       const AAdditionalPath: string = ES): string;
@@ -101,6 +102,10 @@ procedure TLWSActionView.Clear;
 begin
   inherited Clear;
   FContent := '';
+end;
+
+procedure TLWSActionView.ShowException(var E: Exception; const AReferer: string);
+begin
 end;
 
 function TLWSActionView.ButtonTo(const ACaption: string;
