@@ -46,6 +46,8 @@ type
       const AViewPath: string = ES; const AViewFile: string = ES;
       const AAutoLoaded: Boolean = True); overload;
     procedure Clear; override;
+    procedure Index; virtual; abstract;
+    procedure NotFound(const APathInfo: string); virtual; abstract;
     function ButtonTo(const ACaption: string; const AControllerName: ShortString;
       const AActionName: ShortString = ES; AValue: ShortString = ES;
       const AAdditionalPath: string = ES): string;
