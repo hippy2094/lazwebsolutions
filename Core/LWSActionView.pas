@@ -36,19 +36,20 @@ type
     FPath: string;
     FRecursive: Boolean;
     FTagPrefix: ShortString;
+    FURL: string;
     function GetContent: string;
     procedure SetContent(const AValue: string);
+    procedure SetDomain(const AValue: string);
     procedure SetPath(const AValue: string);
   public
     constructor Create(const AElements: array of const;
       const AViewPath: string = ES; const AViewFile: string = ES;
       const AAutoLoaded: Boolean = True); overload;
     procedure Clear; override;
-    function Index: string;
     function ButtonTo(const ACaption: string; const AControllerName: ShortString;
       const AActionName: ShortString = ES; AValue: ShortString = ES;
       const AAdditionalPath: string = ES): string;
-    function Link(const ACaption: string): string;
+    function Link(const ACaption: string; AURL: string = ES): string;
     function LinkTo(const ACaption: string; const AControllerName: ShortString;
       const AActionName: ShortString = ES;
       const AAdditionalPath: string = ES): string;
@@ -62,7 +63,8 @@ type
     procedure Format;
     procedure LoadFromFile(const AFileName: TFileName);
     property Content: string read GetContent write SetContent;
-    property Domain: string read FDomain write FDomain;
+    property Domain: string read FDomain write SetDomain;
+    property URL: string read FURL;
     property Path: string read FPath write SetPath;
     property Recursive: Boolean read FRecursive write FRecursive;
     property TagPrefix: ShortString read FTagPrefix write FTagPrefix;
@@ -99,11 +101,6 @@ begin
   FContent := '';
 end;
 
-function TLWSActionView.Index: string;
-begin
-  Result := LWSExcludeURLPathDelimiter(FDomain);
-end;
-
 function TLWSActionView.ButtonTo(const ACaption: string;
   const AControllerName: ShortString; const AActionName: ShortString;
   AValue: ShortString; const AAdditionalPath: string): string;
@@ -116,9 +113,11 @@ begin
       '" type="hidden"/><input value=' + ACaption + ' type="submit"/></form>';
 end;
 
-function TLWSActionView.Link(const ACaption: string): string;
+function TLWSActionView.Link(const ACaption: string; AURL: string): string;
 begin
-  Result := '<a href="' + Index + '">' + ACaption + '</a>';
+  if AURL = ES then
+    AURL := FURL;
+  Result := '<a href="' + AURL + '">' + ACaption + '</a>';
 end;
 
 function TLWSActionView.LinkTo(const ACaption: string;
@@ -200,6 +199,12 @@ end;
 procedure TLWSActionView.SetContent(const AValue: string);
 begin
   FContent := AValue;
+end;
+
+procedure TLWSActionView.SetDomain(const AValue: string);
+begin
+  FDomain := AValue;
+  FURL := LWSExcludeURLPathDelimiter(AValue);
 end;
 
 procedure TLWSActionView.LoadFromFile(const AFileName: TFileName);
