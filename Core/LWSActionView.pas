@@ -36,10 +36,8 @@ type
     FPath: string;
     FRecursive: Boolean;
     FTagPrefix: ShortString;
-    FURL: string;
     function GetContent: string;
     procedure SetContent(const AValue: string);
-    procedure SetDomain(const AValue: string);
     procedure SetPath(const AValue: string);
   public
     constructor Create(const AElements: array of const;
@@ -66,8 +64,7 @@ type
     procedure Format;
     procedure LoadFromFile(const AFileName: TFileName);
     property Content: string read GetContent write SetContent;
-    property Domain: string read FDomain write SetDomain;
-    property URL: string read FURL;
+    property Domain: string read FDomain write FDomain;
     property Path: string read FPath write SetPath;
     property Recursive: Boolean read FRecursive write FRecursive;
     property TagPrefix: ShortString read FTagPrefix write FTagPrefix;
@@ -125,7 +122,7 @@ end;
 function TLWSActionView.Link(const ACaption: string; AURL: string): string;
 begin
   if AURL = ES then
-    AURL := FURL;
+    AURL := FDomain;
   Result := '<a href="' + AURL + '">' + ACaption + '</a>';
 end;
 
@@ -140,7 +137,8 @@ end;
 function TLWSActionView.URLFor(const AControllerName: ShortString;
   const AActionName: ShortString; const AAdditionalPath: string): string;
 begin
-  Result := FDomain + AControllerName + AAdditionalPath;
+  Result := LWSIncludeURLPathDelimiter(FDomain) + AControllerName +
+    AAdditionalPath;
   if AActionName <> ES then
     Result += US + AActionName;
 end;
@@ -208,12 +206,6 @@ end;
 procedure TLWSActionView.SetContent(const AValue: string);
 begin
   FContent := AValue;
-end;
-
-procedure TLWSActionView.SetDomain(const AValue: string);
-begin
-  FDomain := AValue;
-  FURL := LWSExcludeURLPathDelimiter(AValue);
 end;
 
 procedure TLWSActionView.LoadFromFile(const AFileName: TFileName);
