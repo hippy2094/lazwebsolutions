@@ -64,8 +64,8 @@ type
     procedure Update(AValue: Int64); virtual;
     procedure MethodNotAllowed; virtual;
 {$IFDEF USELWSCGI}
-    procedure RedirectTo(const AURL: string; const AActionName: ShortString = ES;
-      AControllerName: ShortString = ES);
+    procedure RedirectTo(const AURL: string = ES;
+      const AActionName: ShortString = ES; AControllerName: ShortString = ES);
     property CGI: TLWSCGI read FCGI write FCGI;
 {$ELSE}
     property Contents: TLWSMemoryStream read FContents write FContents;
