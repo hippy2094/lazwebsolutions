@@ -84,7 +84,6 @@ type
     FTransferEncoding: ShortString;
     FUserAgent: string;
     procedure InternalShowException;
-    procedure SetDomain(const AValue: string);
     procedure WriteOutput;
     procedure ReadInput;
     procedure SetLocation(const AValue: string);
@@ -118,7 +117,7 @@ type
     property Contents: TLWSMemoryStream read FContents write FContents;
     property ContentType: ShortString read FContentType write FContentType;
     property DocumentRoot: string read FDocumentRoot;
-    property Domain: string read FDomain write SetDomain;
+    property Domain: string read FDomain write FDomain;
     property EnvironmentVariables: TStrings read FEnvironmentVariables
       write FEnvironmentVariables;
     property ETag: string read FETag write FETag;
@@ -462,11 +461,6 @@ begin
     FReasonPhrase + CRLF + LWS_HTTP_HEADER_CONTENT_TYPE +
     FHeaderContentType + CRLF;
   FHeaders.Text := VHeaders;
-end;
-
-procedure TLWSCGI.SetDomain(const AValue: string);
-begin
-  FDomain := LWSIncludeURLPathDelimiter(AValue);
 end;
 
 procedure TLWSCGI.SetLocation(const AValue: string);
