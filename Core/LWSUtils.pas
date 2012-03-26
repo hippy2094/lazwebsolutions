@@ -88,6 +88,9 @@ function LWSPathToJSON(const APath: string; const ADelimiter: Char;
 { File to string. }
 function LWSFileToString(const AFileName: TFileName): string;
 {$IFDEF LWSINLINE}inline;{$ENDIF}
+{ Show password as asterisks. }
+function LWSShowPassword(const APassword: string;
+  const AChar: Char = '*'): string;
 
 implementation
 
@@ -471,6 +474,14 @@ begin
   finally
     Free;
   end;
+end;
+
+function LWSShowPassword(const APassword: string; const AChar: Char): string;
+begin
+  if APassword = ES then
+    Result := ES
+  else
+    Result := StringOfChar(AChar, Length(APassword));
 end;
 
 end.
