@@ -26,8 +26,6 @@ uses
   JSONParser;
 
 type
-  TLWSActionType = (atInsert, atUpdate, atDelete, atLocate);
-
   TLWSRouterCreateControllerEvent = procedure(
     AController: TLWSActionController) of object;
 

@@ -27,6 +27,8 @@ uses
   LWSConsts, LWSActionView, FPJSON;
 
 type
+  TLWSActionType = (atIndex, atNew, atInsert, atShow, atEdit, atUpdate,
+    atExclude, atDelete, atFind, atLocate);
 
   { TLWSActionController }
 
@@ -62,6 +64,7 @@ type
     procedure New; virtual;
     procedure Show(AValue: Int64); virtual;
     procedure Update(AValue: Int64); virtual;
+    function Validate(const AActionType: TLWSActionType): Boolean; virtual;
     procedure MethodNotAllowed; virtual;
 {$IFDEF USELWSCGI}
     procedure RedirectTo(const AURL: string = ES;
@@ -121,6 +124,12 @@ begin
     LWS_HTTP_REASON_PHRASE_NO_CONTENT);
 end;
 {$HINTS ON}
+
+function TLWSActionController.Validate(const AActionType: TLWSActionType
+  ): Boolean;
+begin
+  Result := True;
+end;
 
 procedure TLWSActionController.Find;
 begin
