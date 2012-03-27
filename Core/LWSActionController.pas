@@ -27,7 +27,7 @@ uses
   LWSConsts, LWSActionView, FPJSON;
 
 type
-  TLWSActionType = (atIndex, atNew, atInsert, atShow, atEdit, atUpdate,
+  TLWSActionType = (atNone, atIndex, atNew, atInsert, atShow, atEdit, atUpdate,
     atExclude, atDelete, atFind, atLocate);
 
   { TLWSActionController }
