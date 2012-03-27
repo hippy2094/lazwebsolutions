@@ -30,6 +30,7 @@ type
     AController: TLWSActionController) of object;
 
   TLWSRouterNotFoundEvent = procedure(const APathInfo: string) of object;
+
   { TLWSRouter }
 
   TLWSRouter = class
@@ -178,7 +179,7 @@ begin
         FController := VControllerClass.Create;
         if Assigned(AOnCreateController) then
           AOnCreateController(FController);
-        if FController.Validate(atNone) then
+        if FController.Validate(atUnknow) then
         begin
           Routing(ARequestMethod, APathInfo, FPathInfos, FController, VContinue);
           if VContinue then
@@ -189,7 +190,9 @@ begin
             if ARequestMethod = LWS_HTTP_REQUEST_METHOD_GET then
             begin
               case VCount of
-                1: FController.Index;
+                1:
+                  if FController.Validate(atIndex) then
+                    FController.Index;
                 2:
                   begin
                     VActionName := VPathInfoItem.AsString;
@@ -198,25 +201,34 @@ begin
                       VParams := FController{$IFDEF USELWSCGI}.CGI{$ENDIF}.Params;
                       if Assigned(VParams) and (VParams.Count > 0) then
                       begin
-                        if Require(atLocate) then
+                        if Require(atLocate) and FController.Validate(atLocate) then
                           FController.Locate(VParams);
                       end
                       else
-                        FController.Find;
+                        if FController.Validate(atFind) then
+                          FController.Find;
                     end
                     else
                     if VActionName = FActionNew then
-                      FController.New
+                    begin
+                      if FController.Validate(atNew) then
+                        FController.New;
+                    end
                     else
-                      FController.Show(VPathInfoItem.AsInt64);
+                      if FController.Validate(atShow) then
+                        FController.Show(VPathInfoItem.AsInt64);
                   end;
                 3:
                   begin
                     VActionName := FPathInfos[FSkippedItems + 2].AsString;
                     if VActionName = FActionEdit then
-                      FController.Edit(VPathInfoItem.AsInt64)
+                    begin
+                      if FController.Validate(atEdit) then
+                        FController.Edit(VPathInfoItem.AsInt64);
+                    end
                     else
-                    if VActionName = FActionExclude then
+                    if (VActionName = FActionExclude) and
+                      FController.Validate(atExclude) then
                       FController.Exclude(VPathInfoItem.AsInt64);
                   end;
               end;
@@ -229,27 +241,31 @@ begin
               begin
                 _methodIndex := VFields.IndexOfName('_method');
                 if Assigned(VFields) and (_methodIndex <> -1) and
-                  (VFields.Items[_methodIndex].AsString = 'delete') and
-                  Require(atDelete) then
-                  FController.Delete(VPathInfoItem.AsInt64)
+                  (VFields.Items[_methodIndex].AsString = 'delete') then
+                begin
+                  if Require(atDelete) and FController.Validate(atDelete) then
+                    FController.Delete(VPathInfoItem.AsInt64);
+                end
                 else
-                if Require(atUpdate) then
+                if Require(atUpdate) and FController.Validate(atUpdate) then
                   FController.Update(VPathInfoItem.AsInt64);
               end
               else
-              if Require(atInsert) then
+              if Require(atInsert) and FController.Validate(atInsert) then
                 FController.Insert;
             end
             else
             if ARequestMethod = LWS_HTTP_REQUEST_METHOD_PUT then
             begin
-              if (VCount > 1) and Require(atUpdate) then
+              if (VCount > 1) and Require(atUpdate) and
+                FController.Validate(atUpdate) then
                 FController.Update(VPathInfoItem.AsInt64);
             end
             else
             if ARequestMethod = LWS_HTTP_REQUEST_METHOD_DELETE then
             begin
-              if (VCount > 1) and Require(atDelete) then
+              if (VCount > 1) and Require(atDelete) and
+                FController.Validate(atDelete) then
                 FController.Delete(VPathInfoItem.AsInt64);
             end
             else
