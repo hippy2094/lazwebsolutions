@@ -61,7 +61,7 @@ type
     procedure Exclude(AValue: Int64); virtual;
     procedure Find; virtual;
     procedure Insert; virtual;
-    procedure JSON; virtual;
+    procedure JSON(AFields: TJSONObject); virtual;
     procedure Locate(AParams: TJSONObject); virtual;
     procedure New; virtual;
     procedure Show(AValue: Int64); virtual;
@@ -145,7 +145,7 @@ begin
     LWS_HTTP_REASON_PHRASE_CREATED);
 end;
 
-procedure TLWSActionController.JSON;
+procedure TLWSActionController.JSON(AFields: TJSONObject);
 begin
 end;
 

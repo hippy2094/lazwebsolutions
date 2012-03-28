@@ -224,12 +224,6 @@ begin
                         end;
                     end
                     else
-                    if VActionName = FActionJSON then
-                    begin
-                      FController.Allowed := True;
-                      FController.JSON;
-                    end
-                    else
                     if VActionName = FActionNew then
                     begin
                       if FController.Validate(atNew) then
@@ -272,21 +266,30 @@ begin
               VFields := FController{$IFDEF USELWSCGI}.CGI{$ENDIF}.Fields;
               if VCount = 2 then
               begin
-                _methodIndex := VFields.IndexOfName('_method');
-                if Assigned(VFields) and (_methodIndex <> -1) and
-                  (VFields.Items[_methodIndex].AsString = 'delete') then
-                begin
-                  if Require(atDelete) and FController.Validate(atDelete) then
-                  begin
-                    FController.Allowed := True;
-                    FController.Delete(VPathInfoItem.AsInt64);
-                  end;
-                end
-                else
-                if Require(atUpdate) and FController.Validate(atUpdate) then
+                VActionName := VPathInfoItem.AsString;
+                if VActionName = FActionJSON then
                 begin
                   FController.Allowed := True;
-                  FController.Update(VPathInfoItem.AsInt64);
+                  FController.JSON(VFields);
+                end
+                else
+                begin
+                  _methodIndex := VFields.IndexOfName('_method');
+                  if Assigned(VFields) and (_methodIndex <> -1) and
+                    (VFields.Items[_methodIndex].AsString = 'delete') then
+                  begin
+                    if Require(atDelete) and FController.Validate(atDelete) then
+                    begin
+                      FController.Allowed := True;
+                      FController.Delete(VPathInfoItem.AsInt64);
+                    end;
+                  end
+                  else
+                  if Require(atUpdate) and FController.Validate(atUpdate) then
+                  begin
+                    FController.Allowed := True;
+                    FController.Update(VPathInfoItem.AsInt64);
+                  end;
                 end;
               end
               else
