@@ -133,6 +133,10 @@ function TLWSActionController.Validate(const AActionType: TLWSActionType
 begin
   Result := True;
 end;
+
+procedure TLWSActionController.JSON(AFields: TJSONObject);
+begin
+end;
 {$HINTS ON}
 
 procedure TLWSActionController.Find;
@@ -143,10 +147,6 @@ procedure TLWSActionController.Insert;
 begin
   SetHTTPStatusCode(LWS_HTTP_STATUS_CODE_CREATED,
     LWS_HTTP_REASON_PHRASE_CREATED);
-end;
-
-procedure TLWSActionController.JSON(AFields: TJSONObject);
-begin
 end;
 
 procedure TLWSActionController.New;
