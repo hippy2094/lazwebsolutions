@@ -61,6 +61,7 @@ type
     procedure Exclude(AValue: Int64); virtual;
     procedure Find; virtual;
     procedure Insert; virtual;
+    procedure JSON; virtual;
     procedure Locate(AParams: TJSONObject); virtual;
     procedure New; virtual;
     procedure Show(AValue: Int64); virtual;
@@ -142,6 +143,10 @@ procedure TLWSActionController.Insert;
 begin
   SetHTTPStatusCode(LWS_HTTP_STATUS_CODE_CREATED,
     LWS_HTTP_REASON_PHRASE_CREATED);
+end;
+
+procedure TLWSActionController.JSON;
+begin
 end;
 
 procedure TLWSActionController.New;
