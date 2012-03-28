@@ -41,6 +41,7 @@ type
     FActionNew: ShortString;
     FController: TLWSActionController;
     FControllerClasses: TList;
+    FFound: Boolean;
     FPathInfos: TJSONArray;
     FSkippedItems: Integer;
   protected
@@ -63,6 +64,7 @@ type
     property ActionExclude: ShortString read FActionExclude write FActionExclude;
     property ActionFind: ShortString read FActionFind write FActionFind;
     property ActionNew: ShortString read FActionNew write FActionNew;
+    property Found: Boolean read FFound write FFound;
     property SkippedItems: Integer read FSkippedItems write FSkippedItems;
   end;
 
@@ -80,6 +82,7 @@ begin
   FActionExclude := 'exclude';
   FActionFind := 'find';
   FActionNew := 'new';
+  FFound := True;
   FSkippedItems := 0;
 end;
 
@@ -192,7 +195,10 @@ begin
               case VCount of
                 1:
                   if FController.Validate(atIndex) then
+                  begin
+                    FController.Allowed := True;
                     FController.Index;
+                  end;
                 2:
                   begin
                     VActionName := VPathInfoItem.AsString;
@@ -202,21 +208,33 @@ begin
                       if Assigned(VParams) and (VParams.Count > 0) then
                       begin
                         if Require(atLocate) and FController.Validate(atLocate) then
+                        begin
+                          FController.Allowed := True;
                           FController.Locate(VParams);
+                        end;
                       end
                       else
                         if FController.Validate(atFind) then
+                        begin
+                          FController.Allowed := True;
                           FController.Find;
+                        end;
                     end
                     else
                     if VActionName = FActionNew then
                     begin
                       if FController.Validate(atNew) then
+                      begin
+                        FController.Allowed := True;
                         FController.New;
+                      end;
                     end
                     else
                       if FController.Validate(atShow) then
+                      begin
+                        FController.Allowed := True;
                         FController.Show(VPathInfoItem.AsInt64);
+                      end;
                   end;
                 3:
                   begin
@@ -224,12 +242,18 @@ begin
                     if VActionName = FActionEdit then
                     begin
                       if FController.Validate(atEdit) then
+                      begin
+                        FController.Allowed := True;
                         FController.Edit(VPathInfoItem.AsInt64);
+                      end;
                     end
                     else
                     if (VActionName = FActionExclude) and
                       FController.Validate(atExclude) then
+                    begin
+                      FController.Allowed := True;
                       FController.Exclude(VPathInfoItem.AsInt64);
+                    end;
                   end;
               end;
             end
@@ -244,32 +268,50 @@ begin
                   (VFields.Items[_methodIndex].AsString = 'delete') then
                 begin
                   if Require(atDelete) and FController.Validate(atDelete) then
+                  begin
+                    FController.Allowed := True;
                     FController.Delete(VPathInfoItem.AsInt64);
+                  end;
                 end
                 else
                 if Require(atUpdate) and FController.Validate(atUpdate) then
+                begin
+                  FController.Allowed := True;
                   FController.Update(VPathInfoItem.AsInt64);
+                end;
               end
               else
               if Require(atInsert) and FController.Validate(atInsert) then
+              begin
+                FController.Allowed := True;
                 FController.Insert;
+              end;
             end
             else
             if ARequestMethod = LWS_HTTP_REQUEST_METHOD_PUT then
             begin
               if (VCount > 1) and Require(atUpdate) and
                 FController.Validate(atUpdate) then
+              begin
+                FController.Allowed := True;
                 FController.Update(VPathInfoItem.AsInt64);
+              end;
             end
             else
             if ARequestMethod = LWS_HTTP_REQUEST_METHOD_DELETE then
             begin
               if (VCount > 1) and Require(atDelete) and
                 FController.Validate(atDelete) then
+              begin
+                FController.Allowed := True;
                 FController.Delete(VPathInfoItem.AsInt64);
+              end;
             end
             else
               FController.MethodNotAllowed;
+            if (not FController.Allowed) or (not FFound) and
+              Assigned(AOnNotFound) then
+              AOnNotFound(APathInfo);
           end;
         end;
       end
