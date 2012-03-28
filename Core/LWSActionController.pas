@@ -34,6 +34,7 @@ type
 
   TLWSActionController = class
   private
+    FAllowed: Boolean;
 {$IFDEF USELWSCGI}
     FCGI: TLWSCGI;
 {$ELSE}
@@ -80,6 +81,7 @@ type
     property ReasonPhrase: ShortString read FReasonPhrase write FReasonPhrase;
     property StatusCode: Word read FStatusCode write FStatusCode;
 {$ENDIF}
+    property Allowed: Boolean read FAllowed write FAllowed;
     property View: TLWSActionView read GetView write SetView;
   end;
 
@@ -91,6 +93,7 @@ implementation
 
 constructor TLWSActionController.Create;
 begin
+  FAllowed := False;
 end;
 
 {$HINTS OFF}
