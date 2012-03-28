@@ -38,6 +38,7 @@ type
     FActionEdit: ShortString;
     FActionExclude: ShortString;
     FActionFind: ShortString;
+    FActionJSON: ShortString;
     FActionNew: ShortString;
     FController: TLWSActionController;
     FControllerClasses: TList;
@@ -63,6 +64,7 @@ type
     property ActionEdit: ShortString read FActionEdit write FActionEdit;
     property ActionExclude: ShortString read FActionExclude write FActionExclude;
     property ActionFind: ShortString read FActionFind write FActionFind;
+    property ActionJSON: ShortString read FActionJSON write FActionJSON;
     property ActionNew: ShortString read FActionNew write FActionNew;
     property Found: Boolean read FFound write FFound;
     property SkippedItems: Integer read FSkippedItems write FSkippedItems;
@@ -81,6 +83,7 @@ begin
   FActionEdit := 'edit';
   FActionExclude := 'exclude';
   FActionFind := 'find';
+  FActionJSON := 'json';
   FActionNew := 'new';
   FFound := True;
   FSkippedItems := 0;
@@ -219,6 +222,12 @@ begin
                           FController.Allowed := True;
                           FController.Find;
                         end;
+                    end
+                    else
+                    if VActionName = FActionJSON then
+                    begin
+                      FController.Allowed := True;
+                      FController.JSON;
                     end
                     else
                     if VActionName = FActionNew then
