@@ -113,10 +113,11 @@ function TLWSActionView.ButtonTo(const ACaption: string;
 begin
   if AValue = ES then
     AValue := 'delete';
-  Result := '<form class="button_to" method="post" action="' +
+  Result := '<form class="button_to_form" method="post" action="' +
     URLFor(AControllerName, AActionName, AAdditionalPath) +
       '"><input name="_method" value="' + AValue +
-      '" type="hidden"/><input value=' + ACaption + ' type="submit"/></form>';
+      '" type="hidden"/><input value=' + ACaption +
+      ' type="submit" class="button_to"/></form>';
 end;
 
 function TLWSActionView.Link(const ACaption: string; AURL: string): string;
