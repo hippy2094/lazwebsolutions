@@ -185,9 +185,9 @@ begin
         FController := VControllerClass.Create;
         if Assigned(AOnCreateController) then
           AOnCreateController(FController);
+        Routing(ARequestMethod, APathInfo, FPathInfos, FController, VContinue);
         if FController.Validate(atUnknow) then
         begin
-          Routing(ARequestMethod, APathInfo, FPathInfos, FController, VContinue);
           if VContinue then
           begin
             FController.Clear;
@@ -320,7 +320,13 @@ begin
               end;
             end
             else
+            begin
               FController.MethodNotAllowed;
+{$IFDEF DEBUG}
+                LWSSendMethodExit('TLWSRouter.Route');
+{$ENDIF}
+              Exit;
+            end;
             if (not FController.Allowed) or (not FFound) and
               Assigned(AOnNotFound) then
               AOnNotFound(APathInfo);
