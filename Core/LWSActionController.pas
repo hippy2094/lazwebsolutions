@@ -47,12 +47,13 @@ type
     FStatusCode: Word;
 {$ENDIF}
     FView: TLWSActionView;
+  protected
+    function GetView: TLWSActionView;
+    procedure SetView(const AValue: TLWSActionView);
   public
     constructor Create; virtual;
     procedure SetHTTPStatusCode(const AStatusCode: Word;
       const AReasonPhrase: ShortString);
-    function GetView: TLWSActionView;
-    procedure SetView(const AValue: TLWSActionView);
     class function Name: ShortString; virtual;
     procedure Display;
     procedure Index; virtual; abstract;
