@@ -327,9 +327,11 @@ begin
 {$ENDIF}
               Exit;
             end;
-            if (not FController.Allowed) or (not FFound) and
-              Assigned(AOnNotFound) then
-              AOnNotFound(APathInfo);
+            if FController.Allowed and FFound then
+              FController.Display
+            else
+              if Assigned(AOnNotFound) then
+                AOnNotFound(APathInfo);
           end;
         end;
       end

@@ -43,10 +43,8 @@ type
     constructor Create(const AElements: array of const;
       const AViewPath: string = ES; const AViewFile: string = ES;
       const AAutoLoaded: Boolean = True); overload;
+    procedure Load(const ADir, AContent: string); virtual; abstract;
     procedure Clear; override;
-    procedure Index; virtual; abstract;
-    procedure NotFound(const APathInfo: string); virtual; abstract;
-    procedure ShowException(var E: Exception; const AReferer: string); virtual;
     function ButtonTo(const ACaption: string; const AControllerName: ShortString;
       const AActionName: ShortString = ES; AValue: ShortString = ES;
       const AAdditionalPath: string = ES): string;
@@ -103,12 +101,6 @@ begin
       LoadFromFile(AViewFile);
   end;
 end;
-
-{$HINTS OFF}
-procedure TLWSActionView.ShowException(var E: Exception; const AReferer: string);
-begin
-end;
-{$HINTS ON}
 
 procedure TLWSActionView.Clear;
 begin
@@ -275,6 +267,7 @@ end;
 
 procedure TLWSActionView.LoadFromFile(const AFileName: TFileName);
 begin
+  Clear;
   if not DirectoryExists(FPath) then
     raise ELWSActionView.CreateFmt(LWS_VIEW_PATH_NOT_FOUND_ERR,
       [FPath, ClassName]);

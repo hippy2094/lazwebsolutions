@@ -54,6 +54,7 @@ type
     function GetView: TLWSActionView;
     procedure SetView(const AValue: TLWSActionView);
     class function Name: ShortString; virtual;
+    procedure Display;
     procedure Index; virtual; abstract;
     procedure Clear; virtual; abstract;
     procedure Delete(AValue: Int64); virtual;
@@ -196,6 +197,11 @@ end;
 class function TLWSActionController.Name: ShortString;
 begin
   Result := Copy(LowerCase(ClassName), 2, MaxInt);
+end;
+
+procedure TLWSActionController.Display;
+begin
+{$IFDEF USELWSCGI}CGI.{$ENDIF}Contents.Text := FView.Content;
 end;
 
 end.
