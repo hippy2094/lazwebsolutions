@@ -61,6 +61,15 @@ type
       const AUseViewPath: Boolean = True): string;
     function HTMLToString(const AFileName: TFileName;
       const AUseViewPath: Boolean = True): string;
+    function Back(const ACaption, AHTTPReferer: string): string;
+    function Error(const AMsg: string): string;
+    function ErrorFmt(const AFmt: string; AArgs: array of const): string;
+    function Msg(const AMsg: string): string;
+    function MsgFmt(const AFmt: string; AArgs: array of const): string;
+    function MakeOptions(const AOptions: array of string;
+      const ASelected: string): string;
+    function MakeOptions(const AOptions, AValues: array of string;
+      const ASelected: string): string;
     procedure Format;
     procedure LoadFromFile(const AFileName: TFileName);
     property Content: string read GetContent write SetContent;
@@ -157,6 +166,61 @@ function TLWSActionView.HTMLToString(const AFileName: TFileName;
   const AUseViewPath: Boolean): string;
 begin
   Result := FileToString(AFileName + '.lws.html', AUseViewPath);
+end;
+
+function TLWSActionView.Back(const ACaption, AHTTPReferer: string): string;
+begin
+  Result := Link(ACaption, AHTTPReferer);
+end;
+
+function TLWSActionView.Error(const AMsg: string): string;
+begin
+  Result := '<p style="color: red" class="_lwserror">' + AMsg + '</p>';
+end;
+
+function TLWSActionView.ErrorFmt(const AFmt: string;
+  AArgs: array of const): string;
+begin
+  Result := SysUtils.Format('<p style="color: red" class="_lwserror">' + AFmt +
+    '</p>', AArgs);
+end;
+
+function TLWSActionView.Msg(const AMsg: string): string;
+begin
+  Result := '<p style="color: green" class="_lwsmsg">' + AMsg + '</p>';
+end;
+
+function TLWSActionView.MsgFmt(const AFmt: string;
+  AArgs: array of const): string;
+begin
+  Result := SysUtils.Format('<p style="color: green" class="_lwsmsg">' + AFmt +
+    '</p>', AArgs);
+end;
+
+function TLWSActionView.MakeOptions(const AOptions: array of string;
+  const ASelected: string): string;
+var
+  I: Integer;
+begin
+  for I := 0 to High(AOptions) do
+    if AOptions[I] = ASelected then
+      Result += '<option selected>' + AOptions[I] + '</option>'
+    else
+      Result += '<option>' + AOptions[I] + '</option>';
+end;
+
+function TLWSActionView.MakeOptions(const AOptions, AValues: array of string;
+  const ASelected: string): string;
+var
+  I: Integer;
+begin
+  for I := 0 to High(AOptions) do
+    if AOptions[I] = ASelected then
+      Result += '<option value="' + AValues[I] + '" selected>' + AOptions[I] +
+        '</option>'
+    else
+      Result += '<option value="' + AValues[I] + '">' + AOptions[I] +
+        '</option>';
 end;
 
 procedure TLWSActionView.Format;
