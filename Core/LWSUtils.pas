@@ -19,7 +19,7 @@ unit LWSUtils;
 interface
 
 uses
-  LWSConsts, FPJSON, SysUtils, Classes;
+  LWSConsts, FPJSON, SysUtils, Classes, MD5, SHA1;
 
 type
   TLWSHTTPAcceptEncodingSet = set of (ceDeflate, ceGzip, ceSdch, ceXGzip);
@@ -91,6 +91,10 @@ function LWSFileToString(const AFileName: TFileName): string;
 { Show password as asterisks. }
 function LWSShowPassword(const APassword: string;
   const AChar: Char = '*'): string;
+{ Generate MD5 string from a string. (see: http://en.wikipedia.org/wiki/MD5) }
+function LWSMD5(const AString: string): string;
+{ Generate SHA1 string from a string. (see: http://en.wikipedia.org/wiki/SHA-1) }
+function LWSSHA1(const AString: string): string;
 
 implementation
 
@@ -482,6 +486,16 @@ begin
     Result := ES
   else
     Result := StringOfChar(AChar, Length(APassword));
+end;
+
+function LWSMD5(const AString: string): string;
+begin
+  Result := MD5Print(MD5String(AString));
+end;
+
+function LWSSHA1(const AString: string): string;
+begin
+  Result := SHA1Print(SHA1String(AString));
 end;
 
 end.
