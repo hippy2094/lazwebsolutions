@@ -250,10 +250,7 @@ var
   I, J, VPos: Integer;
   S, VName, VValue, VResult: string;
 begin
-  if AUseURIDecode then
-    Result := StringToJSONString(LWSURIDecode(AParamString))
-  else
-    Result := StringToJSONString(AParamString);
+  Result := StringToJSONString(AParamString);
   if Length(Result) = 0 then
   begin
     Result := '{}';
@@ -301,7 +298,10 @@ begin
       VValue := Copy(Result, Succ(VPos), MaxInt);
     VResult := DQ + VName + '": "' + VValue + DQ;
   end;
-  Result := '{ ' + VResult + ' }';
+  if AUseURIDecode then
+    Result := '{ ' + LWSURIDecode(VResult) + ' }'
+  else
+    Result := '{ ' + VResult + ' }';
 end;
 
 function LWSDateTimeToGMT(const ADateTime: TDateTime): string;
@@ -433,10 +433,7 @@ var
   S: string;
   I, L: LongInt;
 begin
-  if AUseURIDecode then
-    Result := LWSURIDecode(APath)
-  else
-    Result := APath;
+  Result := APath;
   L := Length(Result);
   if L < 2 then
   begin
@@ -459,7 +456,10 @@ begin
   L := Length(S);
   if S[L] <> DQ then
     Insert(DQ, S, L + 1);
-  Result := '[' + S + ']';
+  if AUseURIDecode then
+    Result := '[' + LWSURIDecode(S) + ']'
+  else
+    Result := '[' + S + ']';
 end;
 
 function LWSFileToString(const AFileName: TFileName): string;
