@@ -43,7 +43,6 @@ type
     constructor Create(const AElements: array of const;
       const AViewPath: string = ES; const AViewFile: string = ES;
       const AAutoLoaded: Boolean = True); overload;
-    procedure Load(const ADir, AContent: string); virtual; abstract;
     procedure Clear; override;
     function ButtonTo(const ACaption: string; const AControllerName: ShortString;
       const AActionName: ShortString = ES; AValue: ShortString = ES;
