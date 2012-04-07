@@ -56,8 +56,8 @@ type
       const AReasonPhrase: ShortString);
     class function Name: ShortString; virtual;
     procedure Display;
+    procedure Clear; virtual;
     procedure Index; virtual; abstract;
-    procedure Clear; virtual; abstract;
     procedure Delete(AValue: Int64); virtual;
     procedure Edit(AValue: Int64); virtual;
     procedure Exclude(AValue: Int64); virtual;
@@ -204,6 +204,10 @@ begin
 {$IFDEF USELWSCGI}CGI.{$ENDIF}Contents.Text := FView.Content
   else
 {$IFDEF USELWSCGI}CGI.{$ENDIF}Contents.Text := FView.AsJSON;
+end;
+
+procedure TLWSActionController.Clear;
+begin
 end;
 
 end.
