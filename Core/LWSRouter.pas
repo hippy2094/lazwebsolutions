@@ -48,6 +48,8 @@ type
   protected
     function FindControllerClass(
       const AName: ShortString): TLWSActionControllerClass;
+    procedure FindingControllerClass(
+      AControllerClass: TLWSActionControllerClass); virtual;
     function Require(const AActionType: TLWSActionType): Boolean; virtual;
     procedure Routing(const ARequestMethod: ShortString;
       const APathInfo: string; APathInfos: TJSONArray;
@@ -110,6 +112,11 @@ procedure TLWSRouter.Routing(const ARequestMethod: ShortString;
   AController: TLWSActionController; var AContinue: Boolean);
 begin
 end;
+
+procedure TLWSRouter.FindingControllerClass(
+  AControllerClass: TLWSActionControllerClass);
+begin
+end;
 {$HINTS ON}
 
 function TLWSRouter.FindControllerClass(const AName: ShortString
@@ -122,6 +129,7 @@ begin
   for I := 0 to Pred(FControllerClasses.Count) do
   begin
     VClass := TLWSActionControllerClass(FControllerClasses[I]);
+    FindingControllerClass(VClass);
     if CompareText(AName, VClass.Name) = 0 then
     begin
       Result := VClass;
