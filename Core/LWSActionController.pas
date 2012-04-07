@@ -201,9 +201,15 @@ end;
 procedure TLWSActionController.Display;
 begin
   if FView.Content <> ES then
-{$IFDEF USELWSCGI}CGI.{$ENDIF}Contents.Text := FView.Content
+  begin
+    FView.Format;
+{$IFDEF USELWSCGI}CGI.{$ENDIF}Contents.Text := FView.Content;
+  end
   else
+  begin
+    JSON({$IFDEF USELWSCGI}CGI.{$ENDIF}Fields);
 {$IFDEF USELWSCGI}CGI.{$ENDIF}Contents.Text := FView.AsJSON;
+  end;
 end;
 
 procedure TLWSActionController.Clear;
