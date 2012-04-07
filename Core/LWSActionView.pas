@@ -36,8 +36,6 @@ type
     FPath: string;
     FRecursive: Boolean;
     FTagPrefix: ShortString;
-    function GetContent: string;
-    procedure SetContent(const AValue: string);
     procedure SetPath(const AValue: string);
   public
     constructor Create(const AElements: array of const;
@@ -69,7 +67,7 @@ type
       const ASelected: string): string;
     procedure Format;
     procedure LoadFromFile(const AFileName: TFileName);
-    property Content: string read GetContent write SetContent;
+    property Content: string read FContent write FContent;
     property Domain: string read FDomain write FDomain;
     property Path: string read FPath write SetPath;
     property Recursive: Boolean read FRecursive write FRecursive;
@@ -251,17 +249,6 @@ end;
 procedure TLWSActionView.SetPath(const AValue: string);
 begin
   FPath := IncludeTrailingPathDelimiter(AValue);
-end;
-
-function TLWSActionView.GetContent: string;
-begin
-  Format;
-  Result := FContent;
-end;
-
-procedure TLWSActionView.SetContent(const AValue: string);
-begin
-  FContent := AValue;
 end;
 
 procedure TLWSActionView.LoadFromFile(const AFileName: TFileName);
