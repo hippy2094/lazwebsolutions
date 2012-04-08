@@ -35,9 +35,9 @@ type
   TLWSActionController = class
   private
     FAllowed: Boolean;
+    FUseJSON: Boolean;
 {$IFDEF USELWSCGI}
     FCGI: TLWSCGI;
-    FUseJSON: Boolean;
 {$ELSE}
     FContents: TLWSMemoryStream;
     FEnvironmentVariables: TStrings;
