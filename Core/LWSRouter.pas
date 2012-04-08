@@ -335,9 +335,7 @@ begin
 {$ENDIF}
               Exit;
             end;
-            if FController.Allowed and FFound then
-              FController.Display
-            else
+            if not (FController.Allowed and FFound and FController.Display) then
               if Assigned(AOnNotFound) then
                 AOnNotFound(APathInfo);
           end;

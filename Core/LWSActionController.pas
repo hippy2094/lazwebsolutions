@@ -37,6 +37,7 @@ type
     FAllowed: Boolean;
 {$IFDEF USELWSCGI}
     FCGI: TLWSCGI;
+    FUseJSON: Boolean;
 {$ELSE}
     FContents: TLWSMemoryStream;
     FEnvironmentVariables: TStrings;
@@ -55,7 +56,7 @@ type
     procedure SetHTTPStatusCode(const AStatusCode: Word;
       const AReasonPhrase: ShortString);
     class function Name: ShortString; virtual;
-    procedure Display;
+    function Display: Boolean;
     procedure Clear; virtual;
     procedure Index; virtual; abstract;
     procedure Delete(AValue: Int64); virtual;
@@ -85,6 +86,7 @@ type
     property StatusCode: Word read FStatusCode write FStatusCode;
 {$ENDIF}
     property Allowed: Boolean read FAllowed write FAllowed;
+    property UseJSON: Boolean read FUseJSON write FUseJSON;
     property View: TLWSActionView read GetView write SetView;
   end;
 
@@ -97,6 +99,7 @@ implementation
 constructor TLWSActionController.Create;
 begin
   FAllowed := False;
+  FUseJSON := False;
 end;
 
 {$HINTS OFF}
@@ -198,15 +201,19 @@ begin
   Result := Copy(LowerCase(ClassName), 2, MaxInt);
 end;
 
-procedure TLWSActionController.Display;
+function TLWSActionController.Display: Boolean;
 begin
   if FView.Content <> ES then
   begin
+    Result := True;
     FView.Format;
 {$IFDEF USELWSCGI}CGI.{$ENDIF}Contents.Text := FView.Content;
   end
   else
   begin
+    Result := FUseJSON;
+    if not Result then
+      Exit;
     JSON({$IFDEF USELWSCGI}CGI.{$ENDIF}Fields);
 {$IFDEF USELWSCGI}CGI.{$ENDIF}Contents.Text := FView.AsJSON;
   end;
