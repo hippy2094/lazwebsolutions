@@ -29,8 +29,12 @@ type
   end;
 
   procedure TCGI.FillHeaders;
+  var
+    VHeader: string;
   begin
-    Headers.Text := FSessions.Header + CRLF;
+    VHeader := FSessions.Header;
+    if VHeader <> ES then
+      Headers.Add(VHeader);
     inherited;
   end;
 
