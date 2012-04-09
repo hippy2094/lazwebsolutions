@@ -555,7 +555,6 @@ begin
     FillHeaders;
     Finit;
     WriteOutput;
-Headers.SaveToFile('C:\Users\silvioprog\Desktop\l\'+FormatDateTime('hhnnsszzz',now)+'-HEADER.txt');
   except
     on E: Exception do
       try
