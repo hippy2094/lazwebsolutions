@@ -30,7 +30,7 @@ type
 
   procedure TCGI.FillHeaders;
   begin
-    Headers.Text := FSessions.Header;
+    Headers.Text := FSessions.Header + CRLF;
     inherited;
   end;
 

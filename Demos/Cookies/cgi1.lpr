@@ -4,6 +4,7 @@ program cgi1;
 
 uses
   LWSCGI,
+  LWSConsts,
   LWSCookies,
   SysUtils,
   DateUtils;
@@ -31,7 +32,7 @@ type
 
   procedure TCGI.FillHeaders;
   begin
-    Headers.Text := FCookies.Header;
+    Headers.Text := FCookies.Header + CRLF;
     inherited;
   end;
 
