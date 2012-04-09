@@ -53,7 +53,7 @@ type
     if FCookies.IndexOfName('welcome', True) = -1 then
     begin
       Contents.Add('	Welcome!');
-      FCookies.SetCookie('welcome', 'none', IncHour(Now, 3));
+      FCookies.SetCookie('welcome', 'none', IncHour(Now, 10));
     end
     else
       Contents.Add('	Welcome again!');
