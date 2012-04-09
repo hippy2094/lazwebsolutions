@@ -498,7 +498,7 @@ begin
   if Trim(FLocation) <> ES { 30x status } then
   begin
     VHeaders += LWS_HTTP_HEADER_LOCATION + FLocation;
-    FHeaders.Text := VHeaders + CRLF;
+    FHeaders.Add(VHeaders);
   end
   else
   begin
@@ -555,6 +555,7 @@ begin
     FillHeaders;
     Finit;
     WriteOutput;
+Headers.SaveToFile('C:\Users\silvioprog\Desktop\l\'+FormatDateTime('hhnnsszzz',now)+'-HEADER.txt');
   except
     on E: Exception do
       try
