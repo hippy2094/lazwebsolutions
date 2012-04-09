@@ -181,7 +181,9 @@ begin
   LWSSendMethodEnter('TLWSSessions.Finish');
 {$ENDIF}
   FWriteJSONFile := False;
-  Result := DeleteFile(FFileName);
+  Result := FileExists(FFileName);
+  if Result then
+    DeleteFile(FFileName);
 {$IFDEF DEBUG}
   LWSSendMethodExit('TLWSSessions.Finish');
 {$ENDIF}
