@@ -49,7 +49,7 @@ type
     Contents.Add('<html lang="en-US">');
     Contents.Add('<head>');
     Contents.Add('	<meta charset="UTF-8">');
-    Contents.Add('	<title>Cookies</title>');
+    Contents.Add('	<title>Sessions</title>');
     Contents.Add('</head>');
     Contents.Add('<body>');
     if FSessions.Count = 0 then
