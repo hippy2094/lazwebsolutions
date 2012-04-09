@@ -155,8 +155,11 @@ begin
   MakeID;
   FFileName := FSavePath + LWS_SESSION_PREFIX + FID;
   FFile := TMemoryStream.Create;
-  if FileExists(FFileName) then
-    FFile.LoadFromFile(FFileName);
+  try
+    if FileExists(FFileName) then
+      FFile.LoadFromFile(FFileName);
+  except
+  end;
   VJSONData := nil;
   VJSONParser := TJSONParser.Create(FFile);
   try
@@ -230,7 +233,7 @@ begin
       FSessSecure, FSessHTTPOnly)
   else
     LWSSetRawCookie(FHeader, FName, FID);
-  if ADeleteOldSession then
+  if ADeleteOldSession and FileExists(FFileName) then
     DeleteFile(FFileName);
   FWriteJSONFile := True;
   FFileName := FSavePath + LWS_SESSION_PREFIX + FID;
@@ -264,7 +267,8 @@ begin
     begin
       VFileName := FSavePath + VSearchRec.Name;
       if (VSearchRec.Name <> '..') and (VSearchRec.Name <> '.') and
-        (VFileName <> FFileName) and (LWSFileDate(VFileName) < ABeforeFrom) then
+        (VFileName <> FFileName) and (LWSFileDate(VFileName) < ABeforeFrom) and
+        FileExists(VFileName) then
         DeleteFile(VFileName);
       VResult := FindNext(VSearchRec);
     end;
