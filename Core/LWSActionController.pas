@@ -174,7 +174,6 @@ begin
     VURL := AURL
   else
     VURL := View.URLFor(AControllerName, AActionName);
-  CGI.Headers.Clear;
   CGI.Headers.Add(LWS_HTTP_HEADER_LOCATION + VURL + CRLF);
 end;
 {$ENDIF}
