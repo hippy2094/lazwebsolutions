@@ -40,7 +40,7 @@ const
   LWS_GMT_DAYS: array[1..7] of string[3] = (
     'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat');
   LWS_GMT_FRMT = '%s, %.2d %s %d %.2d:%.2d:%.2d GMT';
-  LWS_SESSID = 'LSSESSID';
+  LWS_SESSID = 'LWSSESSID';
   LWS_SESSION_TIMEOUT = 180;
   LWS_SESSION_PREFIX = 'lws_sess_';
   LWS_DEFAULT_TAG_PREFIX = '@';
