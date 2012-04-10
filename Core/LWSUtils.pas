@@ -393,15 +393,15 @@ begin
     AHTTPHeader += CRLF;
   AHTTPHeader += LWS_HTTP_HEADER_SET_COOKIE + AName + '=' + AValue;
   if AExpires <> NullDate then
-    AHTTPHeader += '; expires=' + LWSDateTimeToGMT(AExpires);
+    AHTTPHeader += '; Expires=' + LWSDateTimeToGMT(AExpires);
   if APath <> ES then
-    AHTTPHeader += '; path=' + APath;
+    AHTTPHeader += '; Path=' + APath;
   if ADomain <> ES then
-    AHTTPHeader += '; domain=' + ADomain;
+    AHTTPHeader += '; Domain=' + ADomain;
   if ASecure then
-    AHTTPHeader += '; secure';
+    AHTTPHeader += '; Secure';
   if AHTTPOnly then
-    AHTTPHeader += '; httponly';
+    AHTTPHeader += '; HttpOnly';
 end;
 
 function LWSGetRawCookie(const AHTTPCookie: string; const AName: string): string;
@@ -425,10 +425,10 @@ begin
     AHTTPHeader += CRLF;
   AHTTPHeader += LWS_HTTP_HEADER_SET_COOKIE + AName + '=';
   if APath <> ES then
-    AHTTPHeader += '; path=' + APath;
+    AHTTPHeader += '; Path=' + APath;
   if ADomain <> ES then
-    AHTTPHeader += '; domain=' + ADomain;
-  AHTTPHeader += '; expires=' + NullCookieExpires;
+    AHTTPHeader += '; Domain=' + ADomain;
+  AHTTPHeader += '; Expires=' + NullCookieExpires;
 end;
 
 function LWSPathToJSON(const APath: string; const ADelimiter: Char;
