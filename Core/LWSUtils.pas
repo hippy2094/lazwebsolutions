@@ -470,7 +470,7 @@ function LWSFileToString(const AFileName: TFileName): string;
 var
   L: LongInt;
 begin
-  with TFileStream.Create(AFileName, fmOpenRead) do
+  with TFileStream.Create(AFileName, fmOpenRead or fmShareDenyWrite) do
   try
     L := Size;
     SetLength(Result, L);
