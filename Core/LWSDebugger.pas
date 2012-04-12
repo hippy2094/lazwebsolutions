@@ -54,7 +54,7 @@ function DebugFile: TFileStream;
 begin
   try
     if not Assigned(_DebugFile) then
-      _DebugFile := TFileStream.Create(_DebugFileName, fmCreate);
+      _DebugFile := TFileStream.Create(_DebugFileName, fmCreate or fmShareDenyNone);
     Result := _DebugFile;
   except
     on E: Exception do
