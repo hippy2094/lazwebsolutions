@@ -65,7 +65,7 @@ type
       const ASelected: string): string;
     function MakeOptions(const AOptions, AValues: array of string;
       const ASelected: string): string;
-    procedure Format;
+    procedure Format; virtual;
     procedure LoadFromFile(const AFileName: TFileName);
     property Content: string read FContent write FContent;
     property Domain: string read FDomain write FDomain;
