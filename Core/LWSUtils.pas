@@ -95,6 +95,8 @@ function LWSShowPassword(const APassword: string;
 function LWSMD5(const AString: string): string;
 { Generate SHA1 string from a string. (see: http://en.wikipedia.org/wiki/SHA-1) }
 function LWSSHA1(const AString: string): string;
+{ Compare two URLs. }
+function LWSCompareURL(AURL1, AURL2: string): Integer;
 
 implementation
 
@@ -496,6 +498,13 @@ end;
 function LWSSHA1(const AString: string): string;
 begin
   Result := SHA1Print(SHA1String(AString));
+end;
+
+function LWSCompareURL(AURL1, AURL2: string): Integer;
+begin
+  AURL1 := LWSIncludeURLPathDelimiter(AURL1);
+  AURL2 := LWSIncludeURLPathDelimiter(AURL2);
+  Result := CompareText(AURL1, AURL2);
 end;
 
 end.
