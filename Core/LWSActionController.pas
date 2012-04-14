@@ -56,7 +56,7 @@ type
     procedure SetHTTPStatusCode(const AStatusCode: Word;
       const AReasonPhrase: ShortString);
     class function Name: ShortString; virtual;
-    function Display: Boolean;
+    function Display: Boolean; virtual;
     procedure Clear; virtual;
     procedure Index; virtual; abstract;
     procedure Delete(AValue: Int64); virtual;
