@@ -22,7 +22,7 @@ uses
 {$IFDEF DEBUG}
   LWSDebugger,
 {$ENDIF}
-  LWSConsts, LWSUtils, SysUtils, FPJSON;
+  LWSConsts, LWSUtils, Classes, SysUtils, FPJSON;
 
 type
   ELWSActionView = class(Exception);
@@ -67,6 +67,7 @@ type
       const ASelected: string): string;
     procedure Format; virtual;
     procedure LoadFromFile(const AFileName: TFileName);
+    procedure SaveToFile(const AFileName: TFileName);
     property Content: string read FContent write FContent;
     property Domain: string read FDomain write FDomain;
     property Path: string read FPath write SetPath;
@@ -258,6 +259,20 @@ begin
     raise ELWSActionView.CreateFmt(LWS_VIEW_PATH_NOT_FOUND_ERR,
       [FPath, ClassName]);
   FContent := LWSFileToString(FPath + AFileName);
+end;
+
+procedure TLWSActionView.SaveToFile(const AFileName: TFileName);
+var
+  FS: TFileStream;
+  JS: TJSONStringType;
+begin
+  FS := TFileStream.Create(AFileName, fmCreate or fmShareDenyRead);
+  try
+    JS := AsJSON;
+    FS.Write(Pointer(JS)^, Length(JS));
+  finally
+    FS.Free;
+  end;
 end;
 
 end.
