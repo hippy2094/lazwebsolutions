@@ -58,7 +58,7 @@
     <Version Value="9"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="c:\websrv\cgi-bin\cgi" ApplyConventions="False"/>
+      <Filename ApplyConventions="False"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
