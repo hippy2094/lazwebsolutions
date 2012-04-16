@@ -22,7 +22,7 @@ uses
 {$IFDEF DEBUG}
   LWSDebugger,
 {$ENDIF}
-  LWSConsts, Classes, SysUtils, FPJSON;
+  LWSConsts, LWSUtils, Classes, SysUtils, FPJSON;
 
 type
   PJSONObject = ^TJSONObject;
@@ -59,6 +59,7 @@ type
 
   TLWSUploads = class(TCollection)
   private
+    FEncodeFileName: Boolean;
     FSavePath: string;
     function GetItem(AIndex: Integer): TLWSUploadItem;
     procedure SetItem(AIndex: Integer; const AValue: TLWSUploadItem);
@@ -70,6 +71,7 @@ type
     procedure ReadUploads(AData: string; AFields: PJSONObject;
       const ABoundary: string); virtual;
     function Add: TLWSUploadItem;
+    property EncodeFileName: Boolean read FEncodeFileName write FEncodeFileName;
     function IndexOfFile(const AName: string): Integer;
     function FileByName(const AName: string): TLWSUploadItem;
     function FindFile(const AName: string): TLWSUploadItem;
@@ -296,7 +298,10 @@ begin
       else
       begin
         VItem.FContentLength := VContentLength;
-        VFileName := FSavePath + VItem.FFileName;
+        if FEncodeFileName then
+          VFileName := FSavePath + LWSURIEncode(VItem.FFileName)
+        else
+          VFileName := FSavePath + Utf8ToAnsi(VItem.FFileName);
         VFile := TFileStream.Create(VFileName, fmCreate);
         try
           VFile.Write(Pointer(VItem.FContent)^, VItem.FContentLength);
