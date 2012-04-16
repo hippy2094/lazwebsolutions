@@ -49,9 +49,7 @@ type
     FHTTPIfNoneMatch: string;
     FHTTPReferer: string;
     FInputData: string;
-    FInputStream: TStream;
     FLastModified: TDateTime;
-    FOutputStream: TStream;
     FContentLength: Int64;
     FContents: TLWSMemoryStream;
     FContentType: ShortString;
@@ -384,39 +382,47 @@ procedure TLWSCGI.ReadInput;
 var
   VRetryCount: Integer;
   VByte, VBytes: LongInt;
+  VInputStream: TIOStream;
 begin
 {$IFDEF DEBUG}
   LWSSendMethodEnter('TLWSCGI.ReadInput');
 {$ENDIF}
-  FInputStream := TIOStream.Create(iosInput);
+  VInputStream := TIOStream.Create(iosInput);
   try
     if FContentLength <> 0 then
     begin
       SetLength(FInputData, FContentLength);
       VBytes := 0;
       repeat
-        VByte := FInputStream.Read(FInputData[Succ(VBytes)],
+        VByte := VInputStream.Read(FInputData[Succ(VBytes)],
           FContentLength - VBytes);
         VBytes += VByte;
         if VByte = 0 then
         begin
           Sleep(10);
-          VByte := FInputStream.Read(FInputData[Succ(VBytes)],
+          VByte := VInputStream.Read(FInputData[Succ(VBytes)],
             FContentLength - VBytes);
           if VByte = 0 then
             for VRetryCount := 0 to 149 do
             begin
               Sleep(100);
-              VByte := FInputStream.Read(FInputData[Succ(VBytes)],
+              VByte := VInputStream.Read(FInputData[Succ(VBytes)],
                 FContentLength - VBytes);
               if VByte <> 0 then
                 Break;
             end;
-          VBytes := VBytes + VByte;
+          VBytes += VByte;
         end;
       until (VBytes >= FContentLength) or (VByte = 0);
       if VBytes < FContentLength then
         SetLength(FInputData, VBytes);
+    end
+    else
+    begin
+      FInputData := ES;
+      VByte := 0;
+      while VInputStream.Read(VByte, 1) > 0 do
+        FInputData += Chr(VByte);
     end;
     if Pos(LWS_HTTP_CONTENT_TYPE_APP_X_WWW_FORM_URLENCODED,
       LowerCase(FContentType)) <> 0 then
@@ -426,7 +432,7 @@ begin
       LowerCase(FContentType)) <> 0 then
       FillUploads(FInputData);
   finally
-    FInputStream.Free;
+    VInputStream.Free;
   end;
 {$IFDEF DEBUG}
   LWSSendMethodExit('TLWSCGI.ReadInput');
@@ -434,8 +440,9 @@ begin
 end;
 
 procedure TLWSCGI.WriteOutput;
-{$IFDEF DEBUG}
 var
+  VOutputStream: TIOStream;
+{$IFDEF DEBUG}
   VOutput: TStream;
 {$ENDIF}
 begin
@@ -443,15 +450,15 @@ begin
   LWSSendMethodEnter('TLWSCGI.WriteOutput');
   VOutput := TMemoryStream.Create;
 {$ENDIF}
-  FOutputStream := TIOStream.Create(iosOutPut);
+  VOutputStream := TIOStream.Create(iosOutPut);
   try
     FHeaders.Position := 0;
-    FOutputStream.CopyFrom(FHeaders, FHeaders.Size);
-    FOutputStream.Write(CRLF, 2);
+    VOutputStream.CopyFrom(FHeaders, FHeaders.Size);
+    VOutputStream.Write(CRLF, 2);
     if FTransferEncoding = LWS_HTTP_TRANSFER_ENCODING_CHUNKED then
       FContents.Add(ES);
     FContents.Position := 0;
-    FOutputStream.CopyFrom(FContents, FContents.Size);
+    VOutputStream.CopyFrom(FContents, FContents.Size);
 {$IFDEF DEBUG}
     FHeaders.Position := 0;
     VOutput.CopyFrom(FHeaders, FHeaders.Size);
@@ -461,7 +468,7 @@ begin
     LWSSendStream(VOutput);
 {$ENDIF}
   finally
-    FOutputStream.Free;
+    VOutputStream.Free;
 {$IFDEF DEBUG}
     VOutput.Free;
     LWSSendMethodExit('TLWSCGI.WriteOutput', LF);
