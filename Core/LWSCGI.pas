@@ -48,6 +48,7 @@ type
     FHTTPCookie: string;
     FHTTPIfNoneMatch: string;
     FHTTPReferer: string;
+    FInputData: string;
     FInputStream: TStream;
     FLastModified: TDateTime;
     FOutputStream: TStream;
@@ -90,12 +91,12 @@ type
   protected
     procedure Init; virtual;
     procedure Finit; virtual;
-    procedure FillFields(AData: TMemoryStream); virtual;
+    procedure FillFields(const AData: string); virtual;
     procedure FillHeaders; virtual;
     procedure FillParams; virtual;
     procedure FillProperties; virtual;
     procedure FillingProperties(var AName, AValue: string); virtual;
-    procedure FillUploads(AData: TMemoryStream); virtual;
+    procedure FillUploads(const AData: string); virtual;
     procedure ShowException(var E: Exception); virtual;
     procedure Request; virtual;
     procedure Respond; virtual;
@@ -130,6 +131,7 @@ type
     property HTTPCookie: string read FHTTPCookie;
     property HTTPIfNoneMatch: string read FHTTPIfNoneMatch;
     property HTTPReferer: string read FHTTPReferer;
+    property InputData: string read FInputData;
     property LastModified: TDateTime read FLastModified write FLastModified;
     property Location: string read FLocation write SetLocation;
     property Params: TJSONObject read FParams write FParams;
@@ -205,7 +207,7 @@ procedure TLWSCGI.FillingProperties(var AName, AValue: string);
 begin
 end;
 
-procedure TLWSCGI.FillUploads(AData: TMemoryStream);
+procedure TLWSCGI.FillUploads(const AData: string);
 begin
 end;
 {$HINTS ON}
@@ -241,18 +243,14 @@ begin
 {$ENDIF}
 end;
 
-procedure TLWSCGI.FillFields(AData: TMemoryStream);
+procedure TLWSCGI.FillFields(const AData: string);
 var
-  S: string;
   VJSONParser: TJSONParser;
 begin
 {$IFDEF DEBUG}
   LWSSendMethodEnter('TLWSCGI.FillFields');
 {$ENDIF}
-  SetLength(S, FContentLength);
-  AData.Position := 0;
-  AData.Read(Pointer(S)^, FContentLength);
-  VJSONParser := TJSONParser.Create(LWSParamStringToJSON(S, '=', '&'));
+  VJSONParser := TJSONParser.Create(LWSParamStringToJSON(AData, '=', '&'));
   try
     FFields := TJSONObject(VJSONParser.Parse);
   finally
@@ -384,25 +382,51 @@ end;
 
 procedure TLWSCGI.ReadInput;
 var
-  VData: TMemoryStream;
+  VRetryCount: Integer;
+  VByte, VBytes: LongInt;
 begin
 {$IFDEF DEBUG}
   LWSSendMethodEnter('TLWSCGI.ReadInput');
 {$ENDIF}
-  VData := TMemoryStream.Create;
   FInputStream := TIOStream.Create(iosInput);
   try
-    VData.CopyFrom(FInputStream, FContentLength);
+    if FContentLength <> 0 then
+    begin
+      SetLength(FInputData, FContentLength);
+      VBytes := 0;
+      repeat
+        VByte := FInputStream.Read(FInputData[Succ(VBytes)],
+          FContentLength - VBytes);
+        VBytes += VByte;
+        if VByte = 0 then
+        begin
+          Sleep(10);
+          VByte := FInputStream.Read(FInputData[Succ(VBytes)],
+            FContentLength - VBytes);
+          if VByte = 0 then
+            for VRetryCount := 0 to 149 do
+            begin
+              Sleep(100);
+              VByte := FInputStream.Read(FInputData[Succ(VBytes)],
+                FContentLength - VBytes);
+              if VByte <> 0 then
+                Break;
+            end;
+          VBytes := VBytes + VByte;
+        end;
+      until (VBytes >= FContentLength) or (VByte = 0);
+      if VBytes < FContentLength then
+        SetLength(FInputData, VBytes);
+    end;
     if Pos(LWS_HTTP_CONTENT_TYPE_APP_X_WWW_FORM_URLENCODED,
       LowerCase(FContentType)) <> 0 then
-      FillFields(VData)
+      FillFields(FInputData)
     else
     if Pos(LWS_HTTP_CONTENT_TYPE_MULTIPART_FORM_DATA,
       LowerCase(FContentType)) <> 0 then
-      FillUploads(VData);
+      FillUploads(FInputData);
   finally
     FInputStream.Free;
-    VData.Free;
   end;
 {$IFDEF DEBUG}
   LWSSendMethodExit('TLWSCGI.ReadInput');
