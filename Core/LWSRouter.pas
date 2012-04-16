@@ -159,6 +159,7 @@ function TLWSRouter.Route(
   AOnNotFound: TLWSRouterNotFoundEvent): Boolean;
 var
   VCount: LongInt;
+  VIsFields: Boolean;
   VParser: TJSONParser;
   VFields: TJSONObject;
   VParams: TJSONObject;
@@ -282,8 +283,10 @@ begin
                 end
                 else
                 begin
-                  _methodIndex := VFields.IndexOfName('_method');
-                  if Assigned(VFields) and (_methodIndex <> -1) and
+                  VIsFields := Assigned(VFields);
+                  if VIsFields then
+                    _methodIndex := VFields.IndexOfName('_method');
+                  if VIsFields and (_methodIndex <> -1) and
                     (VFields.Items[_methodIndex].AsString = 'delete') then
                   begin
                     if Require(atDelete) and FController.Validate(atDelete) then
