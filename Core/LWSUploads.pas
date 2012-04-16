@@ -67,7 +67,7 @@ type
     procedure SplitForm(var AContent: string; const ABoundary: string); virtual;
   public
     constructor Create;
-    procedure ReadUploads(AData: TMemoryStream; AFields: PJSONObject;
+    procedure ReadUploads(AData: string; AFields: PJSONObject;
       const ABoundary: string); virtual;
     function Add: TLWSUploadItem;
     function IndexOfFile(const AName: string): Integer;
@@ -255,14 +255,14 @@ begin
 {$ENDIF}
 end;
 
-procedure TLWSUploads.ReadUploads(AData: TMemoryStream; AFields: PJSONObject;
+procedure TLWSUploads.ReadUploads(AData: string; AFields: PJSONObject;
   const ABoundary: string);
 var
   VFile: TStream;
   VFileName: TFileName;
   VItem: TLWSUploadItem;
   I, VContentLength: Integer;
-  S, VFieldName, VFieldValue, VBoundary: string;
+  VFieldName, VFieldValue, VBoundary: string;
 begin
 {$IFDEF DEBUG}
   LWSSendMethodEnter('TLWSUploads.ReadUploads');
@@ -275,11 +275,8 @@ begin
   I := Length(VBoundary);
   if (I > 0) and (VBoundary[1] = DQ) then
     VBoundary := Copy(VBoundary, 2, I - 2);
-  VContentLength := AData.Size;
-  SetLength(S, VContentLength);
-  AData.Position := 0;
-  AData.Read(Pointer(S)^, VContentLength);
-  SplitForm(S, VBoundary);
+  VContentLength := Length(AData);
+  SplitForm(AData, VBoundary);
   AFields^ := TJSONObject.Create([]);
   for I := 0 to Pred(Count) do
   begin
