@@ -26,7 +26,7 @@ type
   private
     FUploads: TLWSUploads;
   protected
-    procedure FillUploads(AData: TMemoryStream); override;
+    procedure FillUploads(const AData: string); override;
     procedure Request; override;
     procedure Respond; override;
   public
@@ -46,7 +46,7 @@ type
     inherited Destroy;
   end;
 
-  procedure TCGI.FillUploads(AData: TMemoryStream);
+    procedure TCGI.FillUploads(const AData: string);
   begin
     FUploads.ReadUploads(AData, @Fields, ContentType);
   end;
