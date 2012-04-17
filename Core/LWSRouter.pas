@@ -111,6 +111,7 @@ procedure TLWSRouter.Routing(const ARequestMethod: ShortString;
   const APathInfo: string; APathInfos: TJSONArray;
   AController: TLWSActionController; var AContinue: Boolean);
 begin
+  AContinue := True;
 end;
 
 procedure TLWSRouter.FindingControllerClass(

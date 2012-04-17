@@ -213,7 +213,6 @@ begin
     Result := FUseJSON;
     if not Result then
       Exit;
-    JSON({$IFDEF USELWSCGI}CGI.{$ENDIF}Fields);
 {$IFDEF USELWSCGI}CGI.{$ENDIF}Contents.Text := FView.AsJSON;
   end;
 end;
