@@ -35,6 +35,7 @@ type
   TLWSActionController = class
   private
     FAllowed: Boolean;
+    FArrayOutput: Boolean;
     FUseJSON: Boolean;
 {$IFDEF USELWSCGI}
     FCGI: TLWSCGI;
@@ -86,6 +87,7 @@ type
     property StatusCode: Word read FStatusCode write FStatusCode;
 {$ENDIF}
     property Allowed: Boolean read FAllowed write FAllowed;
+    property ArrayOutput: Boolean read FArrayOutput write FArrayOutput;
     property UseJSON: Boolean read FUseJSON write FUseJSON;
     property View: TLWSActionView read GetView write SetView;
   end;
@@ -99,6 +101,7 @@ implementation
 constructor TLWSActionController.Create;
 begin
   FAllowed := False;
+  FArrayOutput := False;
   FUseJSON := False;
 end;
 
@@ -201,6 +204,8 @@ begin
 end;
 
 function TLWSActionController.Display: Boolean;
+var
+  VJSON: TJSONStringType;
 begin
   if FView.Content <> ES then
   begin
@@ -213,7 +218,10 @@ begin
     Result := FUseJSON;
     if not Result then
       Exit;
-{$IFDEF USELWSCGI}CGI.{$ENDIF}Contents.Text := FView.AsJSON;
+    VJSON := FView.AsJSON;
+    if FArrayOutput then
+      VJSON := '[ ' + VJSON + ' ]';
+{$IFDEF USELWSCGI}CGI.{$ENDIF}Contents.Text := VJSON;
   end;
 end;
 
