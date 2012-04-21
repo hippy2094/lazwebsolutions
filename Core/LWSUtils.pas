@@ -44,8 +44,7 @@ procedure LWSGetVariableNameValue(const AString: string;
   out AName, AValue: string);{$IFDEF LWSINLINE}inline;{$ENDIF}
 { Convert parametrized string to JSON. }
 function LWSParamStringToJSON(const AParamString: string;
-  const AValueSeparator, ADelimiter: Char;
-  const AUseURIDecode: Boolean = True): TJSONStringType;
+  const AValueSeparator, ADelimiter: Char): TJSONStringType;
 { TDateTime to GMT. }
 function LWSDateTimeToGMT(const ADateTime: TDateTime): string;
 { File date. }
@@ -249,14 +248,13 @@ begin
 end;
 
 function LWSParamStringToJSON(const AParamString: string;
-  const AValueSeparator, ADelimiter: Char;
-  const AUseURIDecode: Boolean): TJSONStringType;
+  const AValueSeparator, ADelimiter: Char): TJSONStringType;
 var
   VChar: Char;
   I, J, VPos: Integer;
   S, VName, VValue, VResult: string;
 begin
-  Result := StringToJSONString(AParamString);
+  Result := AParamString;
   if Length(Result) = 0 then
   begin
     Result := '{}';
@@ -280,7 +278,8 @@ begin
       VValue := ES;
       if VName <> ES then
         VValue := Copy(S, Succ(VPos), MaxInt);
-      VResult += DQ + VName + '": "' + VValue + '", ';
+      VResult += DQ + VName + '": "' +
+        StringToJSONString(LWSURIDecode(VValue)) + '", ';
       J := I + 1;
     end;
     Inc(I);
@@ -293,7 +292,8 @@ begin
     VValue := ES;
     if VName <> ES then
       VValue := Copy(S, Succ(VPos), MaxInt);
-    VResult += DQ + VName + '": "' + VValue + DQ;
+    VResult += DQ + VName + '": "' +
+      StringToJSONString(LWSURIDecode(VValue)) + DQ;
   end
   else
   begin
@@ -302,12 +302,10 @@ begin
     VValue := ES;
     if VName <> ES then
       VValue := Copy(Result, Succ(VPos), MaxInt);
-    VResult := DQ + VName + '": "' + VValue + DQ;
+    VResult := DQ + VName + '": "' +
+      StringToJSONString(LWSURIDecode(VValue)) + DQ;
   end;
-  if AUseURIDecode then
-    Result := '{ ' + LWSURIDecode(VResult) + ' }'
-  else
-    Result := '{ ' + VResult + ' }';
+  Result := '{ ' + VResult + ' }';
 end;
 
 function LWSDateTimeToGMT(const ADateTime: TDateTime): string;
