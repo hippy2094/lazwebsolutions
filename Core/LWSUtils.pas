@@ -81,8 +81,8 @@ procedure LWSDeleteCookie(var AHTTPHeader: string;
   const AName: string; const APath: string = ES; const ADomain: string = ES);
 {$IFDEF LWSINLINE}inline;{$ENDIF}
 { Convert a path string to JSON }
-function LWSPathToJSON(const APath: string; const ADelimiter: Char;
-  const AUseURIDecode: Boolean = True): TJSONStringType;
+function LWSPathToJSON(const APath: string;
+  const ADelimiter: Char): TJSONStringType;
 {$IFDEF LWSINLINE}inline;{$ENDIF}
 { File to string. }
 function LWSFileToString(const AFileName: TFileName): string;
@@ -431,8 +431,8 @@ begin
   AHTTPHeader += '; Expires=' + NullCookieExpires;
 end;
 
-function LWSPathToJSON(const APath: string; const ADelimiter: Char;
-  const AUseURIDecode: Boolean): TJSONStringType;
+function LWSPathToJSON(const APath: string;
+  const ADelimiter: Char): TJSONStringType;
 var
   S: string;
   I, L: LongInt;
@@ -460,10 +460,7 @@ begin
   L := Length(S);
   if S[L] <> DQ then
     Insert(DQ, S, L + 1);
-  if AUseURIDecode then
-    Result := '[' + LWSURIDecode(S) + ']'
-  else
-    Result := '[' + S + ']';
+  Result := '[' + LWSURIDecode(S) + ']'
 end;
 
 function LWSFileToString(const AFileName: TFileName): string;
