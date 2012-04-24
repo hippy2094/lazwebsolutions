@@ -327,7 +327,8 @@ end;
 
 function LWSGetTickCount: DWord;
 begin
-  Result := DWord(Trunc(Now * 24 * 60 * 60 * 1000));
+  Result := DWord(Trunc(Now * HoursPerDay * MinsPerHour * SecsPerMin *
+    MSecsPerSec));
 end;
 
 function LWSTrimCookies(const ACookies: string): string;
