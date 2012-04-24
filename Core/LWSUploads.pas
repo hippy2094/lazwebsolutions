@@ -116,7 +116,7 @@ procedure TLWSUploadItem.ParseLine;
         VQuoted := not VQuoted
       else
       begin
-        if not (C in [' ', '=', ';', ':']) or VQuoted then
+        if not (C in [SP, '=', ';', ':']) or VQuoted then
           Result += C;
         if (C in [';', ':', '=']) and not VQuoted then
         begin

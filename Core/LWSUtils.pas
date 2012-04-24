@@ -130,7 +130,7 @@ begin
   while (S1 - S2) < VLength do
   begin
     case S1^ of
-      '+': VResult^ := ' ';
+      '+': VResult^ := SP;
       '%':
         begin
           Inc(S1);
@@ -148,7 +148,7 @@ begin
                 VHexStr[3] := S1^;
                 Val(VHexStr, PByte(VResult)^, VCode);
                 if VCode <> 0 then
-                  VResult^ := ' ';
+                  VResult^ := SP;
               end;
             end;
           end;
@@ -180,7 +180,7 @@ begin
     if S1^ in LWS_HTTP_ALLOWED_CHARS then
       VResult^ := S1^
     else
-    if S1^ = ' ' then
+    if S1^ = SP then
       VResult^ := '+'
     else
     begin
@@ -337,7 +337,7 @@ var
 begin
   Result := ACookies;
   for I := 1 to Length(Result) do
-    if (Result[I] = ';') and (Result[I + 1] = ' ') then
+    if (Result[I] = ';') and (Result[I + 1] = SP) then
       Delete(Result, I + 1, 1);
 end;
 
