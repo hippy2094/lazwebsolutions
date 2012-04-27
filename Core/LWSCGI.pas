@@ -49,6 +49,7 @@ type
     FHTTPIfNoneMatch: string;
     FHTTPReferer: string;
     FInputData: string;
+    FIsAjax: Boolean;
     FLastModified: TDateTime;
     FContentLength: Int64;
     FContents: TLWSMemoryStream;
@@ -130,6 +131,7 @@ type
     property HTTPIfNoneMatch: string read FHTTPIfNoneMatch;
     property HTTPReferer: string read FHTTPReferer;
     property InputData: string read FInputData;
+    property IsAjax: Boolean read FIsAjax;
     property LastModified: TDateTime read FLastModified write FLastModified;
     property Location: string read FLocation write SetLocation;
     property Params: TJSONObject read FParams write FParams;
@@ -295,7 +297,7 @@ begin
         FGatewayInterface := VValue;
       if VName = LWS_CLT_ENV_HTTP_ACCEPT_ENCODING then
         FHTTPAcceptEncoding := VValue;
-      if VName = LWS_CLT_ENV_HTTP_HTTP_COOKIE then
+      if VName = LWS_CLT_ENV_HTTP_COOKIE then
         FHTTPCookie := VValue;
       if VName = LWS_CLT_ENV_HTTP_IF_NONE_MATCH then
         FHTTPIfNoneMatch := VValue;
@@ -339,6 +341,8 @@ begin
         FServerSoftware := VValue;
       if VName = LWS_CLT_ENV_HTTP_USER_AGENT then
         FUserAgent := VValue;
+      if VName = LWS_CLT_ENV_HTTP_X_REQUESTED_WITH then
+        FIsAjax := VValue = 'XMLHttpRequest';
     end;
   end;
   if FRequestMethod = ES then
