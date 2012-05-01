@@ -82,6 +82,7 @@ type
     FOrderByPK: Boolean;
     FPKFieldName: string;
     FShowDateAsString: Boolean;
+    FTableAlias: string;
     FTableName: string;
     function GetItems(AIndex: Integer): TJSONObject;
     procedure SetItems(AIndex: Integer; const AValue: TJSONObject);
@@ -100,7 +101,7 @@ type
     function Update(AJSONArray: TJSONArray): Boolean; virtual;
     function Delete(AJSONObject: TJSONObject): Boolean; virtual;
     function Delete(AJSONArray: TJSONArray): Boolean; virtual;
-    function Open(const AWhere: string = ES): Boolean; virtual;
+    function Open(const AAdditionalSQL: string = ES): Boolean; virtual;
     function Count: Integer;
     function First: TJSONObject;
     function Last: TJSONObject;
@@ -110,6 +111,7 @@ type
       write SetItems; default;
     property Fields: TJSONObject read FFields;
     property TableName: string read FTableName write FTableName;
+    property TableAlias: string read FTableAlias write FTableAlias;
     property PKFieldName: string read FPKFieldName write FPKFieldName;
     property OrderByPK: Boolean read FOrderByPK write FOrderByPK;
     property ShowDateAsString: Boolean read FShowDateAsString
@@ -415,7 +417,7 @@ end;
 procedure TLWSJDOQuery.Prepare(const ASQLOperation: TLWSJDOQuerySQLOperation;
   const AAdditionalSQL: string);
 
-  function _SQLSet(const Token: ShortString; const PK: string;
+  function _SQLSet(const Token, PK: string;
     const SkipPK, Pairs: Boolean): string;
   var
     FN: string;
@@ -443,7 +445,12 @@ procedure TLWSJDOQuery.Prepare(const ASQLOperation: TLWSJDOQuerySQLOperation;
       end;
     end;
     if Result = ES then
-      Result := AK;
+    begin
+      if FTableAlias <> ES then
+        Result := FTableAlias + DT + AK
+      else
+        Result := AK;
+    end;
   end;
 
 var
@@ -454,12 +461,17 @@ begin
       begin
         if AAdditionalSQL <> ES then
           VSQL := SQL_SELECT_TOKEN + _SQLSet(ES, FPKFieldName, False, False) +
-            SQL_FROM_TOKEN + FTableName + SQL_WHERE_TOKEN + AAdditionalSQL
+            SQL_FROM_TOKEN + FTableName + SP + AAdditionalSQL
         else
           VSQL := SQL_SELECT_TOKEN + _SQLSet(ES, FPKFieldName, False, False) +
             SQL_FROM_TOKEN + FTableName;
         if FOrderByPK then
-          VSQL += SQL_ORDER_BY_TOKEN + FPKFieldName;
+        begin
+          if FTableAlias <> ES then
+            VSQL += SQL_ORDER_BY_TOKEN + FTableAlias + DT + FPKFieldName
+          else
+            VSQL += SQL_ORDER_BY_TOKEN + FPKFieldName;
+        end;
         FDataBase.Prepare(VSQL);
       end;
     soInsert: FDataBase.Prepare(SQL_INSERT_TOKEN + FTableName +
@@ -496,16 +508,22 @@ end;
 
 procedure TLWSJDOQuery.AddField(const AFieldName: ShortString;
   const AFieldType: TLWSJDOFieldTypes; const AIsPK: Boolean);
+var
+  VFieldName: string;
 begin
   if AIsPK then
     FPKFieldName := AFieldName;
+  if (FTableAlias <> ES) and (Pos(DT, AFieldName) = 0) then
+    VFieldName := FTableAlias + DT + AFieldName
+  else
+    VFieldName := AFieldName;
   case AFieldType of
-    ftNull: FFields.Add(AFieldName, LWS_FT_NULL);
-    ftStr: FFields.Add(AFieldName, LWS_FT_STR);
-    ftBool: FFields.Add(AFieldName, LWS_FT_BOOL);
-    ftDate: FFields.Add(AFieldName, LWS_FT_DATE);
-    ftFloat: FFields.Add(AFieldName, LWS_FT_FLOAT);
-    ftInt: FFields.Add(AFieldName, LWS_FT_INT);
+    ftNull: FFields.Add(VFieldName, LWS_FT_NULL);
+    ftStr: FFields.Add(VFieldName, LWS_FT_STR);
+    ftBool: FFields.Add(VFieldName, LWS_FT_BOOL);
+    ftDate: FFields.Add(VFieldName, LWS_FT_DATE);
+    ftFloat: FFields.Add(VFieldName, LWS_FT_FLOAT);
+    ftInt: FFields.Add(VFieldName, LWS_FT_INT);
   end;
 end;
 
@@ -592,7 +610,7 @@ begin
   end;
 end;
 
-function TLWSJDOQuery.Open(const AWhere: string): Boolean;
+function TLWSJDOQuery.Open(const AAdditionalSQL: string): Boolean;
 var
   I: Integer;
   VField: TField;
@@ -601,7 +619,7 @@ var
   VIsSQLGeneric: Boolean;
 begin
   if FLastSQLOperation <> soSelect then
-    Prepare(soSelect, AWhere);
+    Prepare(soSelect, AAdditionalSQL);
   VIsSQLGeneric := Pos(AK, FDataBase.Query.SQL.Text) <> 0;
   Result := FDataBase.Open;
   FItems.Clear;
