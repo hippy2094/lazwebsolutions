@@ -611,10 +611,10 @@ begin
     FDataBase.Query.First;
     while not FDataBase.Query.EOF do
     begin
+      VItem := TJSONObject.Create;
       for I := 0 to Pred(FDataBase.Fields.Count) do
       begin
         VField := FDataBase.Fields[I];
-        VItem := TJSONObject.Create;
         VFieldName := VField.FieldName;
         case VField.DataType of
           ftUnknown, ftCursor, ftADT, ftArray, ftReference, ftDataSet,
@@ -635,8 +635,8 @@ begin
             else
               VItem.Add(VFieldName, VField.AsDateTime);
         end;
-        FItems.Add(VItem);
       end;
+      FItems.Add(VItem);
       FDataBase.Query.Next;
     end;
   end

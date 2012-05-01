@@ -24,7 +24,7 @@ for details about the copyright.
 This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."/>
-    <Version Release="4"/>
+    <Version Release="4" Build="1"/>
     <Files Count="16">
       <Item1>
         <Filename Value="..\Core\lazwebsolutions.inc"/>
