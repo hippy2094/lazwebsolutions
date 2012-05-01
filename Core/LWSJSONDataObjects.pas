@@ -34,6 +34,8 @@ type
 
   TLWSJDOQuerySQLOperation = (soNone, soSelect, soInsert, soUpdate, soDelete);
 
+  TLWSJDOLikeOptions = set of (loCaseInsensitive, loPartialKey);
+
   { TLWSJDOConnection }
 
   TLWSJDOConnection = class
@@ -75,6 +77,9 @@ type
 
   TLWSJDOQuery = class
   private
+    FLike: string;
+    FLikeKey: string;
+    FLikeValue: string;
     FLastSQLOperation: TLWSJDOQuerySQLOperation;
     FDataBase: TLWSJDOConnection;
     FFields: TJSONObject;
@@ -95,6 +100,8 @@ type
     procedure AddField(const AFieldName: ShortString;
       const AFieldType: TLWSJDOFieldTypes;
       const AIsPK: Boolean = False);
+    procedure Like(const AValue, AKey: string;
+      const AOptions: TLWSJDOLikeOptions = []);
     function Insert(AJSONObject: TJSONObject): Boolean; virtual;
     function Insert(AJSONArray: TJSONArray): Boolean; virtual;
     function Update(AJSONObject: TJSONObject): Boolean; virtual;
@@ -106,6 +113,8 @@ type
     function First: TJSONObject;
     function Last: TJSONObject;
     function AsJSON: TJSONStringType;
+    function Field(const AFieldName: string): TField;
+    function Param(const AParamName: string): TParam;
     property DataBase: TLWSJDOConnection read FDataBase write FDataBase;
     property Items[AIndex: Integer]: TJSONObject read GetItems
       write SetItems; default;
@@ -465,6 +474,8 @@ begin
         else
           VSQL := SQL_SELECT_TOKEN + _SQLSet(ES, FPKFieldName, False, False) +
             SQL_FROM_TOKEN + FTableName;
+        if FLike <> ES then
+          VSQL += SQL_WHERE_TOKEN + FLike;
         if FOrderByPK then
         begin
           if FTableAlias <> ES then
@@ -524,6 +535,26 @@ begin
     ftDate: FFields.Add(VFieldName, LWS_FT_DATE);
     ftFloat: FFields.Add(VFieldName, LWS_FT_FLOAT);
     ftInt: FFields.Add(VFieldName, LWS_FT_INT);
+  end;
+end;
+
+procedure TLWSJDOQuery.Like(const AValue, AKey: string;
+  const AOptions: TLWSJDOLikeOptions);
+begin
+  if loPartialKey in AOptions then
+    FLikeValue := AnsiQuotedStr(AValue, '%')
+  else
+    FLikeValue := AValue;
+  FLikeKey := AKey;
+  if loCaseInsensitive in AOptions then
+  begin
+    FLikeValue := LowerCase(FLikeValue);
+    FLike := SQL_LOWER_TOKEN + PS + FLikeKey + PE + SQL_LIKE_TOKEN + AKey + PE;
+  end
+  else
+  begin
+    FLikeValue := FLikeValue;
+    FLike := FLikeKey + SQL_LIKE_TOKEN + AKey + PE;
   end;
 end;
 
@@ -621,6 +652,8 @@ begin
   if FLastSQLOperation <> soSelect then
     Prepare(soSelect, AAdditionalSQL);
   VIsSQLGeneric := Pos(AK, FDataBase.Query.SQL.Text) <> 0;
+  if FLike <> ES then
+    Param(FLikeKey).AsString := FLikeValue;
   Result := FDataBase.Open;
   FItems.Clear;
   FDataBase.Query.First;
@@ -695,6 +728,16 @@ begin
     else
       Result += TJSONObject(FItems[I]).AsJSON;
   Result := BS + Result + BE;
+end;
+
+function TLWSJDOQuery.Field(const AFieldName: string): TField;
+begin
+  Result := FDataBase.Query.Fields.FieldByName(AFieldName);
+end;
+
+function TLWSJDOQuery.Param(const AParamName: string): TParam;
+begin
+  Result := FDataBase.Query.Params.ParamByName(AParamName);
 end;
 
 end.
