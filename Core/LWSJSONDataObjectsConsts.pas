@@ -1,5 +1,5 @@
 (*
-  LazWebSolutions, JSON Data Objects unit
+  LazWebSolutions, JSON Data Objects consts unit
   Copyright (C) 2012-2014 Silvio Clecio, Luciano Souza.
 
   https://github.com/silvioprog/lazwebsolutions

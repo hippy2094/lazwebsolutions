@@ -644,17 +644,15 @@ var
   VField: TField;
   VFieldName: string;
   VItem: TJSONObject;
-  VIsSQLGeneric: Boolean;
 begin
   if FLastSQLOperation <> soSelect then
     Prepare(soSelect, AAdditionalSQL);
-  VIsSQLGeneric := Pos(AK, FDataBase.Query.SQL.Text) <> 0;
   if FLike <> ES then
     Param(FLikeKey).AsString := FLikeValue;
   Result := FDataBase.Open;
   FItems.Clear;
   FDataBase.Query.First;
-  if VIsSQLGeneric then
+  if Pos(AK, FDataBase.Query.SQL.Text) <> 0 then
   begin
     FDataBase.Query.First;
     while not FDataBase.Query.EOF do
