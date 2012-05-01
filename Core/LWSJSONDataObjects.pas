@@ -131,7 +131,7 @@ function LWSFieldTypeToLWSJDOFieldType(
 function LWSFieldTypeToLWSJDOFieldTypeEnum(
   const AFieldType: TFieldType): TLWSJDOFieldTypes;
 procedure LWSFieldsToJSONObject(AFields: TFields;
-  AJSONFiels, AJSONObject: TJSONObject; const AShowDateAsString: Boolean);
+  AJSONFiels, AJSONObject: TJSONObject; const ADateAsString: Boolean);
 procedure LWSJSONObjectToParams(AParams: TParams;
   AJSONFiels, AJSONObject: TJSONObject; const APKFieldName: string = ES);
 
@@ -172,7 +172,7 @@ begin
 end;
 
 procedure LWSFieldsToJSONObject(AFields: TFields;
-  AJSONFiels, AJSONObject: TJSONObject; const AShowDateAsString: Boolean);
+  AJSONFiels, AJSONObject: TJSONObject; const ADateAsString: Boolean);
 var
   I: Integer;
   VField: TField;
@@ -202,7 +202,7 @@ begin
       AJSONObject.Add(VFieldName, VField.AsBoolean);
     if VFieldType = LWS_FT_DATE then
     begin
-      if AShowDateAsString then
+      if ADateAsString then
         AJSONObject.Add(VFieldName, VField.AsString)
       else
         AJSONObject.Add(VFieldName, VField.AsFloat);
@@ -246,9 +246,14 @@ begin
     if VFieldType = LWS_FT_STR then
       VParam.AsString := VData.AsString;
     if VFieldType = LWS_FT_BOOL then
-      VParam.AsBoolean := VData.AsBoolean;
+      VParam.AsBoolean := (VData.AsString = 'on') or VData.AsBoolean;
     if VFieldType = LWS_FT_DATE then
-      VParam.AsDateTime := VData.AsFloat;
+    begin
+      if VData.JSONType = jtNumber then
+        VParam.AsDateTime := VData.AsFloat
+      else
+        VParam.AsDateTime := StrToDateTime(VData.AsString);
+    end;
     if VFieldType = LWS_FT_FLOAT then
       VParam.AsFloat := VData.AsFloat;
     if VFieldType = LWS_FT_INT then
