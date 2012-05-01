@@ -37,7 +37,7 @@ begin
         WriteLn('AsJSON: ', q.AsJSON);
       end
       else
-        WriteLn('Empty table.');
+        WriteLn('No record found');
       conn.Commit;
     except
       conn.Rollback;

@@ -86,7 +86,7 @@ type
     FItems: TObjectList;
     FOrderByPK: Boolean;
     FPKFieldName: string;
-    FShowDateAsString: Boolean;
+    FDateAsString: Boolean;
     FTableAlias: string;
     FTableName: string;
     function GetItems(AIndex: Integer): TJSONObject;
@@ -123,8 +123,7 @@ type
     property TableAlias: string read FTableAlias write FTableAlias;
     property PKFieldName: string read FPKFieldName write FPKFieldName;
     property OrderByPK: Boolean read FOrderByPK write FOrderByPK;
-    property ShowDateAsString: Boolean read FShowDateAsString
-      write FShowDateAsString;
+    property DateAsString: Boolean read FDateAsString write FDateAsString;
   end;
 
 function LWSFieldTypeToLWSJDOFieldType(
@@ -405,7 +404,7 @@ begin
   FDataBase := ADataBase;
   FTableName := ATableName;
   FLastSQLOperation := soNone;
-  FShowDateAsString := True;
+  FDateAsString := True;
   FPKFieldName := DEFAULT_PK_FIELD;
   FOrderByPK := True;
 end;
@@ -440,17 +439,15 @@ procedure TLWSJDOQuery.Prepare(const ASQLOperation: TLWSJDOQuerySQLOperation;
         Continue;
       if Pairs then
       begin
+        Result += FN + EQ + Token + FN;
         if Succ(I) < C then
-          Result += FN + EQ + Token + FN + CS
-        else
-          Result += FN + EQ + Token + FN;
+          Result += CS;
       end
       else
       begin
+        Result += Token + FN;
         if Succ(I) < C then
-          Result += Token + FN + CS
-        else
-          Result += Token + FN;
+          Result += CS;
       end;
     end;
     if Result = ES then
@@ -468,14 +465,12 @@ begin
   case ASQLOperation of
     soSelect:
       begin
-        if AAdditionalSQL <> ES then
-          VSQL := SQL_SELECT_TOKEN + _SQLSet(ES, FPKFieldName, False, False) +
-            SQL_FROM_TOKEN + FTableName + SP + AAdditionalSQL
-        else
-          VSQL := SQL_SELECT_TOKEN + _SQLSet(ES, FPKFieldName, False, False) +
-            SQL_FROM_TOKEN + FTableName;
+        VSQL := SQL_SELECT_TOKEN + _SQLSet(ES, FPKFieldName, False, False) +
+          SQL_FROM_TOKEN + FTableName;
         if FLike <> ES then
           VSQL += SQL_WHERE_TOKEN + FLike;
+        if AAdditionalSQL <> ES then
+          VSQL += SP + AAdditionalSQL;
         if FOrderByPK then
         begin
           if FTableAlias <> ES then
@@ -552,10 +547,7 @@ begin
     FLike := SQL_LOWER_TOKEN + PS + FLikeKey + PE + SQL_LIKE_TOKEN + AKey + PE;
   end
   else
-  begin
-    FLikeValue := FLikeValue;
     FLike := FLikeKey + SQL_LIKE_TOKEN + AKey + PE;
-  end;
 end;
 
 function TLWSJDOQuery.Insert(AJSONObject: TJSONObject): Boolean;
@@ -681,7 +673,7 @@ begin
           DB.ftFloat, ftCurrency, ftBCD, ftFMTBcd:
             VItem.Add(VFieldName, VField.AsFloat);
           DB.ftDate, ftTime, ftDateTime, ftTimeStamp:
-            if FShowDateAsString then
+            if FDateAsString then
               VItem.Add(VFieldName, VField.AsString)
             else
               VItem.Add(VFieldName, VField.AsDateTime);
@@ -695,8 +687,7 @@ begin
     while not FDataBase.Query.EOF do
     begin
       VItem := TJSONObject.Create;
-      LWSFieldsToJSONObject(FDataBase.Query.Fields, FFields, VItem,
-        FShowDateAsString);
+      LWSFieldsToJSONObject(FDataBase.Query.Fields, FFields, VItem, FDateAsString);
       FItems.Add(VItem);
       FDataBase.Query.Next;
     end;
@@ -723,10 +714,11 @@ var
 begin
   C := FItems.Count;
   for I := 0 to Pred(C) do
+  begin
+    Result += TJSONObject(FItems[I]).AsJSON;
     if Succ(I) < C then
-      Result += TJSONObject(FItems[I]).AsJSON + CS
-    else
-      Result += TJSONObject(FItems[I]).AsJSON;
+      Result += CS;
+  end;
   Result := BS + Result + BE;
 end;
 

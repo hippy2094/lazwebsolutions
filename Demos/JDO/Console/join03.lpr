@@ -29,7 +29,7 @@ begin
       if q.Open(SQL_JOIN) then
         WriteLn(q.AsJSON)
       else
-        WriteLn('Empty table.');
+        WriteLn('No record found');
       conn.Commit;
     except
       conn.Rollback;
