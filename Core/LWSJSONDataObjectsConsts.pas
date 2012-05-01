@@ -43,6 +43,8 @@ const
   SQL_SET_TOKEN = ' set ';
   SQL_DELETE_TOKEN = 'delete';
   SQL_EQ_PARAM_TOKEN = ' = :';
+  SQL_LOWER_TOKEN = 'lower';
+  SQL_LIKE_TOKEN = ' like (:';
   LWS_FT_NULL = 'null';
   LWS_FT_STR = 'str';
   LWS_FT_BOOL = 'bool';
