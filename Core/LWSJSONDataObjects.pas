@@ -118,7 +118,7 @@ type
 
 function LWSFieldTypeToLWSJDOFieldType(
   const AFieldType: TFieldType): ShortString;
-function LWSAFieldTypeToLWSJDOFieldTypeEnum(
+function LWSFieldTypeToLWSJDOFieldTypeEnum(
   const AFieldType: TFieldType): TLWSJDOFieldTypes;
 procedure LWSFieldsToJSONObject(AFields: TFields;
   AJSONFiels, AJSONObject: TJSONObject; const AShowDateAsString: Boolean);
@@ -144,7 +144,7 @@ begin
   end;
 end;
 
-function LWSAFieldTypeToLWSJDOFieldTypeEnum(
+function LWSFieldTypeToLWSJDOFieldTypeEnum(
   const AFieldType: TFieldType): TLWSJDOFieldTypes;
 begin
   case AFieldType of
