@@ -24,72 +24,76 @@ for details about the copyright.
 This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."/>
-    <Version Release="4" Build="3"/>
-    <Files Count="16">
+    <Version Release="4" Build="4"/>
+    <Files Count="17">
       <Item1>
-        <Filename Value="..\Core\lazwebsolutions.inc"/>
-        <Type Value="Include"/>
+        <Filename Value="..\Brokers\SQLite3ConnDef.pas"/>
+        <UnitName Value="SQLite3ConnDef"/>
       </Item1>
       <Item2>
-        <Filename Value="..\Core\LWSActionController.pas"/>
-        <UnitName Value="LWSActionController"/>
+        <Filename Value="..\Core\lazwebsolutions.inc"/>
+        <Type Value="Include"/>
       </Item2>
       <Item3>
-        <Filename Value="..\Core\LWSActionView.pas"/>
-        <UnitName Value="LWSActionView"/>
+        <Filename Value="..\Core\LWSActionController.pas"/>
+        <UnitName Value="LWSActionController"/>
       </Item3>
       <Item4>
-        <Filename Value="..\Core\LWSCGI.pas"/>
-        <UnitName Value="LWSCGI"/>
+        <Filename Value="..\Core\LWSActionView.pas"/>
+        <UnitName Value="LWSActionView"/>
       </Item4>
       <Item5>
-        <Filename Value="..\Core\LWSClasses.pas"/>
-        <UnitName Value="LWSClasses"/>
+        <Filename Value="..\Core\LWSCGI.pas"/>
+        <UnitName Value="LWSCGI"/>
       </Item5>
       <Item6>
-        <Filename Value="..\Core\LWSConsts.pas"/>
-        <UnitName Value="LWSConsts"/>
+        <Filename Value="..\Core\LWSClasses.pas"/>
+        <UnitName Value="LWSClasses"/>
       </Item6>
       <Item7>
-        <Filename Value="..\Core\LWSCookies.pas"/>
-        <UnitName Value="LWSCookies"/>
+        <Filename Value="..\Core\LWSConsts.pas"/>
+        <UnitName Value="LWSConsts"/>
       </Item7>
       <Item8>
-        <Filename Value="..\Core\LWSDebugger.pas"/>
-        <UnitName Value="LWSDebugger"/>
+        <Filename Value="..\Core\LWSCookies.pas"/>
+        <UnitName Value="LWSCookies"/>
       </Item8>
       <Item9>
-        <Filename Value="..\Core\LWSJSONDataObjects.pas"/>
-        <UnitName Value="LWSJSONDataObjects"/>
+        <Filename Value="..\Core\LWSDebugger.pas"/>
+        <UnitName Value="LWSDebugger"/>
       </Item9>
       <Item10>
-        <Filename Value="..\Core\LWSJSONDataObjectsConsts.pas"/>
-        <UnitName Value="LWSJSONDataObjectsConsts"/>
+        <Filename Value="..\Core\LWSJSONDataObjects.pas"/>
+        <UnitName Value="LWSJSONDataObjects"/>
       </Item10>
       <Item11>
-        <Filename Value="..\Core\LWSMessages.pas"/>
-        <UnitName Value="LWSMessages"/>
+        <Filename Value="..\Core\LWSJSONDataObjectsConsts.pas"/>
+        <UnitName Value="LWSJSONDataObjectsConsts"/>
       </Item11>
       <Item12>
-        <Filename Value="..\Core\LWSMessages.inc"/>
-        <Type Value="Include"/>
+        <Filename Value="..\Core\LWSMessages.pas"/>
+        <UnitName Value="LWSMessages"/>
       </Item12>
       <Item13>
-        <Filename Value="..\Core\LWSRouter.pas"/>
-        <UnitName Value="LWSRouter"/>
+        <Filename Value="..\Core\LWSMessages.inc"/>
+        <Type Value="Include"/>
       </Item13>
       <Item14>
-        <Filename Value="..\Core\LWSSessions.pas"/>
-        <UnitName Value="LWSSessions"/>
+        <Filename Value="..\Core\LWSRouter.pas"/>
+        <UnitName Value="LWSRouter"/>
       </Item14>
       <Item15>
-        <Filename Value="..\Core\LWSUploads.pas"/>
-        <UnitName Value="LWSUploads"/>
+        <Filename Value="..\Core\LWSSessions.pas"/>
+        <UnitName Value="LWSSessions"/>
       </Item15>
       <Item16>
+        <Filename Value="..\Core\LWSUploads.pas"/>
+        <UnitName Value="LWSUploads"/>
+      </Item16>
+      <Item17>
         <Filename Value="..\Core\LWSUtils.pas"/>
         <UnitName Value="LWSUtils"/>
-      </Item16>
+      </Item17>
     </Files>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>
