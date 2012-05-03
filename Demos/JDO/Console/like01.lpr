@@ -12,12 +12,12 @@ uses
 
 var
   q: TLWSJDOQuery;
-  conn: TLWSJDODataBase;
+  db: TLWSJDODataBase;
 begin
-  conn := TLWSJDODataBase.Create('db.cfg');
-  q := TLWSJDOQuery.Create(conn, 'jdo_demo');
+  db := TLWSJDODataBase.Create('db.cfg');
+  q := TLWSJDOQuery.Create(db, 'jdo_demo');
   try
-    conn.StartTrans;
+    db.StartTrans;
     try
       q.OrderByPK := False;
       q.Like('o', 'ftstr', [loCaseInsensitive, loPartialKey]);
@@ -25,14 +25,14 @@ begin
         WriteLn(q.AsJSON)
       else
         WriteLn('No record found');
-      conn.Commit;
+      db.Commit;
     except
-      conn.Rollback;
+      db.Rollback;
       raise;
     end;
   finally
     q.Free;
-    conn.Free;
+    db.Free;
   end;
 end.
 

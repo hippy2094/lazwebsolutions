@@ -17,15 +17,15 @@ var
   a: TJSONArray;
   j, j2: TJSONObject;
   q: TLWSJDOQuery;
-  conn: TLWSJDODataBase;
+  db: TLWSJDODataBase;
 begin
-  conn := TLWSJDODataBase.Create('db.cfg');
-  q := TLWSJDOQuery.Create(conn, 'jdo_demo');
+  db := TLWSJDODataBase.Create('db.cfg');
+  q := TLWSJDOQuery.Create(db, 'jdo_demo');
   a := TJSONArray.Create;
   j := TJSONObject.Create;
   j2 := TJSONObject.Create;
   try
-    conn.StartTrans;
+    db.StartTrans;
     try
       q.AddField('id', ftInt, True);
       j.Add('id', 1);
@@ -36,16 +36,16 @@ begin
         WriteLn(SSuccessfullyDeleted)
       else
         WriteLn(SCouldNotDelete);
-      conn.Commit;
+      db.Commit;
     except
-      conn.Rollback;
+      db.Rollback;
       WriteLn(SCouldNotDelete);
       raise;
     end;
   finally
     a.Free;
     q.Free;
-    conn.Free;
+    db.Free;
   end;
 end.
 

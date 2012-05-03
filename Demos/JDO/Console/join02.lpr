@@ -15,26 +15,26 @@ const
 
 var
   q: TLWSJDOQuery;
-  conn: TLWSJDODataBase;
+  db: TLWSJDODataBase;
 begin
-  conn := TLWSJDODataBase.Create('db.cfg');
-  q := TLWSJDOQuery.Create(conn, 'jdo_demo');
+  db := TLWSJDODataBase.Create('db.cfg');
+  q := TLWSJDOQuery.Create(db, 'jdo_demo');
   try
-    conn.StartTrans;
+    db.StartTrans;
     try
       q.TableAlias := q.TableName;
       if q.Open(SQL_JOIN) then
         WriteLn(q.AsJSON)
       else
         WriteLn('No record found');
-      conn.Commit;
+      db.Commit;
     except
-      conn.Rollback;
+      db.Rollback;
       raise;
     end;
   finally
     q.Free;
-    conn.Free;
+    db.Free;
   end;
 end.
 

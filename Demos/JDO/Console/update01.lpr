@@ -16,13 +16,13 @@ resourcestring
 var
   j: TJSONObject;
   q: TLWSJDOQuery;
-  conn: TLWSJDODataBase;
+  db: TLWSJDODataBase;
 begin
-  conn := TLWSJDODataBase.Create('db.cfg');
-  q := TLWSJDOQuery.Create(conn, 'jdo_demo');
+  db := TLWSJDODataBase.Create('db.cfg');
+  q := TLWSJDOQuery.Create(db, 'jdo_demo');
   j := TJSONObject.Create;
   try
-    conn.StartTrans;
+    db.StartTrans;
     try
       q.AddField('id', ftInt, True);
       q.AddField('ftstr', ftStr);
@@ -40,16 +40,16 @@ begin
         WriteLn(SSuccessfullyUpdated)
       else
         WriteLn(SCouldNotUpdate);
-      conn.Commit;
+      db.Commit;
     except
-      conn.Rollback;
+      db.Rollback;
       WriteLn(SCouldNotUpdate);
       raise;
     end;
   finally
     j.Free;
     q.Free;
-    conn.Free;
+    db.Free;
   end;
 end.
 

@@ -11,23 +11,23 @@ uses
 
 var
   q: TLWSJDOQuery;
-  conn: TLWSJDODataBase;
+  db: TLWSJDODataBase;
 begin
-  conn := TLWSJDODataBase.Create('db.cfg');
-  q := TLWSJDOQuery.Create(conn, 'jdo_demo');
+  db := TLWSJDODataBase.Create('db.cfg');
+  q := TLWSJDOQuery.Create(db, 'jdo_demo');
   try
-    conn.StartTrans;
+    db.StartTrans;
     try
       q.Open;
       WriteLn(q.AsJSON);
-      conn.Commit;
+      db.Commit;
     except
-      conn.Rollback;
+      db.Rollback;
       raise;
     end;
   finally
     q.Free;
-    conn.Free;
+    db.Free;
   end;
 end.
 

@@ -17,7 +17,7 @@ type
 
   TCGI = class(TLWSCGI)
   private
-    FConn: TLWSJDODataBase;
+    FDB: TLWSJDODataBase;
     FQuery: TLWSJDOQuery;
   protected
     procedure Init; override;
@@ -27,19 +27,19 @@ type
 
   procedure TCGI.Init;
   begin
-    FConn := TLWSJDODataBase.Create('db.cfg');
-    FQuery := TLWSJDOQuery.Create(FConn, 'jdo_demo');
+    FDB := TLWSJDODataBase.Create('db.cfg');
+    FQuery := TLWSJDOQuery.Create(FDB, 'jdo_demo');
   end;
 
   procedure TCGI.Finit;
   begin
     FQuery.Free;
-    FConn.Free;
+    FDB.Free;
   end;
 
   procedure TCGI.Request;
   begin
-    FConn.StartTrans;
+    FDB.StartTrans;
     try
       FQuery.AddField('ftstr', ftStr);
       FQuery.AddField('ftbool', ftBool);
@@ -50,9 +50,9 @@ type
         Contents.Text := SSuccessfullyInserted
       else
         Contents.Text := SCouldNotInsert;
-      FConn.Commit;
+      FDB.Commit;
     except
-      FConn.Rollback;
+      FDB.Rollback;
       raise;
     end;
   end;
