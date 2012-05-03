@@ -78,6 +78,7 @@ type
 
   TLWSJDOQuery = class
   private
+    FAdditionalSQL: TStrings;
     FLike: string;
     FLikeKey: string;
     FLikeValue: string;
@@ -88,6 +89,7 @@ type
     FOrderByPK: Boolean;
     FPKFieldName: string;
     FDateAsString: Boolean;
+    FSQL: TStrings;
     FTableAlias: string;
     FTableName: string;
     function GetItems(AIndex: Integer): TJSONObject;
@@ -123,6 +125,8 @@ type
     property TableName: string read FTableName write FTableName;
     property TableAlias: string read FTableAlias write FTableAlias;
     property PKFieldName: string read FPKFieldName write FPKFieldName;
+    property SQL: TStrings read FSQL write FSQL;
+    property AdditionalSQL: TStrings read FAdditionalSQL write FAdditionalSQL;
     property OrderByPK: Boolean read FOrderByPK write FOrderByPK;
     property DateAsString: Boolean read FDateAsString write FDateAsString;
   end;
@@ -408,6 +412,8 @@ begin
   inherited Create;
   FItems := TObjectList.Create(True);
   FFields := TJSONObject.Create;
+  FSQL := TStringList.Create;
+  FAdditionalSQL := TStringList.Create;
   FDataBase := ADataBase;
   FTableName := ATableName;
   FLastSQLOperation := soNone;
@@ -424,6 +430,8 @@ end;
 
 destructor TLWSJDOQuery.Destroy;
 begin
+  FAdditionalSQL.Free;
+  FSQL.Free;
   FFields.Free;
   FItems.Free;
   inherited Destroy;
@@ -469,6 +477,13 @@ procedure TLWSJDOQuery.Prepare(const ASQLOperation: TLWSJDOQuerySQLOperation;
 var
   VSQL: string;
 begin
+  if FSQL.Count > 0 then
+  begin
+    FLastSQLOperation := soNone;
+    FDataBase.SQL.Assign(FSQL);
+    FDataBase.SQL.AddStrings(FAdditionalSQL);
+    Exit;
+  end;
   case ASQLOperation of
     soSelect:
       begin
@@ -478,6 +493,8 @@ begin
           VSQL += SQL_WHERE_TOKEN + FLike;
         if AAdditionalSQL <> ES then
           VSQL += SP + AAdditionalSQL;
+        if FAdditionalSQL.Count > 0 then
+          VSQL += SP + FAdditionalSQL.Text;
         if FOrderByPK then
         begin
           if FTableAlias <> ES then
