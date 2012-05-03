@@ -4,7 +4,7 @@ program cgi1;
 
 uses
   LWSCGI,
-  LWSJDO,
+  JDO,
   PQConnection;
 
 resourcestring
@@ -17,8 +17,8 @@ type
 
   TCGI = class(TLWSCGI)
   private
-    FDB: TLWSJDODataBase;
-    FQuery: TLWSJDOQuery;
+    FDB: TJDODataBase;
+    FQuery: TJDOQuery;
   protected
     procedure Init; override;
     procedure Finit; override;
@@ -27,8 +27,8 @@ type
 
   procedure TCGI.Init;
   begin
-    FDB := TLWSJDODataBase.Create('db.cfg');
-    FQuery := TLWSJDOQuery.Create(FDB, 'jdo_demo');
+    FDB := TJDODataBase.Create('db.cfg');
+    FQuery := TJDOQuery.Create(FDB, 'jdo_demo');
   end;
 
   procedure TCGI.Finit;
