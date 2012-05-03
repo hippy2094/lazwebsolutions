@@ -35,9 +35,9 @@ type
 
   TLWSJDOLikeOptions = set of (loCaseInsensitive, loPartialKey);
 
-  { TLWSJDOConnection }
+  { TLWSJDODataBase }
 
-  TLWSJDOConnection = class
+  TLWSJDODataBase = class
   private
     FConfig: TStrings;
     FConfigFileName: TFileName;
@@ -80,7 +80,7 @@ type
     FLikeKey: string;
     FLikeValue: string;
     FLastSQLOperation: TLWSJDOQuerySQLOperation;
-    FDataBase: TLWSJDOConnection;
+    FDataBase: TLWSJDODataBase;
     FFields: TJSONObject;
     FItems: TObjectList;
     FOrderByPK: Boolean;
@@ -92,7 +92,7 @@ type
     procedure SetItems(AIndex: Integer; const AValue: TJSONObject);
   public
     constructor Create;
-    constructor Create(ADataBase: TLWSJDOConnection; const ATableName: string);
+    constructor Create(ADataBase: TLWSJDODataBase; const ATableName: string);
     destructor Destroy; override;
     procedure Prepare(const ASQLOperation: TLWSJDOQuerySQLOperation;
       const AAdditionalSQL: string = ES); virtual;
@@ -114,7 +114,7 @@ type
     function AsJSON: TJSONStringType;
     function Field(const AFieldName: string): TField;
     function Param(const AParamName: string): TParam;
-    property DataBase: TLWSJDOConnection read FDataBase write FDataBase;
+    property DataBase: TLWSJDODataBase read FDataBase write FDataBase;
     property Items[AIndex: Integer]: TJSONObject read GetItems
       write SetItems; default;
     property Fields: TJSONObject read FFields;
@@ -260,9 +260,9 @@ begin
   end;
 end;
 
-{ TLWSJDOConnection }
+{ TLWSJDODataBase }
 
-constructor TLWSJDOConnection.Create(const AConfigFileName: TFileName;
+constructor TLWSJDODataBase.Create(const AConfigFileName: TFileName;
   const AConnect: Boolean);
 begin
   FConfig := TStringList.Create;
@@ -279,7 +279,7 @@ begin
   end;
 end;
 
-destructor TLWSJDOConnection.Destroy;
+destructor TLWSJDODataBase.Destroy;
 begin
   FConfig.Free;
   FQuery.Free;
@@ -288,7 +288,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TLWSJDOConnection.InternalCreateConnection;
+procedure TLWSJDODataBase.InternalCreateConnection;
 var
   VConnectorName: ShortString;
   VConnectionDef: TConnectionDef;
@@ -304,30 +304,30 @@ begin
       SLWSConnectorUnitWasNotDeclaredError, [VConnectorName]);
 end;
 
-function TLWSJDOConnection.GetFields: TFields;
+function TLWSJDODataBase.GetFields: TFields;
 begin
   Result := FQuery.Fields;
 end;
 
-function TLWSJDOConnection.GetParams: TParams;
+function TLWSJDODataBase.GetParams: TParams;
 begin
   Result := FQuery.Params;
 end;
 
-procedure TLWSJDOConnection.InternalCreateTransaction;
+procedure TLWSJDODataBase.InternalCreateTransaction;
 begin
   FTransaction := TSQLTransaction.Create(nil);
   FTransaction.DataBase := FConnection;
 end;
 
-procedure TLWSJDOConnection.InternalCreateQuery;
+procedure TLWSJDODataBase.InternalCreateQuery;
 begin
   FQuery := TSQLQuery.Create(nil);
   FQuery.DataBase := FConnection;
   FQuery.Transaction := FTransaction;
 end;
 
-procedure TLWSJDOConnection.LoadConfig;
+procedure TLWSJDODataBase.LoadConfig;
 begin
   if not FileExists(FConfigFileName) then
     raise ELWSJDOConnection.CreateFmt(
@@ -335,7 +335,7 @@ begin
   FConfig.LoadFromFile(FConfigFileName);
 end;
 
-procedure TLWSJDOConnection.SetProperties;
+procedure TLWSJDODataBase.SetProperties;
 var
   I: Integer;
   VPropName, VToken: ShortString;
@@ -355,51 +355,51 @@ begin
   end;
 end;
 
-procedure TLWSJDOConnection.Prepare(const ASQL: string);
+procedure TLWSJDODataBase.Prepare(const ASQL: string);
 begin
   FQuery.SQL.Text := ASQL;
 end;
 
-function TLWSJDOConnection.Field(const AFieldByName: string): TField;
+function TLWSJDODataBase.Field(const AFieldByName: string): TField;
 begin
   Result := FQuery.Fields.FieldByName(AFieldByName);
 end;
 
-function TLWSJDOConnection.Param(const AParamName: string): TParam;
+function TLWSJDODataBase.Param(const AParamName: string): TParam;
 begin
   Result := FQuery.Params.ParamByName(AParamName);
 end;
 
-function TLWSJDOConnection.Open: Boolean;
+function TLWSJDODataBase.Open: Boolean;
 begin
   FQuery.Open;
   Result := FQuery.RecordCount > 0;
 end;
 
-function TLWSJDOConnection.Execute: Boolean;
+function TLWSJDODataBase.Execute: Boolean;
 begin
   FQuery.ExecSQL;
   Result := FQuery.RowsAffected > 0;
 end;
 
-procedure TLWSJDOConnection.StartTrans;
+procedure TLWSJDODataBase.StartTrans;
 begin
   FTransaction.StartTransaction;
 end;
 
-procedure TLWSJDOConnection.Commit;
+procedure TLWSJDODataBase.Commit;
 begin
   FTransaction.Commit;
 end;
 
-procedure TLWSJDOConnection.Rollback;
+procedure TLWSJDODataBase.Rollback;
 begin
   FTransaction.Rollback;
 end;
 
 { TLWSJDOQuery }
 
-constructor TLWSJDOQuery.Create(ADataBase: TLWSJDOConnection;
+constructor TLWSJDOQuery.Create(ADataBase: TLWSJDODataBase;
   const ATableName: string);
 begin
   inherited Create;

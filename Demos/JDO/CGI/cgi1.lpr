@@ -17,7 +17,7 @@ type
 
   TCGI = class(TLWSCGI)
   private
-    FConn: TLWSJDOConnection;
+    FConn: TLWSJDODataBase;
     FQuery: TLWSJDOQuery;
   protected
     procedure Init; override;
@@ -27,7 +27,7 @@ type
 
   procedure TCGI.Init;
   begin
-    FConn := TLWSJDOConnection.Create('db.cfg');
+    FConn := TLWSJDODataBase.Create('db.cfg');
     FQuery := TLWSJDOQuery.Create(FConn, 'jdo_demo');
   end;
 

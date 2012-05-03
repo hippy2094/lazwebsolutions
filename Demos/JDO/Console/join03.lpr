@@ -16,9 +16,9 @@ const
 
 var
   q: TLWSJDOQuery;
-  conn: TLWSJDOConnection;
+  conn: TLWSJDODataBase;
 begin
-  conn := TLWSJDOConnection.Create('db.cfg');
+  conn := TLWSJDODataBase.Create('db.cfg');
   q := TLWSJDOQuery.Create(conn, 'jdo_demo');
   try
     conn.StartTrans;
