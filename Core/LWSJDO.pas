@@ -43,6 +43,7 @@ type
     FConfigFileName: TFileName;
     FConnection: TSQLConnection;
     FQuery: TSQLQuery;
+    FSQL: TStringList;
     FTransaction: TSQLTransaction;
     function GetFields: TFields;
     function GetParams: TParams;
@@ -55,7 +56,7 @@ type
     destructor Destroy; override;
     procedure LoadConfig;
     procedure SetProperties;
-    procedure Prepare(const ASQL: string);
+    procedure Prepare(const ASQL: string = ES);
     function Field(const AFieldByName: string): TField;
     function Param(const AParamName: string): TParam;
     function Open: Boolean;
@@ -68,6 +69,7 @@ type
     property Connection: TSQLConnection read FConnection;
     property Transaction: TSQLTransaction read FTransaction;
     property Query: TSQLQuery read FQuery;
+    property SQL: TStringList read FSQL;
     property Fields: TFields read GetFields;
     property Params: TParams read GetParams;
   end;
@@ -274,6 +276,7 @@ begin
     InternalCreateTransaction;
     InternalCreateQuery;
     SetProperties;
+    FSQL := FQuery.SQL;
     if AConnect then
       FConnection.Open;
   end;
