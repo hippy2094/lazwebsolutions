@@ -12,15 +12,14 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 *)
 
-unit LWSJSONDataObjects;
+unit LWSJDO;
 
 {$I lazwebsolutions.inc}
 
 interface
 
 uses
-  LWSJSONDataObjectsConsts, Classes, SysUtils, SQLdb, DB, TypInfo, Contnrs,
-  FPJSON;
+  LWSJDOConsts, Classes, SysUtils, SQLdb, DB, TypInfo, Contnrs, FPJSON;
 
 type
 

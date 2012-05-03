@@ -4,8 +4,8 @@ program like01;
 
 uses
   heaptrc,
-  LWSJSONDataObjects,
-  LWSJSONDataObjectsConsts,
+  LWSJDO,
+  LWSJDOConsts,
   SysUtils,
   FPJSON,
   PQConnection;

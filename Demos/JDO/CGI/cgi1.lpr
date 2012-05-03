@@ -4,7 +4,7 @@ program cgi1;
 
 uses
   LWSCGI,
-  LWSJSONDataObjects,
+  LWSJDO,
   PQConnection;
 
 resourcestring

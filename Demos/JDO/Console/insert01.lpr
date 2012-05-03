@@ -4,7 +4,10 @@ program insert01;
 
 uses
   heaptrc,
-  LWSJSONDataObjects, SysUtils, FPJSON, PQConnection;
+  LWSJDO,
+  SysUtils,
+  FPJSON,
+  PQConnection;
 
 resourcestring
   SCouldNotInsert = 'ERROR: Could not insert.';

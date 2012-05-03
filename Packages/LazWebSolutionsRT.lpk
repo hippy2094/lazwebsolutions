@@ -24,7 +24,7 @@ for details about the copyright.
 This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."/>
-    <Version Release="4" Build="4"/>
+    <Version Release="4" Build="5"/>
     <Files Count="17">
       <Item1>
         <Filename Value="..\Brokers\SQLite3ConnDef.pas"/>
@@ -63,12 +63,12 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."/>
         <UnitName Value="LWSDebugger"/>
       </Item9>
       <Item10>
-        <Filename Value="..\Core\LWSJSONDataObjects.pas"/>
-        <UnitName Value="LWSJSONDataObjects"/>
+        <Filename Value="..\Core\LWSJDO.pas"/>
+        <UnitName Value="LWSJDO"/>
       </Item10>
       <Item11>
-        <Filename Value="..\Core\LWSJSONDataObjectsConsts.pas"/>
-        <UnitName Value="LWSJSONDataObjectsConsts"/>
+        <Filename Value="..\Core\LWSJDOConsts.pas"/>
+        <UnitName Value="LWSJDOConsts"/>
       </Item11>
       <Item12>
         <Filename Value="..\Core\LWSMessages.pas"/>

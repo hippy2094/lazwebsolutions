@@ -4,7 +4,7 @@ program delete03;
 
 uses
   heaptrc,
-  LWSJSONDataObjects,
+  LWSJDO,
   SysUtils,
   FPJSON,
   PQConnection;

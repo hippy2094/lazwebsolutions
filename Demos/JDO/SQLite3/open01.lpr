@@ -4,7 +4,7 @@ program open01;
 
 uses
   heaptrc,
-  LWSJSONDataObjects,
+  LWSJDO,
   SysUtils,
   FPJSON,
   SQLite3ConnDef;

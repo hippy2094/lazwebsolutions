@@ -4,7 +4,7 @@ program join02;
 
 uses
   heaptrc,
-  LWSJSONDataObjects,
+  LWSJDO,
   SysUtils,
   FPJSON,
   PQConnection;

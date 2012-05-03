@@ -4,8 +4,8 @@ program join03;
 
 uses
   heaptrc,
-  LWSJSONDataObjects,
-  LWSJSONDataObjectsConsts,
+  LWSJDO,
+  LWSJDOConsts,
   SysUtils,
   FPJSON,
   PQConnection;
