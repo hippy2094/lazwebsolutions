@@ -32,6 +32,7 @@ type
 
   TLWSCGI = class
   private
+    FIsContentTypeJS: Boolean;
     FAuthType: ShortString;
     FCacheControl: string;
     FCharset: ShortString;
@@ -250,7 +251,10 @@ begin
 {$IFDEF DEBUG}
   LWSSendMethodEnter('TLWSCGI.FillFields');
 {$ENDIF}
-  VJSONParser := TJSONParser.Create(LWSParamStringToJSON(AData, '=', '&'));
+  if FIsContentTypeJS then
+    VJSONParser := TJSONParser.Create(AData)
+  else
+    VJSONParser := TJSONParser.Create(LWSParamStringToJSON(AData, '=', '&'));
   try
     FFields := TJSONObject(VJSONParser.Parse);
   finally
@@ -434,7 +438,16 @@ begin
     else
     if Pos(LWS_HTTP_CONTENT_TYPE_MULTIPART_FORM_DATA,
       LowerCase(FContentType)) <> 0 then
-      FillUploads(FInputData);
+      FillUploads(FInputData)
+    else
+    begin
+      FIsContentTypeJS :=
+        (Pos(LWS_HTTP_CONTENT_TYPE_APP_JAVASCRIPT,
+        LowerCase(FContentType)) <> 0) or
+        (Pos(LWS_HTTP_CONTENT_TYPE_APP_JSON,
+        LowerCase(FContentType)) <> 0);
+      FillFields(FInputData);
+    end;
   finally
     VInputStream.Free;
   end;
