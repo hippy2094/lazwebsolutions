@@ -246,12 +246,15 @@ end;
 
 procedure TLWSCGI.FillFields(const AData: string);
 var
+  VToken: Char = #0;
   VJSONParser: TJSONParser;
 begin
 {$IFDEF DEBUG}
   LWSSendMethodEnter('TLWSCGI.FillFields');
 {$ENDIF}
-  if FIsContentTypeJS then
+  if Length(AData) > 0 then
+    VToken := AData[1];
+  if FIsContentTypeJS and ((VToken = '{') or (VToken = '[')) then
     VJSONParser := TJSONParser.Create(AData)
   else
     VJSONParser := TJSONParser.Create(LWSParamStringToJSON(AData, '=', '&'));
