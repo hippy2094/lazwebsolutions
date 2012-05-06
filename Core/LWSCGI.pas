@@ -80,7 +80,7 @@ type
     FServerProtocol: ShortString;
     FServerSoftware: string;
     FShowExceptionAsHTML: Boolean;
-    FShowNotFound: Boolean;
+    FLengthRequired: Boolean;
     FStatusCode: Word;
     FTransferEncoding: ShortString;
     FUserAgent: string;
@@ -160,7 +160,7 @@ type
     property ShowExceptionAsHTML: Boolean read FShowExceptionAsHTML
       write FShowExceptionAsHTML;
     property StatusCode: Word read FStatusCode write FStatusCode;
-    property ShowNotFound: Boolean read FShowNotFound write FShowNotFound;
+    property LengthRequired: Boolean read FLengthRequired write FLengthRequired;
     property TransferEncoding: ShortString read FTransferEncoding
       write FTransferEncoding;
     property UserAgent: string read FUserAgent;
@@ -186,7 +186,7 @@ begin
   FExpires := NullDate;
   FLastModified := NullDate;
   FStatusCode := LWS_HTTP_STATUS_CODE_OK;
-  FShowNotFound := True;
+  FLengthRequired := True;
   FShowExceptionAsHTML := True;
   FReasonPhrase := LWS_HTTP_REASON_PHRASE_OK;
 end;
@@ -287,7 +287,7 @@ begin
       if VName = LWS_SRV_ENV_CONTENT_LENGTH then
       begin
         FContentLength := StrToInt64(VValue);
-        if FShowNotFound and (FContentLength = 0) then
+        if FLengthRequired and (FContentLength = 0) then
         begin
           FStatusCode := LWS_HTTP_STATUS_CODE_LENGTH_REQUIRED;
           FReasonPhrase := LWS_HTTP_REASON_PHRASE_LENGTH_REQUIRED;
@@ -585,6 +585,8 @@ begin
 end;
 
 procedure TLWSCGI.Run;
+var
+  B: Boolean = True;
 begin
 {$IFDEF DEBUG}
   LWSSendBegin('TLWSCGI.Run', 'Initializing ...');
@@ -596,7 +598,9 @@ begin
     Init;
     FillProperties;
     FillParams;
-    if (FContentLength > 0) and (FContentType <> ES) then
+    if FLengthRequired then
+      B := FContentLength > 0;
+    if B and (FContentType <> ES) then
     begin
       ReadInput;
       Request;
