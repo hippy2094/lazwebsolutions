@@ -70,6 +70,7 @@ type
     FRemoteUser: ShortString;
     FRequestMethod: ShortString;
     FRequestURI: string;
+    FReturnedPathInfo: string;
     FScriptFileName: string;
     FScriptName: string;
     FSendContentLength: Boolean;
@@ -109,6 +110,7 @@ type
       const ADispositionType: ShortString = LWS_HTTP_CONTENT_DISPOSITION_ATTACHMENT;
       const AContentDescription: ShortString = ES;
       const AModificationDate: TDateTime = NullDate);
+    function GetNextPathInfo: string;
     property AuthType: ShortString read FAuthType;
     property CacheControl: string read FCacheControl write FCacheControl;
     property Charset: ShortString read FCharset write FCharset;
@@ -147,6 +149,8 @@ type
     property RemoteUser: ShortString read FRemoteUser;
     property RequestMethod: ShortString read FRequestMethod;
     property RequestURI: string read FRequestURI;
+    property ReturnedPathInfo: string read FReturnedPathInfo
+      write FReturnedPathInfo;
     property ScriptFileName: string read FScriptFileName;
     property ScriptName: string read FScriptName;
     property ServerAddr: ShortString read FServerAddr;
@@ -242,6 +246,24 @@ begin
 {$IFDEF DEBUG}
   LWSSendMethodExit('TLWSCGI.AddContentDisposition');
 {$ENDIF}
+end;
+
+function TLWSCGI.GetNextPathInfo: string;
+var
+  P: string;
+  I: Integer;
+begin
+  P := FPathInfo;
+  if (P <> ES) and (P[Length(P)] = '/') then
+    Delete(P, Length(P), 1);
+  if (P <> ES) and (P[1] = '/') then
+    Delete(P, 1, 1);
+  Delete(P, 1, Length(LWSIncludeURLPathDelimiter(FReturnedPathInfo)));
+  I := Pos('/', P);
+  If I = 0 then
+    I := Length(P) + 1;
+  Result := Copy(P, 1, I - 1);
+  FReturnedPathInfo := LWSIncludeURLPathDelimiter(FReturnedPathInfo) + Result;
 end;
 
 procedure TLWSCGI.FillFields(const AData: string);
