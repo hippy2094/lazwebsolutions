@@ -18,7 +18,7 @@ type
   TCGI = class(TLWSCGI)
   private
     FDB: TJDODataBase;
-    FQuery: TJDOQuery;
+    FQuery: TJDOQuickQuery;
   protected
     procedure Init; override;
     procedure Finit; override;
@@ -28,33 +28,26 @@ type
   procedure TCGI.Init;
   begin
     FDB := TJDODataBase.Create('db.cfg');
-    FQuery := TJDOQuery.Create(FDB, 'jdo_demo');
+    FQuery := TJDOQuickQuery.Create(FDB, 'jdo_demo');
+    FQuery.FreeObjects := False;
   end;
 
   procedure TCGI.Finit;
   begin
-    FQuery.Free;
     FDB.Free;
   end;
 
   procedure TCGI.Request;
   begin
-    FDB.StartTrans;
-    try
-      FQuery.AddField('ftstr', ftStr);
-      FQuery.AddField('ftbool', ftBool);
-      FQuery.AddField('ftdate', ftDate);
-      FQuery.AddField('ftfloat', ftFloat);
-      FQuery.AddField('ftint', ftInt);
-      if FQuery.Insert(Fields) then
-        Contents.Text := SSuccessfullyInserted
-      else
-        Contents.Text := SCouldNotInsert;
-      FDB.Commit;
-    except
-      FDB.Rollback;
-      raise;
-    end;
+    FQuery.AddField('ftstr', ftStr);
+    FQuery.AddField('ftbool', ftBool);
+    FQuery.AddField('ftdate', ftDate);
+    FQuery.AddField('ftfloat', ftFloat);
+    FQuery.AddField('ftint', ftInt);
+    if FQuery.Insert(Fields) then
+      Contents.Text := SSuccessfullyInserted
+    else
+      Contents.Text := SCouldNotInsert;
   end;
 
 begin
