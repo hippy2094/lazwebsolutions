@@ -19,64 +19,52 @@
     </CompilerOptions>
     <Description Value="LazWebSolutions RunTime package."/>
     <License Value="See the file LICENSE.txt, included in this distribution, for details about the copyright."/>
-    <Version Release="4" Build="12"/>
-    <Files Count="14">
+    <Version Release="4" Build="13"/>
+    <Files Count="11">
       <Item1>
         <Filename Value="..\Core\lazwebsolutions.inc"/>
         <Type Value="Include"/>
       </Item1>
       <Item2>
-        <Filename Value="..\Core\LWSActionController.pas"/>
-        <UnitName Value="LWSActionController"/>
-      </Item2>
-      <Item3>
-        <Filename Value="..\Core\LWSActionView.pas"/>
-        <UnitName Value="LWSActionView"/>
-      </Item3>
-      <Item4>
         <Filename Value="..\Core\LWSCGI.pas"/>
         <UnitName Value="LWSCGI"/>
-      </Item4>
-      <Item5>
+      </Item2>
+      <Item3>
         <Filename Value="..\Core\LWSClasses.pas"/>
         <UnitName Value="LWSClasses"/>
-      </Item5>
-      <Item6>
+      </Item3>
+      <Item4>
         <Filename Value="..\Core\LWSConsts.pas"/>
         <UnitName Value="LWSConsts"/>
-      </Item6>
-      <Item7>
+      </Item4>
+      <Item5>
         <Filename Value="..\Core\LWSCookies.pas"/>
         <UnitName Value="LWSCookies"/>
-      </Item7>
-      <Item8>
+      </Item5>
+      <Item6>
         <Filename Value="..\Core\LWSDebugger.pas"/>
         <UnitName Value="LWSDebugger"/>
-      </Item8>
-      <Item9>
+      </Item6>
+      <Item7>
         <Filename Value="..\Core\LWSMessages.pas"/>
         <UnitName Value="LWSMessages"/>
-      </Item9>
-      <Item10>
+      </Item7>
+      <Item8>
         <Filename Value="..\Core\LWSMessages.inc"/>
         <Type Value="Include"/>
-      </Item10>
-      <Item11>
-        <Filename Value="..\Core\LWSRouter.pas"/>
-        <UnitName Value="LWSRouter"/>
-      </Item11>
-      <Item12>
+      </Item8>
+      <Item9>
         <Filename Value="..\Core\LWSSessions.pas"/>
         <UnitName Value="LWSSessions"/>
-      </Item12>
-      <Item13>
+      </Item9>
+      <Item10>
         <Filename Value="..\Core\LWSUploads.pas"/>
         <UnitName Value="LWSUploads"/>
-      </Item13>
-      <Item14>
+      </Item10>
+      <Item11>
         <Filename Value="..\Core\LWSUtils.pas"/>
         <UnitName Value="LWSUtils"/>
-      </Item14>
+      </Item11>
     </Files>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>
