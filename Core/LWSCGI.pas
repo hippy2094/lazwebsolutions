@@ -181,14 +181,9 @@ begin
   FContents := TLWSMemoryStream.Create;
   FHeaders := TLWSMemoryStream.Create;
   FEnvironmentVariables := TStringList.Create;
-  FFields := nil;
-  FParams := nil;
   FHeaders.LineBreakString := CRLF;
-  FHaltOnError := False;
   FContentType := LWS_HTTP_CONTENT_TYPE_TEXT_HTML;
   FCharset := LWS_HTTP_CHARSET_UTF_8;
-  FExpires := NullDate;
-  FLastModified := NullDate;
   FStatusCode := LWS_HTTP_STATUS_CODE_OK;
   FLengthRequired := True;
   FShowExceptionAsHTML := True;
@@ -197,10 +192,8 @@ end;
 
 destructor TLWSCGI.Destroy;
 begin
-  if Assigned(FFields) then
-    FreeAndNil(FFields);
-  if Assigned(FParams) then
-    FreeAndNil(FParams);
+  FreeAndNil(FFields);
+  FreeAndNil(FParams);
   FContents.Free;
   FEnvironmentVariables.Free;
   FHeaders.Free;

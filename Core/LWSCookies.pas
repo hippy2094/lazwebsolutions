@@ -67,7 +67,6 @@ constructor TLWSCookies.Create(const AHTTPCookie: string; const AParse: Boolean)
 begin
   inherited Create;
   FHTTPCookie := AHTTPCookie;
-  FResent := False;
   if AParse then
     Parse;
 end;

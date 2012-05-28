@@ -45,6 +45,11 @@ implementation
 
 { TLWSMemoryStream }
 
+constructor TLWSMemoryStream.Create;
+begin
+  FLineBreakString := LineEnding;
+end;
+
 function TLWSMemoryStream.GetText: string;
 begin
   SetLength(Result, Size);
@@ -56,11 +61,6 @@ procedure TLWSMemoryStream.SetText(const AValue: string);
 begin
   Clear;
   Write(Pointer(AValue)^, Length(AValue));
-end;
-
-constructor TLWSMemoryStream.Create;
-begin
-  FLineBreakString := LineEnding;
 end;
 
 procedure TLWSMemoryStream.Add(const AString: string);
