@@ -25,19 +25,16 @@ type
 
   procedure TCGI.Respond;
   begin
-    if (PathInfo = '') or (PathInfo = '/home') then
-      Contents.LoadFromFile('home.html')
+    case PathInfo of
+      '/home', ES: Contents.LoadFromFile('home.html');
+      '/download': Contents.LoadFromFile('download.html');
+      '/about': Contents.LoadFromFile('about.html');
     else
-    if PathInfo = '/download' then
-      Contents.LoadFromFile('download.html')
-    else
-    if PathInfo = '/about' then
-      Contents.LoadFromFile('about.html')
-    else
-    begin
-      StatusCode := LWS_HTTP_STATUS_CODE_NOT_FOUND;
-      ReasonPhrase := LWS_HTTP_REASON_PHRASE_NOT_FOUND;
-      Contents.LoadFromFile('404.html');
+      begin
+        StatusCode := LWS_HTTP_STATUS_CODE_NOT_FOUND;
+        ReasonPhrase := LWS_HTTP_REASON_PHRASE_NOT_FOUND;
+        Contents.LoadFromFile('404.html');
+      end;
     end;
   end;
 
