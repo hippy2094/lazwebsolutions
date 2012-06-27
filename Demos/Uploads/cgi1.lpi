@@ -57,7 +57,7 @@
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="25" Y="8"/>
+        <CursorPos X="1" Y="1"/>
         <UsageCount Value="21"/>
       </Unit1>
       <Unit2>
@@ -65,16 +65,16 @@
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="54" Y="1"/>
+        <CursorPos X="1" Y="1"/>
         <UsageCount Value="21"/>
       </Unit2>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="9"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename ApplyConventions="False"/>
+      <Filename Value="upload" ApplyConventions="False"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
@@ -86,6 +86,7 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
+        <GenerateDebugInfo Value="False"/>
         <UseLineInfoUnit Value="False"/>
         <UseExternalDbgSyms Value="True"/>
       </Debugging>

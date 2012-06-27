@@ -1,4 +1,4 @@
-﻿'<!DOCTYPE HTML>' + LF +
+'<!DOCTYPE HTML>' + LF +
 '<html lang="en-US">' + LF +
 '<head>' + LF +
 '	<meta charset="UTF-8">' + LF +

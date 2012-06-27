@@ -25,14 +25,14 @@
       <Item1 Name="Release" Default="True"/>
       <Item2 Name="Debug">
         <CompilerOptions>
-          <Version Value="9"/>
+          <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
             <Filename ApplyConventions="False"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\..\Core"/>
-            <OtherUnitFiles Value="..\..\Core"/>
+            <IncludeFiles Value="$(ProjOutDir);..\..\Units"/>
+            <OtherUnitFiles Value="..\..\Units"/>
           </SearchPaths>
           <Conditionals Value="CustomOptions := '-ddebug';"/>
           <CodeGeneration>
@@ -42,6 +42,7 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
+              <GenerateDebugInfo Value="False"/>
               <UseLineInfoUnit Value="False"/>
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
@@ -75,14 +76,14 @@
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <CursorPos X="2" Y="3"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit0>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="9"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
       <Filename ApplyConventions="False"/>
@@ -97,6 +98,7 @@
     </CodeGeneration>
     <Linking>
       <Debugging>
+        <GenerateDebugInfo Value="False"/>
         <UseLineInfoUnit Value="False"/>
         <UseExternalDbgSyms Value="True"/>
       </Debugging>
