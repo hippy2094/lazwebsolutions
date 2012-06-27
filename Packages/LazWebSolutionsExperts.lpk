@@ -8,7 +8,7 @@
       <Version Value="9"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <OtherUnitFiles Value="..\Core"/>
+        <OtherUnitFiles Value="..\Units"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Other>
@@ -20,7 +20,7 @@
     <Version Release="1" Build="1"/>
     <Files Count="1">
       <Item1>
-        <Filename Value="..\Core\LWSIDEIntf.pas"/>
+        <Filename Value="..\Units\LWSIDEIntf.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="LWSIDEIntf"/>
       </Item1>

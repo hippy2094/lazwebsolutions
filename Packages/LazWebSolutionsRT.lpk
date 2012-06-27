@@ -9,8 +9,8 @@
       <Version Value="9"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <IncludeFiles Value="..\Core"/>
-        <OtherUnitFiles Value="..\Core;..\Brokers"/>
+        <IncludeFiles Value="..\Units"/>
+        <OtherUnitFiles Value="..\Units;..\Brokers"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Other>
@@ -22,47 +22,47 @@
     <Version Release="4" Build="13"/>
     <Files Count="11">
       <Item1>
-        <Filename Value="..\Core\lazwebsolutions.inc"/>
+        <Filename Value="..\Units\lazwebsolutions.inc"/>
         <Type Value="Include"/>
       </Item1>
       <Item2>
-        <Filename Value="..\Core\LWSCGI.pas"/>
+        <Filename Value="..\Units\LWSCGI.pas"/>
         <UnitName Value="LWSCGI"/>
       </Item2>
       <Item3>
-        <Filename Value="..\Core\LWSClasses.pas"/>
+        <Filename Value="..\Units\LWSClasses.pas"/>
         <UnitName Value="LWSClasses"/>
       </Item3>
       <Item4>
-        <Filename Value="..\Core\LWSConsts.pas"/>
+        <Filename Value="..\Units\LWSConsts.pas"/>
         <UnitName Value="LWSConsts"/>
       </Item4>
       <Item5>
-        <Filename Value="..\Core\LWSCookies.pas"/>
+        <Filename Value="..\Units\LWSCookies.pas"/>
         <UnitName Value="LWSCookies"/>
       </Item5>
       <Item6>
-        <Filename Value="..\Core\LWSDebugger.pas"/>
+        <Filename Value="..\Units\LWSDebugger.pas"/>
         <UnitName Value="LWSDebugger"/>
       </Item6>
       <Item7>
-        <Filename Value="..\Core\LWSMessages.pas"/>
+        <Filename Value="..\Units\LWSMessages.pas"/>
         <UnitName Value="LWSMessages"/>
       </Item7>
       <Item8>
-        <Filename Value="..\Core\LWSMessages.inc"/>
+        <Filename Value="..\Units\LWSMessages.inc"/>
         <Type Value="Include"/>
       </Item8>
       <Item9>
-        <Filename Value="..\Core\LWSSessions.pas"/>
+        <Filename Value="..\Units\LWSSessions.pas"/>
         <UnitName Value="LWSSessions"/>
       </Item9>
       <Item10>
-        <Filename Value="..\Core\LWSUploads.pas"/>
+        <Filename Value="..\Units\LWSUploads.pas"/>
         <UnitName Value="LWSUploads"/>
       </Item10>
       <Item11>
-        <Filename Value="..\Core\LWSUtils.pas"/>
+        <Filename Value="..\Units\LWSUtils.pas"/>
         <UnitName Value="LWSUtils"/>
       </Item11>
     </Files>
