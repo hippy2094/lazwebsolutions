@@ -132,8 +132,8 @@ procedure TLWSCookies.SetCookie(const AName, AValue: string;
   const AExpires: TDateTime; const APath: string; const ADomain: string;
   const ASecure: Boolean; const AHTTPOnly: Boolean);
 begin
-  LWSSetRawCookie(FHeader, AName, AValue, AExpires, APath, ADomain, ASecure,
-    AHTTPOnly);
+  LWSSetRawCookie(FHeader, AName, LWSURIEncode(AValue), AExpires, APath,
+    ADomain, ASecure, AHTTPOnly);
 end;
 
 function TLWSCookies.GetRawCookie(const AName: string): string;
